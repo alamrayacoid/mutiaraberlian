@@ -73,6 +73,9 @@
                                         </div>
                                     </section>
                                 </div>
+                        		<div class="card-footer text-right">
+                        			<a href="{{ route('manajemenstok.index') }}" class="btn btn-secondary">Kembali</a>
+                        		</div>
                             </div>
                         </div>
                     </div>
@@ -86,6 +89,12 @@
     <script type="text/javascript">
         var tb_analisa;
         $(document).ready(function () {
+            cur_date = new Date();
+            first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+            last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+            $('#date_from').datepicker('setDate', first_day);
+            $('#date_to').datepicker('setDate', last_day);
+
             $('.input-daterange').datepicker({
                 format: 'dd-mm-yyyy',
                 enableOnReadonly: false,
@@ -112,12 +121,15 @@
             let enddate = $('#date_to').val();
             if (id_barang == null || id_barang == '') {
                 messageWarning("Perhatian", "Isi nama barang terlebih dahulu");
+                return false;
             }
             if (startdate == null || startdate == '') {
                 messageWarning("Perhatian", "Isi tanggal awal terlebih dahulu");
+                return false;
             }
             if (enddate == null || enddate == '') {
                 messageWarning("Perhatian", "Isi tanggal akhir terlebih dahulu");
+                return false;
             }
 
             axios.get("{{ route('TurnOverController.getDataPeriode') }}", {

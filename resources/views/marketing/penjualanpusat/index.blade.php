@@ -110,15 +110,15 @@
                     <div class="form-group">
                         <div class="col-md-12">
                             <label>Nama Barang : </label>
-                            <span id="edit_namabarang">Agarillus</span>
+                            <span id="edit_namabarang"></span>
                         </div>
                         <div class="col-md-12">
                             <label>Periode : </label>
-                            <span id="edit_periode">Maret 2019</span>
+                            <span id="edit_periode"></span>
                         </div>
                         <div class="col-md-12">
                             <label>Cabang : </label>
-                            <span id="edit_cabang">Cabang</span>
+                            <span id="edit_cabang"></span>
                         </div>
                     </div>
                     <div class="form-group row">
@@ -133,9 +133,9 @@
                                     id="edit_satuanawal"></select>
                         </div>
                     </div>
-                    <input type="hidden" class="edit_id">
-                    <input type="hidden" class="edit_dt">
                     <form class="form-group row" id="form_updatetarget">
+                        <input type="hidden" name="edit_id" class="edit_id">
+                        <input type="hidden" name="edit_dt" class="edit_dt">
                         <div class="col-sm-6 col-md-6 col-lg-6">
                             <label class="control-label" for="edit_targetbaru">Target Baru</label>
                             <input type="number" class="form-control" id="edit_targetbaru" name="targetbaru">
@@ -180,72 +180,73 @@
                 $('#cari_idbarang').val(data.item.id);
             }
         });
-
-        $(document).on('click', '.btn-rejected', function () {
-            var ini = $(this);
-            $.confirm({
-                animation: 'RotateY',
-                closeAnimation: 'scale',
-                animationBounce: 1.5,
-                icon: 'fa fa-exclamation-triangle',
-                title: 'Peringatan!',
-                content: 'Apa anda yakin?',
-                theme: 'disable',
-                buttons: {
-                    info: {
-                        btnClass: 'btn-blue',
-                        text: 'Ya',
-                        action: function () {
-                            $.toast({
-                                heading: 'Information',
-                                text: 'Promosi Ditolak.',
-                                bgColor: '#0984e3',
-                                textColor: 'white',
-                                loaderBg: '#fdcb6e',
-                                icon: 'info'
-                            })
-                            ini.parents('.btn-group').html('<button class="btn btn-danger btn-sm btn-cancel-reject">Batalkan Penelokan</button>');
-                        }
-                    },
-                    cancel: {
-                        text: 'Tidak',
-                        action: function () {
-                            // tutup confirm
-                        }
-                    }
-                }
-            });
-        });
+        //
+        // $(document).on('click', '.btn-rejected', function () {
+        //     var ini = $(this);
+        //     $.confirm({
+        //         animation: 'RotateY',
+        //         closeAnimation: 'scale',
+        //         animationBounce: 1.5,
+        //         icon: 'fa fa-exclamation-triangle',
+        //         title: 'Peringatan!',
+        //         content: 'Apa anda yakin?',
+        //         theme: 'disable',
+        //         buttons: {
+        //             info: {
+        //                 btnClass: 'btn-blue',
+        //                 text: 'Ya',
+        //                 action: function () {
+        //                     $.toast({
+        //                         heading: 'Information',
+        //                         text: 'Promosi Ditolak.',
+        //                         bgColor: '#0984e3',
+        //                         textColor: 'white',
+        //                         loaderBg: '#fdcb6e',
+        //                         icon: 'info'
+        //                     })
+        //                     ini.parents('.btn-group').html('<button class="btn btn-danger btn-sm btn-cancel-reject">Batalkan Penelokan</button>');
+        //                 }
+        //             },
+        //             cancel: {
+        //                 text: 'Tidak',
+        //                 action: function () {
+        //                     // tutup confirm
+        //                 }
+        //             }
+        //         }
+        //     });
+        // });
 
         $("#datepicker").datepicker({
             format: "mm/yyyy",
             viewMode: "months",
             minViewMode: "months"
         });
+        //
+        // $(document).on('click', '.btn-cancel-reject', function () {
+        //     $(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>' +
+        //         '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
+        // })
+        //
+        // $(document).on('click', '.btn-approval', function () {
+        //     $.toast({
+        //         heading: 'Information',
+        //         text: 'Promosi Diterima.',
+        //         bgColor: '#0984e3',
+        //         textColor: 'white',
+        //         loaderBg: '#fdcb6e',
+        //         icon: 'info'
+        //     })
+        //     $(this).parents('.btn-group').html('<button class="btn btn-primary btn-sm btn-cancel-approve">Batalkan Penerimaan</button>')
+        // })
 
-        $(document).on('click', '.btn-cancel-reject', function () {
-            $(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>' +
-                '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
-        })
+        // $(document).on('click', '.btn-cancel-approve', function () {
+        //     $(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>' +
+        //         '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
+        // })
 
-        $(document).on('click', '.btn-approval', function () {
-            $.toast({
-                heading: 'Information',
-                text: 'Promosi Diterima.',
-                bgColor: '#0984e3',
-                textColor: 'white',
-                loaderBg: '#fdcb6e',
-                icon: 'info'
-            })
-            $(this).parents('.btn-group').html('<button class="btn btn-primary btn-sm btn-cancel-approve">Batalkan Penerimaan</button>')
-        })
-
-        $(document).on('click', '.btn-cancel-approve', function () {
-            $(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>' +
-                '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
-        })
-        targetReal();
-
+        // targetReal();
+        cariTarget();
         // Distribusi ------------------------------------------------------
         tableDistribusi();
         getPaymentMethod();
@@ -266,104 +267,90 @@
         });
     });
 
-    function targetReal() {
-        setTimeout(function () {
-            tb_target = $('#table_target').DataTable({
-                responsive: true,
-                processing: true,
-                serverSide: true,
-                ajax: {
-                    url: "{{ route('targetReal.list') }}",
-                    type: "get",
-                    data: {
-                        "_token": "{{ csrf_token() }}"
-                    }
-                },
-                columns: [
-                    {data: 'st_periode'},
-                    {data: 'c_name'},
-                    {data: 'i_name'},
-                    {data: 'target'},
-                    {data: 'realisasi'},
-                    {data: 'status'},
-                    {data: 'action'}
-                ],
-                pageLength: 10,
-                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
-            });
-        }, 750);
-    }
+    // function targetReal() {
+    //     setTimeout(function () {
+    //         tb_target = $('#table_target').DataTable({
+    //             responsive: true,
+    //             processing: true,
+    //             serverSide: true,
+    //             ajax: {
+    //                 url: "{{ route('targetReal.list') }}",
+    //                 type: "get",
+    //                 data: {
+    //                     "_token": "{{ csrf_token() }}"
+    //                 }
+    //             },
+    //             columns: [
+    //                 {data: 'st_periode'},
+    //                 {data: 'c_name'},
+    //                 {data: 'i_name'},
+    //                 {data: 'target'},
+    //                 {data: 'realisasi'},
+    //                 {data: 'status'},
+    //                 {data: 'action'}
+    //             ],
+    //             pageLength: 10,
+    //             lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+    //         });
+    //     }, 750);
+    // }
 
     function editTarget(st_id, dt_id) {
-        loadingShow();
+        // location.href = baseUrl + '/marketing/penjualanpusat/targetrealisasi/editTarget/' + st_id + '/' + dt_id;
         $.ajax({
-            data: {id: '"' + st_id + '"', dt_id: '"' + dt_id + '"'},
+            url: baseUrl + '/marketing/penjualanpusat/targetrealisasi/editTarget/' + st_id + '/' + dt_id,
             type: "get",
-            url: '{{ url("marketing/penjualanpusat/targetrealisasi/get-target") }}',
-            success: function (response) {
-                $('.edit_dt').val(dt_id);
-                $('.edit_id').val(st_id);
-                $("#edit_satuanawal").select2('destroy');
-                $("#edit_satuanbaru").select2('destroy');
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function (resp) {
+                console.log(resp);
+                $('#edit_namabarang').html(resp.target.get_sales_target_dt[0].get_item.i_name);
+                $('#edit_periode').html(resp.target.st_periode);
+                $('#edit_cabang').html(resp.target.get_company.c_name);
+                $('#edit_targetawal').val(resp.target.get_sales_target_dt[0].std_qty);
+                $('#edit_targetbaru').val('');
                 $('#edit_satuanawal').find('option').remove();
                 $('#edit_satuanbaru').find('option').remove();
-                var data = response.data;
-                var satuan = response.satuan;
-                $('#edit_namabarang').html(data.i_name);
-                $('#edit_periode').html(data.periode);
-                $('#edit_cabang').html(data.c_name);
-                $('#edit_targetawal').val(data.std_qty);
+                var oldUnit = resp.oldUnit;
+                var newUnit = resp.newUnit;
                 $("#edit_satuanawal").select2({
-                    data: satuan
+                    data: oldUnit
                 })
                 $("#edit_satuanbaru").select2({
-                    data: satuan
+                    data: newUnit
                 })
-                $('#edit_satuanawal').val(data.std_unit);
-                $('#edit_satuanawal').trigger('change');
-                loadingHide();
+                $('#edit_satuanbaru').prop('selectedIndex', 0).trigger('change');
+                $('.edit_dt').val(resp.target.get_sales_target_dt[0].std_detailid);
+                $('.edit_id').val(resp.target.id);
                 $('#edittarget').modal('show');
             },
             error: function (e) {
-                $.toast({
-                    heading: 'Warning',
-                    text: e.message,
-                    bgColor: '#00b894',
-                    textColor: 'white',
-                    loaderBg: '#55efc4',
-                    icon: 'warning',
-                    stack: false
-                });
+                messageWarning('Error', 'Terjad kesalahan : ' + e);
+            },
+            complete: function() {
+                loadingHide();
             }
-        })
+        });
     }
 
     function updateTarget() {
-        var dt = $('.edit_dt').val();
-        var id = $('.edit_id').val();
         $.ajax({
-            data: $('#form_updatetarget').serialize(),
+            url: "{{ route('targetReal.update') }}",
             type: "post",
-            url: '{{ url("marketing/penjualanpusat/targetrealisasi/updateTarget/") }}/' + id + '/' + dt,
+            data: $('#form_updatetarget').serialize(),
             success: function (response) {
+                console.log(response);
                 if (response.status == 'sukses') {
                     messageSuccess('Berhasil', 'Data berhasil diperbarui');
                     $('#edittarget').modal('hide');
                     tb_target.ajax.reload();
                 } else {
-                    messageSuccess('Gagal', 'Silahkan coba beberapa saat lagi');
+                    messageFailed('Gagal', 'Silahkan coba beberapa saat lagi');
                 }
             },
             error: function (e) {
-                $.toast({
-                    heading: 'Warning',
-                    text: e.message,
-                    bgColor: '#00b894',
-                    textColor: 'white',
-                    loaderBg: '#55efc4',
-                    icon: 'warning',
-                    stack: false
-                });
+                messageWarning('Error', 'Terjadi kesalahan : ' + e);
             }
         })
     }
@@ -371,7 +358,7 @@
     function cariTarget() {
         var barang = $('#cari_idbarang').val();
         var periode = $('.cari_periode').val();
-        tb_target.destroy();
+        $('#table_target').dataTable().fnDestroy();
         tb_target = $('#table_target').DataTable({
             responsive: true,
             serverSide: true,

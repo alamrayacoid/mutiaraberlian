@@ -18,8 +18,9 @@ use CodeGenerator;
 use App\d_productorder;
 use App\d_productorderdt;
 use App\d_productordercode;
-use App\d_stock;
+use App\d_salestarget;
 use App\d_salescomppayment;
+use App\d_stock;
 use App\m_company;
 use App\m_item;
 use App\m_paymentmethod;
@@ -320,37 +321,37 @@ class PenjualanPusatController extends Controller
         ));
     }
 
-    // Target Realisasi
-    public function targetList()
-    {
-        $sekarang = Carbon::now('Asia/Jakarta');
-        $target = DB::table('d_salestargetdt')
-            ->join('d_salestarget', 'std_salestarget', 'st_id')
-            ->join('m_item', 'std_item', 'i_id')
-            ->join('m_unit', 'std_unit', 'u_id')
-            ->join('m_company', 'st_comp', 'c_id')
-            ->select('d_salestargetdt.*', DB::raw('concat(std_qty, " ", u_name) as target'), 'st_id', 'c_name', DB::raw("concat(i_code, '-', i_name) as i_name"), 'st_periode', DB::raw('date_format(st_periode, "%m/%Y") as st_periode'))
-            ->whereMonth('st_periode', '=', $sekarang->format('m'))
-            ->whereYear('st_periode', '=', $sekarang->format('Y'))
-            ->get();
-
-        return Datatables::of($target)
-            ->addIndexColumn()
-            ->addColumn('status', function ($target) {
-                return '<label class="bg-danger status-reject px-3 py-1" disabled>Gagal</label>';
-            })
-            ->addColumn('action', function ($target) {
-                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Target" onclick="editTarget(\'' . Crypt::encrypt($target->std_salestarget) . '\', \'' . Crypt::encrypt($target->std_detailid) . '\')"><i class="fa fa-pencil"></i>
-                        </button>
-                    </div>';
-            })
-            ->addColumn('realisasi', function () {
-                return '0';
-            })
-            ->rawColumns(['status', 'action'])
-            ->make(true);
-    }
+    // // Target Realisasi
+    // public function targetList()
+    // {
+    //     $sekarang = Carbon::now('Asia/Jakarta');
+    //     $target = DB::table('d_salestargetdt')
+    //         ->join('d_salestarget', 'std_salestarget', 'st_id')
+    //         ->join('m_item', 'std_item', 'i_id')
+    //         ->join('m_unit', 'std_unit', 'u_id')
+    //         ->join('m_company', 'st_comp', 'c_id')
+    //         ->select('d_salestargetdt.*', DB::raw('concat(std_qty, " ", u_name) as target'), 'st_id', 'c_name', DB::raw("concat(i_code, '-', i_name) as i_name"), 'st_periode', DB::raw('date_format(st_periode, "%m/%Y") as st_periode'))
+    //         ->whereMonth('st_periode', '=', $sekarang->format('m'))
+    //         ->whereYear('st_periode', '=', $sekarang->format('Y'))
+    //         ->get();
+    //
+    //     return Datatables::of($target)
+    //         ->addIndexColumn()
+    //         ->addColumn('status', function ($target) {
+    //             return '<label class="bg-danger status-reject px-3 py-1" disabled>Gagal</label>';
+    //         })
+    //         ->addColumn('action', function ($target) {
+    //             return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+    //                     <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit Target" onclick="editTarget(\'' . Crypt::encrypt($target->std_salestarget) . '\', \'' . Crypt::encrypt($target->std_detailid) . '\')"><i class="fa fa-pencil"></i>
+    //                     </button>
+    //                 </div>';
+    //         })
+    //         ->addColumn('realisasi', function () {
+    //             return '0';
+    //         })
+    //         ->rawColumns(['status', 'action'])
+    //         ->make(true);
+    // }
 
     public function createTargetReal()
     {
@@ -519,25 +520,79 @@ class PenjualanPusatController extends Controller
         } catch (\Exception $e) {
             return view('errors.404');
         }
-        $target = DB::table('d_salestargetdt')
-            ->join('d_salestarget', 'std_salestarget', 'st_id')
-            ->join('m_item', 'std_item', 'i_id')
-            ->join('m_unit', 'std_unit', 'u_id')
-            ->join('m_company', 'st_comp', 'c_id')
-            ->select('d_salestargetdt.*', 'st_id', 'st_comp', 'st_periode', 'i_name', 'i_code', 'c_name', 'u_id', 'u_name')
-            ->where('std_salestarget', '=', $st_id)
-            ->where('std_detailid', '=', $dt_id)->first();
-        $company = DB::table('m_company')->select('m_company.*')->get();
-        return view('marketing.penjualanpusat.targetrealisasi.edit', compact('target', 'company'));
+
+        $target = d_salestarget::where('st_id', $st_id)
+            ->whereHas('getSalesTargetDt', function ($q) use ($dt_id) {
+                $q->where('std_detailid', $dt_id);
+            })
+            ->with(['getSalesTargetDt' => function($qu) use ($dt_id) {
+                $qu->where('std_detailid', $dt_id)
+                    ->with('getUnit')
+                    ->with(['getItem' => function ($que) {
+                        $que->select('i_id','i_name', 'i_unit1', 'i_unit2', 'i_unit3')
+                            ->with('getUnit1')
+                            ->with('getUnit2')
+                            ->with('getUnit3');
+                    }]);
+            }])
+            ->with(['getCompany' => function ($q) {
+                $q->select('c_id', 'c_name');
+            }])
+            ->first();
+
+        // set old unit to array-format
+        $oldUnit = array(array(
+            'id' => $target->getSalesTargetDt[0]->std_unit,
+            'text' => $target->getSalesTargetDt[0]->getUnit->u_name
+        ));
+
+        // set new unit to array-format
+        $newUnit = array();
+        $newUnit1 = array(
+            'id' => $target->getSalesTargetDt[0]->getItem->getUnit1->u_id,
+            'text' => $target->getSalesTargetDt[0]->getItem->getUnit1->u_name
+        );
+        array_push($newUnit, $newUnit1);
+        if (!is_null($target->getSalesTargetDt[0]->getItem->getUnit2)) {
+            $newUnit2 = array(
+                'id' => $target->getSalesTargetDt[0]->getItem->getUnit2->u_id,
+                'text' => $target->getSalesTargetDt[0]->getItem->getUnit2->u_name
+            );
+            array_push($newUnit, $newUnit2);
+        }
+        if (!is_null($target->getSalesTargetDt[0]->getItem->getUnit3)) {
+            $newUnit3 = array(
+                'id' => $target->getSalesTargetDt[0]->getItem->getUnit3->u_id,
+                'text' => $target->getSalesTargetDt[0]->getItem->getUnit3->u_name
+            );
+            array_push($newUnit, $newUnit3);
+        }
+
+        Carbon::setlocale('id');
+        $target->st_periode = Carbon::parse($target->st_periode)->format('F Y');
+
+        $target->getSalesTargetDt[0]->std_detailid = Crypt::encrypt($target->getSalesTargetDt[0]->std_detailid);
+        $target->id = Crypt::encrypt($target->st_id);
+
+        return response()->json([
+            'target' => $target,
+            'oldUnit' => $oldUnit,
+            'newUnit' => $newUnit
+            // 'company' => $company
+        ]);
+        // return view('marketing.penjualanpusat.targetrealisasi.edit', compact('target', 'company'));
     }
 
-    public function updateTarget($st_id, $dt_id, Request $request)
+    public function updateTarget(Request $request)
     {
         try {
-            $st_id = Crypt::decrypt($st_id);
-            $dt_id = Crypt::decrypt($dt_id);
-        } catch (\Exception $e) {
-            return view('errors.404');
+            $st_id = Crypt::decrypt($request->edit_id);
+            $dt_id = Crypt::decrypt($request->edit_dt);
+        } catch (\DecryptException $e) {
+            return response()->json([
+                'status' => 'Gagal',
+                'message' => $e->getMessage()
+            ]);
         }
 
         $data = $request->all();
@@ -555,11 +610,12 @@ class PenjualanPusatController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }

@@ -57,15 +57,15 @@
     var table_aturankehadiran;
     var table_jeniscuti;
 
-		$(document).ready(function() {
-		var cur_date = new Date();
-		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
-		const last_day = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
-		// date for 'Index Daftar Presensi SDM'
-		$('#filterDateFromPr').datepicker('setDate', first_day);
-		$('#filterDateToPr').datepicker('setDate', last_day);
-		// date for 'Create Daftar Presensi SDM'
-		$('.dateNowPr').datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), cur_date.getDate()));
+    $(document).ready(function() {
+        var cur_date = new Date();
+        const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+        const last_day = new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+        // date for 'Index Daftar Presensi SDM'
+        $('#filterDateFromPr').datepicker('setDate', first_day);
+        $('#filterDateToPr').datepicker('setDate', last_day);
+        // date for 'Create Daftar Presensi SDM'
+        $('.dateNowPr').datepicker("setDate", new Date(cur_date.getFullYear(), cur_date.getMonth(), cur_date.getDate()));
 
         table_harilibur = $('#table_harilibur').DataTable({
             ordering: false
@@ -151,6 +151,8 @@
         viewMode: "months",
         minViewMode: "months"
 	});
+
+    $('#filterByMonthYearDashbord').datepicker('setDate', month_year);
 </script>
 
 <!-- <script type="text/javascript">
@@ -265,7 +267,7 @@
 				$('.arriveTimePr').eq(idxRow).attr('readonly', false);
 				$('.returnTimePr').eq(idxRow).attr('readonly', false);
 			}
-			console.log('asd');
+
 		});
 
 		// find employee
@@ -286,7 +288,6 @@
 		);
 		// remove an employee row
 		$('.btnRemoveEmployee').on('click', function() {
-			console.log('remove row !');
 			$(this).parents('tr').remove();
 		});
 	}
@@ -440,7 +441,6 @@
 	}
 	// store data to db
 	function storePr() {
-		console.log($('#presenceForm').serialize());
 		$.confirm({
 			animation: 'RotateY',
 			closeAnimation: 'scale',
@@ -480,7 +480,6 @@
 				else {
 					messageWarning('Perhatian', 'Terjadi kesalahan : '+ resp.message);
 				}
-				console.log(resp);
 			},
 			error: function(e) {
 				messageWarning('Error', 'Simpan presensi error: '+ e.message)
@@ -569,8 +568,6 @@
 		let branchDashboard = $('#filterByBranchDashbord').serialize();
 		let param = month_year +'&'+ branchDashboard;
 
-		console.log(param);
-
 		$('#table_presensi_sdm_dashboard').dataTable().fnDestroy();
 		tb_listmpa = $('#table_presensi_sdm_dashboard').DataTable({
 			responsive: true,
@@ -606,8 +603,6 @@
 		let branch = $('#filterByBranch').serialize();
 		let param = dateFrom +'&'+ dateTo +'&'+ branch;
 
-		console.log(param);
-
 		$('#table_presensi_sdm').dataTable().fnDestroy();
 		tb_listmpa = $('#table_presensi_sdm').DataTable({
 			responsive: true,
@@ -637,7 +632,6 @@
 	// show modal detail presence in dashboard
 	function showDetailAbsenPegawai(id, p_emp, p_date)
 	{
-		// console.log(p_employee);
 		$.ajax({
 			url: "{{ route('presensi.getDetailAbsenPegawai') }}",
 			data: {
@@ -646,7 +640,6 @@
 				tanggal: p_date
 			},
 			success: function(resp) {
-				console.log(resp);
 				if (resp.length > 0) {
 					$("#table_detail_absen_pegawai > tbody").find('tr').remove();
 				}
@@ -712,7 +705,6 @@
 				tanggal: p_date
 			},
 			success: function(resp) {
-				console.log(resp);
 				if (resp.length > 0) {
 					$("#table_detail_presence > tbody").find('tr').remove();
 				}

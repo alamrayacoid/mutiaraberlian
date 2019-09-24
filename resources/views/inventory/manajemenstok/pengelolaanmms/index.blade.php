@@ -110,6 +110,9 @@
                                 </div>
                             </section>
                         </div>
+                        <div class="card-footer text-right">
+                            <a href="{{ route('manajemenstok.index') }}" class="btn btn-secondary">Kembali</a>
+                        </div>
                     </div>
 
                 </div>
@@ -183,7 +186,7 @@
                         $("#maxstock").val(resp.data.message.qtymax);
                         $("#rangemin").val(resp.data.message.rangemin);
                         $("#rangemax").val(resp.data.message.rangemax);
-                        
+
                         $('#table_detail').DataTable().clear().destroy();
                         var tb_detail = $('#table_detail').DataTable({
                             responsive: true,

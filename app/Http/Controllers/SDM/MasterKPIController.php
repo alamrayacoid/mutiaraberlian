@@ -174,7 +174,7 @@ class MasterKPIController extends Controller
     //         ]);
     //     }
     // }
-    
+
     public function deleteKpi($id)
     {
         try {
@@ -251,11 +251,11 @@ class MasterKPIController extends Controller
 
         DB::beginTransaction();
         try {
-        
+
             DB::table('d_kpiemp')->where('ke_department', $depart)->delete();
 
             $indicator = $request->indicator;
-            for ($i=0; $i < count($indicator); $i++) { 
+            for ($i=0; $i < count($indicator); $i++) {
                 DB::table('d_kpiemp')->insert([
                     'ke_kpi'      => $indicator[$i],
                     'ke_detailid' => DB::table('d_kpiemp')->where('ke_kpi', $indicator[$i])->max('ke_detailid') + 1,
@@ -265,7 +265,7 @@ class MasterKPIController extends Controller
                     'ke_target'   => $request->target[$i]
                 ]);
             }
-        
+
             DB::commit();
             return response()->json([
                 'status' => 'success',
@@ -309,9 +309,9 @@ class MasterKPIController extends Controller
 
         DB::beginTransaction();
         try {
-        
+
             DB::table('d_kpiemp')->where('ke_department', $divs)->delete();
-        
+
             DB::commit();
             return response()->json([
                 'status' => 'success',
@@ -365,11 +365,11 @@ class MasterKPIController extends Controller
 
         DB::beginTransaction();
         try {
-            
+
             DB::table('d_kpiemp')->where('ke_department', $divs)->delete();
-        
+
             $indicator = $request->indicator;
-            for ($i=0; $i < count($indicator); $i++) { 
+            for ($i=0; $i < count($indicator); $i++) {
                 DB::table('d_kpiemp')->insert([
                     'ke_kpi'      => $indicator[$i],
                     'ke_detailid' => DB::table('d_kpiemp')->where('ke_kpi', $indicator[$i])->max('ke_detailid') + 1,
@@ -454,7 +454,7 @@ class MasterKPIController extends Controller
             DB::table('d_kpiemp')->where('ke_employee', $emp)->delete();
 
             $indicator = $request->indicator;
-            for ($i=0; $i < count($indicator); $i++) { 
+            for ($i=0; $i < count($indicator); $i++) {
                 DB::table('d_kpiemp')->insert([
                     'ke_kpi'      => $indicator[$i],
                     'ke_detailid' => DB::table('d_kpiemp')->where('ke_kpi', $indicator[$i])->max('ke_detailid') + 1,
@@ -464,7 +464,7 @@ class MasterKPIController extends Controller
                     'ke_target'   => $request->target[$i]
                 ]);
             }
-        
+
             DB::commit();
             return response()->json([
                 'status' => 'success',
@@ -510,9 +510,9 @@ class MasterKPIController extends Controller
 
         DB::beginTransaction();
         try {
-        
+
             DB::table('d_kpiemp')->where('ke_employee', $emp)->delete();
-        
+
             DB::commit();
             return response()->json([
                 'status' => 'success',
@@ -560,7 +560,7 @@ class MasterKPIController extends Controller
             ->select('e_name', 'm_name', 'j_name', 'k_indicator', 'k_isactive', 'ke_employee', 'ke_weight', 'ke_target', 'ke_kpi')
             // ->where('ke_employee', '=', $emp)->offset(1)->take(100)->get();
             ->where('ke_employee', '=', $emp)->get();
-        
+
         return view('sdm.kinerjasdm.kpipegawai.edit', compact('employee', 'kpi', 'kpiemp_first', 'kpiemp'));
     }
 
@@ -571,11 +571,11 @@ class MasterKPIController extends Controller
 
         DB::beginTransaction();
         try {
-            
+
             DB::table('d_kpiemp')->where('ke_employee', $emp)->delete();
-        
+
             $indicator = $request->indicator;
-            for ($i=0; $i < count($indicator); $i++) { 
+            for ($i=0; $i < count($indicator); $i++) {
                 DB::table('d_kpiemp')->insert([
                     'ke_kpi'      => $indicator[$i],
                     'ke_detailid' => DB::table('d_kpiemp')->where('ke_kpi', $indicator[$i])->max('ke_detailid') + 1,
@@ -744,8 +744,7 @@ class MasterKPIController extends Controller
     public function getDataIndikatorKpiDivisi(Request $request)
     {
         $data = $request->data;
-        // dd($data);
-        // $periode = $request->periode;
+
         $periode = "01-" . $request->periode;
         $periode = Carbon::createFromFormat('d-m-Y', $periode);
         $periodes = DB::table('d_kpi')
@@ -756,7 +755,6 @@ class MasterKPIController extends Controller
                     ->where('k_type', 'D')
                     ->first();
                     // ->get();
-        // dd($periodes);
 
         // if ($periodes == true) {
         //     $datas = DB::table('d_kpiemp')
@@ -771,6 +769,7 @@ class MasterKPIController extends Controller
         //         ->where('ke_department', '=', $data)
         //         // ->where('ke_department', '=', $periodes)
         //         ->get();
+
         if ($periodes == true) {
             $datas = DB::table('d_kpiemp')
                 ->join('m_kpi', 'm_kpi.k_id', 'ke_kpi')
@@ -789,31 +788,29 @@ class MasterKPIController extends Controller
                 ->whereYear('k_periode', $periode->year)
                 // ->where('ke_department', '=', $periodes)
                 ->get();
-                // dd($datas);
-        } elseif ($periodes == false) {
+
+        }
+        elseif ($periodes == false) {
             $datas = DB::table('d_kpiemp')
                 ->join('m_kpi', 'k_id', 'ke_kpi')
                 // ->join('d_kpidt', 'kd_kpi', 'ke_kpi')
                 ->select('k_id', 'k_indicator', 'k_unit', 'k_isactive', 'ke_type', 'ke_department', 'ke_weight', 'ke_target', 'ke_kpi')
                 ->where('ke_department', '=', $data)
                 ->get();
-            // dd($datas);
+
         }
-        
-        // dd($datas);
-        
+
         $datas2 = DB::table('d_kpiemp')
             ->select('ke_department',
                 DB::RAW('SUM(ke_weight) as sum')
             )
             ->where('ke_department', '=', $data)
             ->groupBy('ke_department')
-            ->first()->sum;
-        // dd($datas2);
+            ->first();
 
         return response()->json([
             'data' => $datas,
-            'total' => $datas2, 
+            'total' => $datas2,
         ]);
     }
 
@@ -865,7 +862,8 @@ class MasterKPIController extends Controller
                 // ->where('ke_department', '=', $periodes)
                 ->get();
                 // dd($datas);
-        } elseif ($periodes == false) {
+        }
+        elseif ($periodes == false) {
             $datas = DB::table('d_kpiemp')
                 ->join('m_kpi', 'k_id', 'ke_kpi')
                 // ->join('d_kpidt', 'kd_kpi', 'ke_kpi')
@@ -880,14 +878,14 @@ class MasterKPIController extends Controller
         //     ->where('ke_employee', '=', $data)
         //     ->get();
         // dd($datas);
-        // 
+        //
         $datas2 = DB::table('d_kpiemp')
             ->select('ke_employee',
                 DB::RAW('SUM(ke_weight) as sum')
             )
             ->where('ke_employee', '=', $data)
             ->groupBy('ke_employee')
-            ->first()->sum;
+            ->first();
 
         return response()->json([
             'data' => $datas,
@@ -910,14 +908,14 @@ class MasterKPIController extends Controller
 
         DB::beginTransaction();
         try {
-        
+
             if ($request->tipe == 'D') {
                 DB::table('d_kpi')->whereMonth('k_periode', $periode->month)->whereYear('k_periode', $periode->year)->where('k_department', $departement)->delete();
-                
+
                 if ($kd_kpiD == true) {
                     DB::table('d_kpidt')->where('kd_kpi', $kd_kpiD)->delete();
                 }
-                
+
                 $kid = DB::table('d_kpi')->max('k_id') + 1;
                 DB::table('d_kpi')->insert([
                     'k_id'          => $kid,
@@ -927,7 +925,7 @@ class MasterKPIController extends Controller
                 ]);
 
                 $indicator = $request->kd_indikatorD;
-                for ($i=0; $i < count($indicator); $i++) { 
+                for ($i=0; $i < count($indicator); $i++) {
                     DB::table('d_kpidt')->insert([
                         'kd_kpi'        => $kid,
                         // 'kd_detailid'   => DB::table('d_kpidt')->where('kd_kpi', $indicator[$i])->max('kd_detailid') + 1,
@@ -940,7 +938,7 @@ class MasterKPIController extends Controller
                         'kd_total'      => $request->nilaiD[$i]
                     ]);
                 }
-            
+
                 DB::commit();
                 return response()->json([
                     'status' => 'success',
@@ -963,7 +961,7 @@ class MasterKPIController extends Controller
                 ]);
 
                 $indicator = $request->kd_indikatorP;
-                for ($i=0; $i < count($indicator); $i++) { 
+                for ($i=0; $i < count($indicator); $i++) {
                     DB::table('d_kpidt')->insert([
                         'kd_kpi'        => $kid,
                         // 'kd_detailid'   => DB::table('d_kpidt')->where('kd_kpi', $indicator[$i])->max('kd_detailid') + 1,
@@ -976,14 +974,14 @@ class MasterKPIController extends Controller
                         'kd_total'      => $request->nilaiP[$i]
                     ]);
                 }
-            
+
                 DB::commit();
                 return response()->json([
                     'status' => 'success',
                     'data'   => ''
                 ]);
             }
-            
+
         } catch (Exception $e) {
             DB::rollback();
             return response()->json([
@@ -998,7 +996,7 @@ class MasterKPIController extends Controller
         // dd('coba');
         $pegawai = $request->pegawai;
         // dd($pegawai);
-        // 
+        //
         $periode = "01-" . $request->periode;
         $periode = Carbon::createFromFormat('d-m-Y', $periode);
         $periodes = DB::table('d_kpi')
@@ -1043,7 +1041,7 @@ class MasterKPIController extends Controller
         // dd('coba');
         $divisi = $request->divisi;
         // dd($pegawai);
-        // 
+        //
         $periode = "01-" . $request->periode;
         $periode = Carbon::createFromFormat('d-m-Y', $periode);
         $periodes = DB::table('d_kpi')

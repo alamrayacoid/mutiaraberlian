@@ -34,7 +34,7 @@
                     </form>
                 </fieldset>
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped w-100" cellspacing="0" id="table_target">
+                    <table class="table table-hover data-table table-striped w-100" cellspacing="0" id="table_target">
                         <thead class="bg-primary">
                             <tr>
                                 <th>Periode</th>

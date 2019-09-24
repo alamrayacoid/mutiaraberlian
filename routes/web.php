@@ -594,7 +594,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/marketing/penjualanpusat/targetrealisasi/get-company', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@getComp')->name('targetReal.getcomp');
     Route::get('/marketing/penjualanpusat/targetrealisasi/store', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@targetRealStore')->name('targetReal.store');
     Route::get('/marketing/penjualanpusat/targetrealisasi/editTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@editTarget')->name('targetReal.edit');
-    Route::get('/marketing/penjualanpusat/targetrealisasi/updateTarget/{st_id}/{dt_id}', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
+    Route::post('/marketing/penjualanpusat/targetrealisasi/updateTarget', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@updateTarget')->name('targetReal.update');
     // Penerimaan Piutang ---------------------------
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/get-list', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@listPiutang')->name('piutang.list');
     Route::get('/marketing/penjualanpusat/penerimaanpiutang/cari-nota', 'Aktivitasmarketing\Penjualanpusat\PenjualanPusatController@cariNota')->name('piutang.cariNota');

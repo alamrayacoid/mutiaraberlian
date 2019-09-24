@@ -113,10 +113,12 @@
         const month_year = new Date(month_years.getFullYear(), month_years.getMonth());
 
         $("#periode_kpi").datepicker( {
-        format: "mm-yyyy",
-        viewMode: "months", 
-        minViewMode: "months"
+            format: "mm-yyyy",
+            viewMode: "months",
+            minViewMode: "months"
         });
+
+        $('#periode_kpi').datepicker('setDate', month_year);
 
         $('#periode_kpi').on('change', function(){
             // $("#table_indikator_divisi_pegawai > tbody").find('tr').remove();
@@ -131,13 +133,6 @@
     </script>
 
     <script>
-        // $(document).ready(function(){
-        //     $('.divisi').on('select2:select', function () {
-        //         console.log('testes');
-        //         getDivisi();
-        //     });
-        // });
-
         function getDivisi(index) {
             axios.get('{{url('/sdm/kinerjasdm/kpi-divisi/get-kpi-divisi')}}')
             .then(function(resp) {
@@ -185,8 +180,8 @@
                 $('.divisi').on('select2:select', function () {
                     $("#table_indikator_divisi_pegawai > tbody").find('tr').remove();
                 });
-                    
-                $('.select2').select2({            
+
+                $('.select2').select2({
                     theme: "bootstrap",
                     dropdownAutoWidth: true,
                     width: '100%'
@@ -221,7 +216,7 @@
                     $("#table_indikator_divisi_pegawai > tbody").find('tr').remove();
                 });
 
-                $('.select2').select2({            
+                $('.select2').select2({
                     theme: "bootstrap",
                     dropdownAutoWidth: true,
                     width: '100%'
@@ -237,21 +232,87 @@
             var idxHasil = null;
             var data = $('#divisi').val();
             var periode = $('#periode_kpi').val();
-            // console.log(emp_id);
+
             $.ajax({
                 url: '{{ route("inputkpi.getDataIndikatorKpiDivisi") }}',
                 type: "post",
                 data: {
-                        "_token": "{{ csrf_token() }}",
-                        "data": data,
-                        "periode": periode,
-                        "total": data
+                    "_token": "{{ csrf_token() }}",
+                    "data": data,
+                    "periode": periode,
+                    "total": data
                 },
                 success: function (resp) {
                     // console.log(resp.total);
                     // console.log(resp.data.length);
                     if (resp.data.length > 0) {
                         $("#table_indikator_divisi_pegawai > tbody").find('tr').remove();
+                        $.each(resp.data, function(key, val) {
+
+                            let indikatorD = `<td class="pad-1">
+                                <input type="hidden" name="kd_kpiD[]" class="form-control-plaintext kd_kpiD onlyread w-100" value="`+ val.kd_kpi +`">
+                                <input type="hidden" name="kd_indikatorD[]" class="form-control-plaintext kd_indikatorD onlyread w-100" value="`+ val.ke_kpi +`">
+                                <textarea name="indikatorD[]" cols="" rows="" class="form-control-plaintext indikatorD onlyread" readonly>`+ val.k_indicator +`</textarea>
+                                </td>`;
+
+                            let unitD = `<td class="pad-1">
+                                <input type="text" name="unitD[]" class="form-control-plaintext unitD onlyread w-100" value="`+ val.k_unit +`" readonly>
+                                </td>`;
+
+                            let bobotD = `<td class="pad-1">
+                                <input type="text" name="bobotD[]" class="form-control-plaintext text-center bobotD onlyread w-100" value="`+ val.ke_weight +`" readonly>
+                                </td>`;
+
+                            let targetD = `<td class="pad-1">
+                                <input type="text" name="targetD[]" class="form-control-plaintext text-center targetD onlyread w-100" value="`+ val.ke_target +`" readonly>
+                                </td>`;
+
+
+                            // var a = val.ke_weight;
+                            // var b = val.ke_target;
+                            // var c = (parseInt(a)+parseInt(b));
+                            let hasilD = `<td class="pad-1">
+                                <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="">
+                                </td>`;
+                            if (val.kd_result == null) {
+                                hasilD = `<td class="pad-1">
+                                    <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="0">
+                                    </td>`;
+                            } else {
+                                hasilD = `<td class="pad-1">
+                                    <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="`+ parseFloat(val.kd_result) +`">
+                                    </td>`;
+                            }
+
+                            let pointD = `<td class="pad-1">
+                                <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="" readonly>
+                                </td>`;
+                            if (val.kd_point == null) {
+                                pointD = `<td class="pad-1">
+                                    <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="0" readonly>
+                                    </td>`;
+                            } else {
+                                pointD = `<td class="pad-1">
+                                    <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="`+ val.kd_point +`" readonly>
+                                    </td>`;
+                            }
+
+                            let nilaiD = `<td class="pad-1">
+                                <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="" readonly>
+                                </td>`;
+                            if (val.kd_total == null) {
+                                nilaiD = `<td class="pad-1">
+                                    <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="0" readonly>
+                                    </td>`;
+                            } else {
+                                nilaiD = `<td class="pad-1">
+                                    <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="`+ val.kd_total +`" readonly>
+                                    </td>`;
+                            }
+
+                            let row = '<tr>'+ indikatorD + unitD + bobotD + targetD + hasilD + pointD + nilaiD +'</tr>'
+                            $('#table_indikator_divisi_pegawai tbody').append(row);
+                        });
                     }
                     else {
                         // $("#table_indikator_divisi_pegawai > tbody").find('tr:gt(0)').remove();
@@ -259,73 +320,6 @@
                     }
 
                     // $('#table_indikator_divisi_pegawai').dataTable().fnDestroy();
-                    $.each(resp.data, function(key, val) {
-
-                        let indikatorD = `<td class="pad-1">
-                                        <input type="hidden" name="kd_kpiD[]" class="form-control-plaintext kd_kpiD onlyread w-100" value="`+ val.kd_kpi +`">
-                                        <input type="hidden" name="kd_indikatorD[]" class="form-control-plaintext kd_indikatorD onlyread w-100" value="`+ val.ke_kpi +`">
-                                        <textarea name="indikatorD[]" cols="" rows="" class="form-control-plaintext indikatorD onlyread" readonly>`+ val.k_indicator +`</textarea>
-                                        </td>`;
-
-                        let unitD = `<td class="pad-1">
-                                        <input type="text" name="unitD[]" class="form-control-plaintext unitD onlyread w-100" value="`+ val.k_unit +`" readonly>
-                                        </td>`;
-
-                        let bobotD = `<td class="pad-1">
-                                        <input type="text" name="bobotD[]" class="form-control-plaintext text-center bobotD onlyread w-100" value="`+ val.ke_weight +`" readonly>
-                                        </td>`;
-
-                        let targetD = `<td class="pad-1">
-                                        <input type="text" name="targetD[]" class="form-control-plaintext text-center targetD onlyread w-100" value="`+ val.ke_target +`" readonly>
-                                        </td>`;
-
-
-                        // var a = val.ke_weight;
-                        // var b = val.ke_target;
-                        // var c = (parseInt(a)+parseInt(b));
-                        let hasilD = `<td class="pad-1">
-                                        <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="">
-                                        </td>`;
-                        if (val.kd_result == null) {
-                            hasilD = `<td class="pad-1">
-                                        <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="0">
-                                        </td>`;
-                        } else {
-                            hasilD = `<td class="pad-1">
-                                            <input type="text" name="hasilD[]" class="form-control text-center hasilD w-100 digits" value="`+ parseFloat(val.kd_result) +`">
-                                            </td>`;
-                        }
-
-                        let pointD = `<td class="pad-1">
-                                        <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="" readonly>
-                                        </td>`;
-                        if (val.kd_point == null) {
-                            pointD = `<td class="pad-1">
-                                        <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="0" readonly>
-                                        </td>`;
-                        } else {
-                            pointD = `<td class="pad-1">
-                                            <input type="text" name="pointD[]" class="form-control-plaintext text-center pointD w-100" value="`+ val.kd_point +`" readonly>
-                                            </td>`;
-                        }
-
-
-                        let nilaiD = `<td class="pad-1">
-                                        <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="" readonly>
-                                        </td>`;
-                        if (val.kd_total == null) {
-                            nilaiD = `<td class="pad-1">
-                                        <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="0" readonly>
-                                        </td>`;
-                        } else {
-                            nilaiD = `<td class="pad-1">
-                                            <input type="text" name="nilaiD[]" class="form-control-plaintext text-center nilaiD w-100" value="`+ val.kd_total +`" readonly>
-                                            </td>`;
-                        }
-
-                        let row = '<tr>'+ indikatorD + unitD + bobotD + targetD + hasilD + pointD + nilaiD +'</tr>' 
-                        $('#table_indikator_divisi_pegawai tbody').append(row);
-                    });
 
                     $('.digits').inputmask("currency", {
                         radixPoint: ",",
@@ -341,19 +335,18 @@
 
                     $('.hasilD').on('keyup', function(){
                         idxHasil = $('.hasilD').index(this);
-                        
+
                         let target_divisi = $(".targetD").eq(idxHasil).val();
                         let hasil_divisi = $(".hasilD").eq(idxHasil).val();
                         let hitung_point_divisi = parseInt(hasil_divisi) / parseInt(target_divisi);
-                        
+
                         $(".pointD").eq(idxHasil).val(hitung_point_divisi.toFixed(2));
 
                         let bobot_divisi = $(".bobotD").eq(idxHasil).val();
                         let point_divisi = $(".pointD").eq(idxHasil).val();
-                        let total_bobot_divisi = parseInt(resp.total);
+                        let total_bobot_divisi = parseInt(resp.total.sum);
                         let nilai_divisi = (bobot_divisi * point_divisi) / parseInt(total_bobot_divisi);
-                        console.log(nilai_divisi);
-
+                        
                         $(".nilaiD").eq(idxHasil).val(nilai_divisi.toFixed(2));
                     });
                 },
@@ -391,7 +384,7 @@
                         let indikatorP = `<td class="pad-1">
                                         <input type="hidden" name="kd_kpiP[]" class="form-control-plaintext kd_kpiP onlyread w-100" value="`+ val.kd_kpi +`">
                                         <input type="hidden" name="kd_indikatorP[]" class="form-control-plaintext kd_indikatorP onlyread w-100" value="`+ val.ke_kpi +`">
-                                        
+
                                         <textarea name="indikatorP[]" cols="" rows="" class="form-control-plaintext indikatorP onlyread" readonly>`+ val.k_indicator +`</textarea>
                                         </td>`;
 
@@ -446,7 +439,7 @@
                                             </td>`;
                         }
 
-                        let row = '<tr>'+ indikatorP + unitP + bobotP + targetP + hasilP + pointP + nilaiP +'</tr>' 
+                        let row = '<tr>'+ indikatorP + unitP + bobotP + targetP + hasilP + pointP + nilaiP +'</tr>'
                         $('#table_indikator_divisi_pegawai tbody').append(row);
                     });
 
@@ -464,16 +457,16 @@
 
                     $('.hasilP').on('keyup', function(){
                         idxHasil = $('.hasilP').index(this);
-                        
+
                         let target_pegawai = $(".targetP").eq(idxHasil).val();
                         let hasil_pegawai = $(".hasilP").eq(idxHasil).val();
                         let hitung_point_pegawai = parseInt(hasil_pegawai) / parseInt(target_pegawai);
-                        
+
                         $(".pointP").eq(idxHasil).val(hitung_point_pegawai.toFixed(2));
 
                         let bobot_pegawai = $(".bobotP").eq(idxHasil).val();
                         let point_pegawai = $(".pointP").eq(idxHasil).val();
-                        let total_bobot_pegawai = parseInt(resp.total);
+                        let total_bobot_pegawai = parseInt(resp.total.sum);
                         let nilai_pegawai = (bobot_pegawai * point_pegawai) / parseInt(total_bobot_pegawai);
                         // console.log(parseFloat(nilai_pegawai).toFixed(2));
 
@@ -482,7 +475,7 @@
                 },
             });
         }
-        
+
         $(document).on('click', '.btn-submit', function (evt) {
             evt.preventDefault();
 
@@ -495,14 +488,14 @@
                     messageSuccess("Berhasil", "Data Kelola KPI Berhasil Disimpan");
                     setTimeout(function(){
                         window.location.href = "{{url('/sdm/kinerjasdm/index')}}"
-                    }, 1000) 
+                    }, 1000)
                 }else{
                     loadingHide();
                     messageFailed("Gagal", "Data Kelola KPI Gagal Disimpan");
                 }
 
             });
-        }) 
+        })
 
     </script>
 @endsection
