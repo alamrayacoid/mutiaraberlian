@@ -10,7 +10,6 @@ use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
 use Carbon\Carbon;
 use CodeGenerator;
 use DB;
-use Mutasi;
 
 class AdjusmentController extends Controller
 {

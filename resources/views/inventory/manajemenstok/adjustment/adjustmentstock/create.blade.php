@@ -159,32 +159,33 @@
 
         $('.select2').select2();
 
-        $('#type_cus').change(function(){
-            if($(this).val() === 'kontrak'){
-                $('#label_type_cus').text('Jumlah Bulan');
-                $('#jumlah_hari_bulan').val('');
-                $('#pagu').val('');
-                $('#armada').prop('selectedIndex', 0).trigger('change');
-                $('.120mm').removeClass('d-none');
-                $('.125mm').addClass('d-none');
-                $('.122mm').removeClass('d-none');
-            } else if($(this).val() === 'harian'){
-                $('#label_type_cus').text('Jumlah Hari');
-                $('#armada').prop('selectedIndex', 0).trigger('change');
-                $('#pagu').val('');
-                $('#jumlah_hari_bulan').val('');
-                $('.122mm').addClass('d-none');
-                $('.120mm').removeClass('d-none');
-                $('.125mm').removeClass('d-none');
-            } else {
-                $('#jumlah_hari_bulan').val('');
-                $('#armada').prop('selectedIndex', 0).trigger('change');
-                $('#pagu').val('');
-                $('.122mm').addClass('d-none');
-                $('.120mm').addClass('d-none');
-                $('.125mm').addClass('d-none');
-            }
-        });
+        // $('#type_cus').change(function(){
+        //     if($(this).val() === 'kontrak'){
+        //         $('#label_type_cus').text('Jumlah Bulan');
+        //         $('#jumlah_hari_bulan').val('');
+        //         $('#pagu').val('');
+        //         $('#armada').prop('selectedIndex', 0).trigger('change');
+        //         $('.120mm').removeClass('d-none');
+        //         $('.125mm').addClass('d-none');
+        //         $('.122mm').removeClass('d-none');
+        //     } else if($(this).val() === 'harian'){
+        //         $('#label_type_cus').text('Jumlah Hari');
+        //         $('#armada').prop('selectedIndex', 0).trigger('change');
+        //         $('#pagu').val('');
+        //         $('#jumlah_hari_bulan').val('');
+        //         $('.122mm').addClass('d-none');
+        //         $('.120mm').removeClass('d-none');
+        //         $('.125mm').removeClass('d-none');
+        //     } else {
+        //         $('#jumlah_hari_bulan').val('');
+        //         $('#armada').prop('selectedIndex', 0).trigger('change');
+        //         $('#pagu').val('');
+        //         $('.122mm').addClass('d-none');
+        //         $('.120mm').addClass('d-none');
+        //         $('.125mm').addClass('d-none');
+        //     }
+        // });
+        //
     });
 
     //  Get Data Opname from nota ------
@@ -205,6 +206,8 @@
                 $('#btnsimpan').css('display', '');
                 $('#item').val(response.data.item.i_name);
                 $('#iditem').val(response.data.item.i_id);
+                $('#satuansystem').find('option').remove();
+                $('#satuanreal').find('option').remove();
                 for (var i = 0; i < response.data.unit.length; i++) {
                     if (response.data.unit[i] != null) {
                         if (response.data.unit[i].u_id == response.data.unitsystem.u_id) {

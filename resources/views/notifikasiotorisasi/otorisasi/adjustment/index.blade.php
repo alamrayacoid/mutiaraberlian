@@ -46,7 +46,7 @@
 					</div>
 					<div class="card-body">
 						<div class="table-responsive">
-							<table class="table table-bordered table-striped table-hover" id="table_otorisasi" cellspacing="0">
+							<table class="table table-bordered table-striped table-hover w-100" id="table_otorisasi" cellspacing="0">
 								<thead class="bg-primary">
 									<tr>
 										<th width="1%">No</th>
@@ -56,7 +56,7 @@
 										<th>QTY System </th>
 										<th>Unit Real</th>
 										<th>QTY Real</th>
-										<th>Sisa</th>
+										<th>selisih</th>
 										<th>Aksi</th>
 									</tr>
 								</thead>
@@ -150,10 +150,10 @@ var table1, table2;
 						{data: 'DT_RowIndex', className: 'text-center'},
 						{data: 'item', name: 'item'},
 						{data: 'nota', name: 'nota'},
-						{data: 'unitreal', name: 'unitreal'},
-						{data: 'aa_qtyreal', name: 'aa_qtyreal', className: 'text-right'},
 						{data: 'unitsystem', name: 'unitsystem'},
 						{data: 'aa_qtysystem', name: 'aa_qtysystem', className: 'text-right'},
+						{data: 'unitreal', name: 'unitreal'},
+						{data: 'aa_qtyreal', name: 'aa_qtyreal', className: 'text-right'},
 						{data: 'selisih', name: 'selisih', className: 'text-right'},
 						{data: 'aksi', name: 'aksi'}
 				],
@@ -181,7 +181,7 @@ var table1, table2;
 				$('#item').val(resp.auth.i_id);
 				$('#qtyS').val(resp.auth.aa_qtysystem);
 				$('#qtyR').val(resp.auth.aa_qtyreal);
-				
+
 				$('#table_detail tbody').empty();
 				$.each(resp.code, function(key, val){
 					$('#table_detail tbody').append(`<tr>

@@ -10,6 +10,7 @@ use function foo\func;
 use App\Helper\keuangan\jurnal\jurnal;
 use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
 
+use App\d_stockdt;
 use App\m_item;
 use App\m_item_auth;
 use Carbon\Carbon;
@@ -184,6 +185,23 @@ class OtorisasiController extends Controller
     {
         $data = DB::table('d_adjusmentauth')
             ->join('m_item', 'i_id', '=', 'aa_item')
+            ->join('m_unit', 'm_item.i_unit1', '=', 'u_id')
+            ->select(
+                'd_adjusmentauth.*',
+                'm_item.i_code',
+                'm_item.i_name',
+                'm_unit.u_name AS unit_base',
+                \DB::RAW('(CASE
+                    WHEN aa_unitsystem = m_item.i_unit1 THEN aa_qtysystem
+                    WHEN aa_unitsystem = m_item.i_unit2 THEN (aa_qtysystem * m_item.i_unitcompare2)
+                    WHEN aa_unitsystem = m_item.i_unit3 THEN (aa_qtysystem * m_item.i_unitcompare3)
+                    END) AS aa_qtysystem_base'),
+                \DB::RAW('(CASE
+                    WHEN aa_unitreal = m_item.i_unit1 THEN aa_qtyreal
+                    WHEN aa_unitreal = m_item.i_unit2 THEN (aa_qtyreal * m_item.i_unitcompare2)
+                    WHEN aa_unitreal = m_item.i_unit3 THEN (aa_qtyreal * m_item.i_unitcompare3)
+                    END) AS aa_qtyreal_base')
+            )
             ->get();
 
         return DataTables::of($data)
@@ -196,15 +214,16 @@ class OtorisasiController extends Controller
             return $data->aa_nota;
         })
         ->addColumn('selisih', function($data){
-            $tmp = $data->aa_qtysystem - $data->aa_qtyreal;
-            return $tmp;
+            $tmp = $data->aa_qtysystem_base - $data->aa_qtyreal_base;
+            $tmp = number_format($tmp, 0, ',', '.');
+            return $tmp . ' (' . $data->unit_base . ')';
         })
         ->addColumn('unitsystem', function($data){
-            $tmp = DB::table('m_unit')->where('u_id', '=', $data->aa_unitreal)->first();
+            $tmp = DB::table('m_unit')->where('u_id', '=', $data->aa_unitsystem)->first();
             return $tmp->u_name;
         })
         ->addColumn('unitreal', function($data){
-            $tmp = DB::table('m_unit')->where('u_id', '=', $data->aa_unitsystem)->first();
+            $tmp = DB::table('m_unit')->where('u_id', '=', $data->aa_unitreal)->first();
             return $tmp->u_name;
         })
         ->addColumn('aksi', function($data){
@@ -235,13 +254,11 @@ class OtorisasiController extends Controller
         DB::beginTransaction();
         try {
             $id = Crypt::decrypt($id);
-
-            // return json_encode($id);
-
+            // get adjustment-auth
             $data = DB::table('d_adjusmentauth')->where('aa_id', $id)->first();
 
             $date = Carbon::now('Asia/Jakarta');
-
+            // get detail item
             $item = DB::table('m_item')->where('i_id', $data->aa_item)->first();
 
             if ($item->i_unit1 == $data->aa_unitreal) {
@@ -264,16 +281,12 @@ class OtorisasiController extends Controller
 
             $comp      = $data->aa_comp;
             $position  = $data->aa_position;
-
             $qtysistem = $data->aa_qtysystem;
-
             $qtyreal   = $data->aa_qtyreal;
-
             $nota      = $data->aa_nota;
-
             $reff      = $data->aa_nota;
-
             $a_id = DB::table('d_adjusment')->max('a_id') +1;
+
             DB::table('d_adjusment')->insert([
                 'a_id'         => $a_id,
                 'a_comp'       => $data->aa_comp,
@@ -288,6 +301,16 @@ class OtorisasiController extends Controller
                 'a_insert'     => $data->aa_insert
             ]);
 
+            // get stock-detail (production code)
+            $stockDt = d_stockdt::whereHas('getStock', function ($q) use ($data) {
+                $q->where('s_comp', $data->aa_comp)
+                ->where('s_position', $data->aa_position)
+                ->where('s_item', $data->aa_item)
+                ->where('s_status', 'ON DESTINATION')
+                ->where('s_condition', 'FINE');
+            })
+            ->get();
+
             $codeAuth = DB::table('d_adjustmentcodeauth')->where('aca_adjustment', '=', $data->aa_id)->get();
             $listPC = [];
             $listQtyPC = [];
@@ -300,16 +323,36 @@ class OtorisasiController extends Controller
                     'ac_qty'        => $codeAuth[$i]->aca_qty
                 ]);
 
+                foreach ($stockDt as $key => $value) {
+                    if ($value->sd_code == $codeAuth[$i]->aca_code) {
+                        $qtyCode = $value->sd_qty - $codeAuth[$i]->aca_qty;
+                        $qtyCode = abs($qtyCode);
+                        array_push($listQtyPC, $qtyCode);
+                    }
+                }
                 array_push($listPC, $codeAuth[$i]->aca_code);
-                array_push($listQtyPC, $codeAuth[$i]->aca_qty);
             }
-
 
             DB::table('d_adjusmentauth')->where('aa_id', $id)->delete();
             DB::table('d_adjustmentcodeauth')->where('aca_adjustment', $id)->delete();
 
             // Create to mutation ------------>>
-            Mutasi::opname((int)$mutcat, $comp, $position, (int)$data->aa_item, $qtysistem, $qtyreal, $sisa, $nota, $reff, $listPC, $listQtyPC);
+            $mutAdjustmentOpname = Mutasi::opname(
+                $mutcat, // mutation category
+                $comp, // item-owner
+                $position, // item position
+                $data->aa_item, // item id
+                $qtysistem, // qty in system
+                $qtyreal, // qty in real
+                $sisa, // difference between qty-system with qty-real
+                $nota, // nota
+                $reff, // nota refference
+                $listPC, // list production-code
+                $listQtyPC // list qty each production-code
+            );
+            if ($mutAdjustmentOpname->original['status'] !== 'success') {
+                return $mutAdjustmentOpname;
+            }
 
             // tambahan dirga
                 $dataHpp = DB::table('d_stock_mutation')
@@ -374,7 +417,7 @@ class OtorisasiController extends Controller
                         "jrdt_cashflow"     => ($selisih > 0) ? $acc_persediaan->pd_cashflow : $acc_beban_selisih->pd_cashflow,
                     ]);
                 }
-                
+
                 $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $data->aa_nota, $parrent->pe_nama, 'TM', Auth::user()->u_company);
 
                 if($jurnal['status'] == 'error'){

@@ -273,7 +273,7 @@ class OpnameController extends Controller
             $opname->oa_qtyreal    = $request->qty_real;
             $opname->oa_unitreal   = $request->unit_real;
             $opname->oa_qtysystem  = $request->qty_sys_hidden;
-            $opname->oa_unitsystem = 1;
+            $opname->oa_unitsystem = $request->unit_sys;
             $opname->oa_insert     = Carbon::now();
             $opname->save();
 
