@@ -2437,8 +2437,8 @@ class MarketingAreaController extends Controller
                 return '<div class="text-right">Rp ' . number_format($datas->sc_total, 0, 0, '.') . '</div>';
             })
             ->addColumn('action', function ($datas) {
+                // <button class="btn btn-warning btn-edit-kons" type="button" title="Edit" onclick="editDK(\'' . Crypt::encrypt($datas->sc_id) . '\')"><i class="fa fa-pencil"></i></button>
                 return '<div class="btn-group btn-group-sm">
-                    <button class="btn btn-warning btn-edit-kons" type="button" title="Edit" onclick="editDK(\'' . Crypt::encrypt($datas->sc_id) . '\')"><i class="fa fa-pencil"></i></button>
                     <button class="btn btn-danger btn-delete-kons" type="button" title="Delete" onclick="deleteDK(\'' . Crypt::encrypt($datas->sc_id) . '\')"><i class="fa fa-trash"></i></button>
                 </div>';
             })
@@ -2882,7 +2882,7 @@ class MarketingAreaController extends Controller
                 $listSmQty = $mutKonsOut->original['listSmQty'];
                 $listPCReturn = $mutKonsOut->original['listPCReturn'];
                 $listQtyPCReturn = $mutKonsOut->original['listQtyPCReturn'];
-// dd($listSmQty, $listPCReturn, $listQtyPCReturn);
+
                 // insert stock mutation using sales 'in'
                 $mutKonsIn = Mutasi::distributionIn(
                     $stock->s_comp, // item-owner (company-id)
@@ -2903,27 +2903,6 @@ class MarketingAreaController extends Controller
                 if ($mutKonsIn->original['status'] !== 'success') {
                     return $mutKonsIn;
                 }
-                // // set mutation (mutation-out is called inside mutation-in)
-                // $mutKons = Mutasi::mutasimasuk(
-                //     12, // mutcat
-                //     $compItem[$i], // comp / item position from
-                //     $comp, // position / destination
-                //     $data['idItem'][$i], // item-id
-                //     $qty_compare, // qty item with smallest unit
-                //     'ON DESTINATION', // status
-                //     'FINE', // condition
-                //     $stock_mutasi->sm_hpp, // hpp
-                //     $sellPrice, // sell value
-                //     $nota, // nota
-                //     $stock_mutasi->sm_nota, // nota refference
-                //     $listPC, // list production-code
-                //     $listQtyPC, // list qty roduction code
-                //     $statusKons, // status konsinyasi ('pusat' / 'branch')
-                //     $stock->s_comp // item owner
-                // );
-                // if (!is_bool($mutKons)) {
-                //     return $mutKons;
-                // }
 
                 $startProdCodeIdx += $prodCodeLength;
                 $detailsd++;
@@ -2938,7 +2917,8 @@ class MarketingAreaController extends Controller
                 'status' => "Success",
                 'message' => "Data berhasil disimpan"
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollBack();
             return Response::json([
                 'status' => "Failed",

@@ -31,24 +31,28 @@ class BudgetingController extends Controller
         // get first day of selected month
         if(!$request->periode){
             $month = Carbon::now('Asia/Jakarta')->startOfMonth()->format('Y-m-d');
-        }else{
+        }
+        else {
             $month = Carbon::createFromFormat('m-Y', $request->periode)->firstOfMonth()->format('Y-m-d');
         }
 
         $d1 = $month;
 
-        $budgeting = d_budgeting::where('b_date', $d1)->get();
         $data = level_1::where('hs_id', '>', '3')
         ->with([
-            'subclass' => function($query) {
+            'subclass' => function($query) use ($month) {
                 $query->select('hs_id', 'hs_nama', 'hs_level_1')
                 ->orderBy('hs_flag')
                 ->with([
-                    'level2' => function($query) {
+                    'level2' => function($query) use ($month) {
                         $query->select('hd_id', 'hd_nama', 'hd_subclass', 'hd_nomor')
                         ->with([
-                            'akun' => function($query) {
+                            'akun' => function($query) use ($month) {
                                 $query->leftJoin('dk_akun_saldo', 'dk_akun_saldo.as_akun', 'dk_akun.ak_id')
+                                ->leftJoin('d_budgeting', function ($join) use ($month){
+                                    $join->on('d_budgeting.b_akun', 'dk_akun.ak_nomor')
+                                    ->where('d_budgeting.b_date', $month);
+                                })
                                 ->groupBy('ak_id')
                                 ->select(
                                     'ak_id',
@@ -56,7 +60,9 @@ class BudgetingController extends Controller
                                     'ak_kelompok',
                                     'ak_nama',
                                     'ak_posisi',
-                                    DB::raw('coalesce((as_saldo_akhir - as_saldo_awal), 2) as saldo_akhir')
+                                    'd_budgeting.b_value AS budgeting_value',
+                                    DB::RAW('coalesce((as_saldo_akhir - as_saldo_awal), 2) as saldo_akhir'),
+                                    DB::RAW('coalesce((as_saldo_akhir - as_saldo_awal), 2) - d_budgeting.b_value AS diff_value')
                                 );
                             }
                         ]);
@@ -66,16 +72,10 @@ class BudgetingController extends Controller
         ])
         ->select('hs_id', 'hs_nama')
         ->get();
-
+        
         return response()->json([
-            'data' => $data,
-            'budgeting' => $budgeting
+            'data' => $data
         ]);
-    }
-
-    public function getAkunBeban(Request $request)
-    {
-        // code...
     }
 
     /**
@@ -207,9 +207,17 @@ class BudgetingController extends Controller
 
     public function data_budget(Request $request)
     {
+        // get first day of selected month
+        if(!$request->periode){
+            $month = Carbon::now('Asia/Jakarta')->startOfMonth()->format('Y-m-d');
+        }
+        else {
+            $month = Carbon::createFromFormat('m-Y', $request->periode)->firstOfMonth()->format('Y-m-d');
+        }
+
         $coun = [];
-        $month = Carbon::now('Asia/Jakarta')->startOfMonth()->format('Y-m-d');
         $d1 = $month;
+
         $data2 = level_1::where('hs_id', '>', '3')
             ->with([
                 'subclass' => function($query) {

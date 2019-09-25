@@ -237,7 +237,8 @@
                 let counterBeban = 0;
                 $('#tablePendapatan > tbody').empty();
                 $('#tableBeban > tbody').empty();
-                if (respBudgeting.length > 0) {
+
+                if (resp.length > 0) {
                     $.each(resp, function (j, data) {
                         if (data.subclass.length <= 0) { return true };
                         $.each(data.subclass, function (k, subclass) {
@@ -249,15 +250,7 @@
                                     // separate between 'pendapatan' and 'beban'
                                     if (akun.ak_nomor.substring(0,1) != '4' && akun.ak_nomor.substring(0,1) != '8') {
                                         counterBeban++;
-                                        $.each(respBudgeting, function (idxBud, valBud) {
-                                            if (valBud.b_akun == akun.ak_nomor) {
-                                                value = '<td><input type="text" class="form-control beban-value w-100 rupiah" name="bebanValue[]" value="'+ parseInt(valBud.b_value) +'"></td>';
-                                                return false;
-                                            }
-                                            else {
-                                                value = '<td><input type="text" class="form-control beban-value w-100 rupiah" name="bebanValue[]" value="0"></td>';
-                                            }
-                                        });
+                                        value = '<td><input type="text" class="form-control beban-value w-100 rupiah" name="bebanValue[]" value="'+ parseInt(akun.budgeting_value) +'"></td>';
                                         let number = '<th scope="row">'+ counterBeban +'</th>';
                                         let name = '<td>'+ akun.ak_nama +'<input type="hidden" name="bebanAkun[]" value="'+ akun.ak_nomor +'"></td>';
                                         let persentase = '<td class="text-right"><label class="beban-persentase"></label></td>';
@@ -265,15 +258,7 @@
                                     }
                                     else {
                                         counterPend++;
-                                        $.each(respBudgeting, function (idxBud, valBud) {
-                                            if (valBud.b_akun == akun.ak_nomor) {
-                                                value = '<td><input type="text" class="form-control pend-value w-100 rupiah" name="pendValue[]" value="'+ parseInt(valBud.b_value) +'"></td>';
-                                                return false;
-                                            }
-                                            else {
-                                                value = '<td><input type="text" class="form-control pend-value w-100 rupiah" name="pendValue[]" value="0"></td>';
-                                            }
-                                        });
+                                        value = '<td><input type="text" class="form-control pend-value w-100 rupiah" name="pendValue[]" value="'+ parseInt(akun.budgeting_value) +'"></td>';
                                         let number = '<th scope="row">'+ counterPend +'</th>';
                                         let name = '<td>'+ akun.ak_nama +'<input type="hidden" name="pendAkun[]" value="'+ akun.ak_nomor +'"></td>';
                                         let persentase = '<td class="text-right"><label class="pend-persentase"></label></td>';
@@ -284,38 +269,6 @@
                         });
                     });
                 }
-                else {
-                    $.each(resp, function (j, data) {
-                        if (data.subclass.length <= 0) { return true };
-                        $.each(data.subclass, function (k, subclass) {
-                            if (subclass.level2.length <= 0) { return true };
-                            $.each(subclass.level2, function (l, level2) {
-                                if (level2.akun.length <= 0) { return true };
-                                $.each(level2.akun, function (m, akun) {
-                                    let value = '';
-                                    // separate between 'pendapatan' and 'beban'
-                                    if (akun.ak_posisi == 'D') {
-                                        counterBeban++;
-                                        value = '<td><input type="text" class="form-control beban-value w-100 rupiah" name="bebanValue[]" value="0"></td>';
-                                        let number = '<th scope="row">'+ counterBeban +'</th>';
-                                        let name = '<td>'+ akun.ak_nama +'<input type="hidden" name="bebanAkun[]" value="'+ akun.ak_nomor +'"></td>';
-                                        let persentase = '<td class="text-right"><label class="beban-persentase"></label></td>';
-                                        layoutBeban += '<tr>'+ number + name + value + persentase +'</tr>'
-                                    }
-                                    else {
-                                        counterPend++;
-                                        value = '<td><input type="text" class="form-control pend-value w-100 rupiah" name="pendValue[]" value="0"></td>';
-                                        let number = '<th scope="row">'+ counterPend +'</th>';
-                                        let name = '<td>'+ akun.ak_nama +'<input type="hidden" name="pendAkun[]" value="'+ akun.ak_nomor +'"></td>';
-                                        let persentase = '<td class="text-right"><label class="pend-persentase"></label></td>';
-                                        layoutPend += '<tr>'+ number + name + value + persentase +'</tr>'
-                                    }
-                                });
-                            });
-                        });
-                    });
-                }
-
                 $('#tablePendapatan > tbody').append(layoutPend);
                 $('#tableBeban > tbody').append(layoutBeban);
                 $('.pend-value').off();
