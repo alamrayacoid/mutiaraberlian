@@ -431,6 +431,42 @@ class BenefitsController extends Controller
         return response()->json($data);
     }
 
+    public function getDetailTunjangan(Request $request)
+    {
+        $id = $request->id;
+        $periode = $request->periode;
+        $periode = Carbon::createFromFormat('d-m-Y', "01-" . $periode);
+        $pusat = DB::table('m_company')
+            ->where('c_type', '=', 'PUSAT')
+            ->first();
+
+        $data = DB::table('m_employee')
+            ->leftJoin('d_employeebenefits as emben', function($q) use ($periode){
+                $q->on('eb_employee', '=', 'e_id');
+                $q->whereMonth('eb_date', '=', $periode->format('m'));
+                $q->whereYear('eb_date', '=', $periode->format('Y'));
+            })
+            ->leftJoin('d_employeebenefitsdt', 'ebd_employeebenefits', '=', 'eb_id')
+            ->leftJoin('m_benefits as benefit', function($q){
+                $q->on('b_id', '=', 'ebd_benefits');
+                $q->where('b_type', '=', 'T');
+            })
+            ->select('e_name', 'e_nip', 'e_id', 'b_name', DB::raw('(case when b_type = "T" then "Tunjangan" end) as b_type'),
+                DB::raw('round(ebd_value) as ebd_value'))
+            ->where('e_id', '=', $id)
+            ->where('e_company', '=', $pusat->c_id)
+            ->where('e_isactive', '=', 'Y')
+            ->get();
+
+        // $tunjangan = DB::table('m_benefits')
+        //     ->where('b_type', '=', 'T')
+        //     ->get();
+
+        return response()->json([
+            'data' => $data
+        ]);
+    }
+
     public function editTunjanganPegawai($id, $periode){
         $tanggal = $periode;
         $periode = Carbon::createFromFormat('d-m-Y', "01-" . $periode);

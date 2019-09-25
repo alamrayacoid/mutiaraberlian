@@ -155,17 +155,6 @@
     $('#filterByMonthYearDashbord').datepicker('setDate', month_year);
 </script>
 
-<!-- <script type="text/javascript">
-	var filter_years = new Date();
-	const filter_year = new Date(filter_years.getFullYear());
-
-	$("#filterByYearDashbord").datepicker( {
-    format: "yyyy",
-    viewMode: "years",
-    minViewMode: "years"
-	});
-</script> -->
-
 <!-- script for 'Create Daftar Presensi SDM' -->
 <script type="text/javascript">
 	var idxRow = 0;
@@ -639,7 +628,11 @@
 				employee: p_emp,
 				tanggal: p_date
 			},
+            beforeSend: function () {
+                loadingShow();
+            },
 			success: function(resp) {
+                console.log(resp);
 				if (resp.length > 0) {
 					$("#table_detail_absen_pegawai > tbody").find('tr').remove();
 				}
@@ -647,8 +640,6 @@
 					$("#table_detail_absen_pegawai > tbody").find('tr:gt(0)').remove();
 				}
 				$('#emp_name').text(resp[0].e_name);
-				// $("#table_detail_absen_pegawai > h4").find('input').val('');
-				// let empId = `<input type="text" name="employeePr[]" class="form-control-plaintext employeePr onlyread w-100" value="`+ get_employee.e_name + ' ('+ get_employee.get_division.m_name +') / '+ p_employee +`">`;
 
 				$("#table_detail_absen_pegawai > tbody").find('input').val('');
 				$.each(resp, function(key, val) {
@@ -657,13 +648,13 @@
 									</td>`;
 
 					let aTime = null;
-					(val.p_entry == null) ? aTime = '' : aTime = val.p_entry;
+					(val.p_entry == null) ? aTime = '-' : aTime = val.p_entry;
 					let arriveTime = `<td class="pad-1">
 										<input type="text" name="arriveTimePr[]" class="form-control-plaintext text-center arriveTimePr onlyread w-100" value="`+ aTime +`">
 										</td>`;
 
 					let rTime = null;
-					(val.p_out == null) ? rTime = '' : rTime = val.p_out;
+					(val.p_out == null) ? rTime = '-' : rTime = val.p_out;
 					let returnTime = `<td class="pad-1"><input type="text" name="returnTimePr[]" class="form-control-plaintext text-center returnTimePr onlyread w-100" value="`+ rTime +`"></td>`;
 
 					let status
@@ -681,7 +672,7 @@
 					}
 
 					let iNote = null;
-					(val.p_note == null || val.p_note == '') ? iNote = '' : iNote = val.p_note;
+					(val.p_note == null || val.p_note == '') ? iNote = '-' : iNote = val.p_note;
 					let note = `<td class="pad-1"><textarea name="notePr[]" rows="2" class="w-100" readonly>`+ iNote +`</textarea></td>`;
 
 					let row = '<tr>'+ date + arriveTime + returnTime + status + note +'</tr>'
@@ -691,7 +682,10 @@
 			},
 			error: function(e) {
 				messageWarning('Error', 'Error getDataPresence: '+ e.message);
-			}
+			},
+            complete: function () {
+                loadingHide();
+            }
 		});
 	}
 

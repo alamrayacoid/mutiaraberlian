@@ -26,7 +26,13 @@
                             <h3 class="title"> Edit Tunjangan Pegawai </h3>
                         </div>
                         <div class="header-block pull-right">
-                            {{-- <button type="button" class="btn btn-primary" id="e-create"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button> --}}
+                            {{--
+                                <!-- <button type="button" class="btn btn-primary" id="e-create"><i class="fa fa-plus"></i>&nbsp;Tambah Data</button>  -->
+                            --}}
+                        </div>
+                        <div class="header-block pull-right">
+                            <a href="{{ URL::previous() }}" class="btn btn-secondary"><i
+                                    class="fa fa-arrow-left"></i></a>
                         </div>
                     </div>
                     <div class="card-block">

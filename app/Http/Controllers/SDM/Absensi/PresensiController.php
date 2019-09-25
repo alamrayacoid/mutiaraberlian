@@ -38,7 +38,7 @@ class PresensiController extends Controller
             ->select('d_presence.*', DB::raw('count(p_employee) as sum'))
             ->get();
         // dd($datas);
-        
+
         // count each status
         $listCountH = array();
         $listCountI = array();
@@ -53,7 +53,7 @@ class PresensiController extends Controller
                             ->whereHas('getEmployee', function ($q) use ($employee_id) {
                                 $q->where('e_id', $employee_id);
                             });
-            
+
             // get presence by status
             $presences = $presences->select(
                 'p_status',
@@ -62,7 +62,7 @@ class PresensiController extends Controller
             ->groupBy('p_status')
             ->get();
             // dd($presences);
-            
+
             foreach ($presences as $idx => $prs) {
                 if ($prs->p_status == 'H') {
                     $val->countH = $prs->count;
@@ -78,7 +78,7 @@ class PresensiController extends Controller
                 }
             }
         }
-        
+
         // dd($datas);
 
         return Datatables::of($datas)
@@ -283,14 +283,8 @@ class PresensiController extends Controller
             $pr_emp = $request->employee;
             $pr_tgl = Carbon::parse($request->tanggal);
 
-            // $press = d_presence::where('p_id', $pr_id)
-            //                     ->where('p_employee', $pr_emp)
-            //                     ->first();
-            // dd($p_emp);
-
             $presences = d_presence::whereMonth('p_date', $pr_tgl->month)
             ->whereYear('p_date', $pr_tgl->year)
-            // where('p_id', $pr_id)
             ->where('p_employee', $pr_emp)
             ->with(['getEmployee' => function ($q) {
                 $q->with('getDivision')->with('getCompany');
@@ -299,11 +293,6 @@ class PresensiController extends Controller
             ->select(DB::raw('date_format(p_date, "%d") as p_date, p_entry, p_out, p_status, p_note, e_name'))
             ->orderBy('e_name', 'asc')
             ->get();
-            // dd($presences);
-
-            // $pr_date = Carbon::parse($presences->p_date)->format('d M Y');
-            // dd($pr_date);
-            // dd($presences);
 
             return response()->json($presences);
         }
@@ -334,7 +323,7 @@ class PresensiController extends Controller
             ->orderBy('e_name', 'asc')
             ->get();
             // dd($presences);
-                                
+
             // if ($prCabang == true) {
             //     $presences = d_presence::whereDate('p_date', $prTanggal)
             //     ->with(['getEmployee' => function ($q) {
@@ -344,7 +333,7 @@ class PresensiController extends Controller
             //     ->where('e_company', $prCabang)
             //     ->orderBy('e_name', 'asc')
             //     ->get();
-            // }  
+            // }
 
             return response()->json($presences);
         }

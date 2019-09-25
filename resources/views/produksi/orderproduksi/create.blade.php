@@ -27,7 +27,7 @@
                                 <h3 class="title">Tambah Order Produksi</h3>
                             </div>
                             <div class="header-block pull-right">
-                                <a href="{{route('order.index')}}" class="btn btn-secondary"><i
+                                <a href="{{ URL::previous() }}" class="btn btn-secondary"><i
                                         class="fa fa-arrow-left"></i></a>
                             </div>
                         </div>

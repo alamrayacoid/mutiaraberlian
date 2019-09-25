@@ -30,7 +30,7 @@
                     </div>
                 </div>
                 <div class="table-responsive mb-3">
-                    <table class="table table-hover table-striped table-bordered display nowrap" style="width: 100%" cellspacing="0" id="table_salary">
+                    <table class="table table-hover table-striped table-bordered display nowrap w-100" cellspacing="0" id="table_salary">
                         <thead class="bg-primary">
                             <tr>
                                 <th>NIP</th>

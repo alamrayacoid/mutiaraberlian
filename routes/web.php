@@ -523,6 +523,7 @@ Route::group(['middleware' => 'auth'], function () {
     // TAB TUNJANGAN
     Route::get('/sdm/penggajian/tunjangan/getdata-tunjangan', 'SDM\BenefitsController@getDataTunjangan')->name('tunjangan.getDataTunjangan');
     Route::get('/sdm/penggajian/tunjangan/getdata-master-tunjangan', 'SDM\BenefitsController@getDataMasterTunjangan')->name('tunjangan.getDataMasterTunjangan');
+    Route::get('/sdm/penggajian/tunjangan/getdetail-tunjangan', 'SDM\BenefitsController@getDetailTunjangan')->name('tunjangan.getDetailTunjangan');
     Route::get('/sdm/penggajian/tunjangan/getdata-edit-tunjangan', 'SDM\BenefitsController@getDataEditTunjangan')->name('tunjangan.getDataEditTunjangan');
     Route::get('/sdm/penggajian/tunjangan/edit-tunjangan-pegawai/{id}/{periode}', 'SDM\BenefitsController@editTunjanganPegawai')->name('tunjangan.editTunjanganPegawai');
     Route::get('/sdm/penggajian/tunjangan/getdata-tunjangan-pegawai', 'SDM\BenefitsController@getDataTunjanganPegawai')->name('tunjangan.getDataTunjanganPegawai');

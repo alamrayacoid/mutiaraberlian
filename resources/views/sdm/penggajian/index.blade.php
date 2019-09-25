@@ -83,6 +83,29 @@
     var table_detailpunishment;
     var table_detailreward;
 	$(document).ready(function(){
+        var cur_date = new Date();
+        var month_years = new Date(cur_date.getFullYear(), cur_date.getMonth());
+        $("#periode_reward").datepicker({
+            format: "mm-yyyy",
+            viewMode: "months",
+            minViewMode: "months",
+            autoclose: true,
+        });
+        $("#periode_salary").datepicker({
+            format: "mm-yyyy",
+            viewMode: "months",
+            minViewMode: "months",
+            autoclose: true,
+        });
+        $("#periode_tunjangan").datepicker({
+            format: "mm-yyyy",
+            viewMode: "months",
+            minViewMode: "months",
+            autoclose: true,
+        });
+        $('#periode_reward').datepicker('setDate', month_years);
+        $('#periode_salary').datepicker('setDate', month_years);
+        $('#periode_tunjangan').datepicker('setDate', month_years);
 
         setTimeout(function(){
             filterCashbon();
@@ -136,7 +159,7 @@
                 info: false
             });
 
-            table_detailtunjangan = $('#modal_detailtabletunjangan').DataTable({
+            table_detailtunjangan = $('#table_detailtunjangan').DataTable({
                 responsive: true,
                 searching: false,
                 paging: false,
@@ -596,7 +619,7 @@
         }).then(function(response){
             loadingHide();
             let data = response.data;
-            table_rewardpunishment.clear().draw();
+            table_tunjangan.clear().draw();
             $.each(data, function(idx, val){
                 if (val.tunjangan == null) {
                     val.tunjangan = 0;
@@ -657,6 +680,38 @@
         }).catch(function(error){
             loadingHide();
             alert('error');
+        })
+    }
+
+    function detailTunjangan(id) {
+        let bulan = $('#periode_tunjangan').val();
+        loadingShow();
+        axios.get('{{ route("tunjangan.getDetailTunjangan") }}', {
+            params:{
+                "id": id,
+                "periode": bulan
+            }
+        }).then(function(response){
+            console.log(response);
+            loadingHide();
+            let data = response.data.data;
+            $('.nama_pegawai').html(data[0].e_name);
+            $('.nip_pegawai').html(data[0].e_nip);
+            table_detailtunjangan.clear().draw();
+            $.each(data, function(idx, val){
+                if (val.b_name != null) {
+                    table_detailtunjangan.row.add([
+                        val.b_name,
+                        val.b_type,
+                        convertToRupiah(val.ebd_value)
+                    ]).draw().node();
+                }
+            });
+            table_detailtunjangan.columns.adjust();
+            $('#modal_detailmastertunjangan').modal('show');
+        }).catch(function(error){
+            loadingHide();
+            alert('error : ' + error);
         })
     }
 

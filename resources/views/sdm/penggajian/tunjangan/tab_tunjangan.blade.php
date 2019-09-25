@@ -22,7 +22,7 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-hover table-striped display nowrap" style="width: 100%" cellspacing="0" id="table_tunjangan">
+                    <table class="table table-hover table-striped display nowrap w-100" cellspacing="0" id="table_tunjangan">
                         <thead class="bg-primary">
                             <tr>
                                 <th>NIP</th>
