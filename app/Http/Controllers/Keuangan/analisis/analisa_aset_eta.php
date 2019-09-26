@@ -42,6 +42,7 @@ class analisa_aset_eta extends Controller
                 $aset = DB::table('dk_akun')
                             // ->where('ak_comp', $request->cab)
                             ->leftJoin('dk_akun_saldo', 'dk_akun_saldo.as_akun', 'dk_akun.ak_id')
+                            // ->where('as_periode', )
                             ->where('as_periode', $waktu_awal)
                             ->where('ak_kelompok', 16)
                             ->where('ak_isactive', '1')
@@ -138,7 +139,8 @@ class analisa_aset_eta extends Controller
                 $aset = DB::table('dk_akun')
                             // ->where('ak_comp', $request->cab)
                             ->leftJoin('dk_akun_saldo', 'dk_akun_saldo.as_akun', 'dk_akun.ak_id')
-                            ->where('as_periode', )
+                            // ->where('as_periode', )
+                            ->where(DB::raw('DATE_FORMAT(as_periode, "%Y")'), date('Y', strtotime($time)))
                             ->where('ak_kelompok', 16)
                             ->where('ak_isactive', '1')
                             ->select(
