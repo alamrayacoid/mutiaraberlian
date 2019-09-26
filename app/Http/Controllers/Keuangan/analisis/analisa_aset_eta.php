@@ -28,10 +28,10 @@ class analisa_aset_eta extends Controller
             ->get());
 
         if($request->type == 'bulan'){
-            
+
             $waktu_awal  = explode('/', $request->lap_tanggal_awal)[1].'-'.explode('/', $request->lap_tanggal_awal)[0].'-01';
             $waktu_akhir = explode('/', $request->lap_tanggal_akhir)[1].'-'.explode('/', $request->lap_tanggal_akhir)[0].'-01';
-            
+
             $data = [
                 'periode'    => [],
                 'aset'       => [],
@@ -42,7 +42,7 @@ class analisa_aset_eta extends Controller
                 $aset = DB::table('dk_akun')
                             // ->where('ak_comp', $request->cab)
                             ->leftJoin('dk_akun_saldo', 'dk_akun_saldo.as_akun', 'dk_akun.ak_id')
-                            ->where('as_periode', )
+                            ->where('as_periode', $waktu_awal)
                             ->where('ak_kelompok', 16)
                             ->where('ak_isactive', '1')
                             ->select(
@@ -86,7 +86,7 @@ class analisa_aset_eta extends Controller
             $timeEnd = $request->lap_tanggal_akhir.'-01-01';
 
             // return json_encode($waktu_awal);
-            
+
             $data = [
                 'periode'   => [],
                 'ocf'       => [],
@@ -171,7 +171,7 @@ class analisa_aset_eta extends Controller
 
                 $time = date('Y-m-d', strtotime('+1 year', strtotime($time)));
             }
-        
+
         }
 
         return response()->json($data);
