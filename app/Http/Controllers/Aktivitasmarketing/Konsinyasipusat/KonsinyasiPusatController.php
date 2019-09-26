@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\AksesUser;
 
 use Auth;
+use App\d_sales;
 use App\d_salescomp;
 use App\d_salescompdt;
 use App\d_salescompcode;
@@ -34,16 +35,29 @@ class KonsinyasiPusatController extends Controller
 {
     // =========================================================================
     // Konsinyasi Pusat
-    public function getKonsinyasi()
+    public function getKonsinyasi(Request $request)
     {
+        $consignor = $request->consignor;
+
         $data = DB::table('d_salescomp')
             ->join('d_salescompdt', function ($sd) {
                 $sd->on('scd_sales', '=', 'sc_id');
             })
             ->join('m_company', 'c_id', '=', 'sc_member')
-            ->where('sc_type', '=', 'K')
-            ->groupBy('d_salescomp.sc_nota')
-            ->select('sc_id as id', 'sc_date as tanggal', 'sc_nota as nota', 'c_name as konsigner', DB::raw("CONCAT('Rp. ',FORMAT(sc_total, 0, 'de_DE')) as total"));
+            ->where('sc_type', '=', 'K');
+
+        if ($consignor != 'all') {
+            $data = $data->where('sc_comp', $consignor);
+        }
+            $data = $data->groupBy('d_salescomp.sc_nota')
+            ->select(
+                'sc_id as id',
+                'sc_date as tanggal',
+                'sc_nota as nota',
+                'c_name as konsigner',
+                DB::raw("CONCAT('Rp. ',FORMAT(sc_total, 0, 'de_DE')) as total")
+            )
+            ->get();
 
         return DataTables::of($data)
             ->addColumn('tanggal', function ($data) {
@@ -60,9 +74,9 @@ class KonsinyasiPusatController extends Controller
             })
             ->addColumn('action', function ($data) {
                 $detail = '<button class="btn btn-primary" type="button" title="Detail" onclick="detailKonsinyasi(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-folder"></i></button>';
-                $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editKonsinyasi(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-pencil"></i></button>';
+                // $edit = '<button class="btn btn-warning" type="button" title="Edit" onclick="editKonsinyasi(\'' . Crypt::encrypt($data->id) . '\')"><i class="fa fa-pencil"></i></button>';
                 $delete = '<button class="btn btn-danger" type="button" title="Hapus" onclick="hapusKonsinyasi(\'' . Crypt::encrypt($data->id) . '\', \'' . $data->nota . '\')"><i class="fa fa-trash"></i></button>';
-                return '<div class="btn-group btn-group-sm">' . $detail . $edit . $delete . '</div>';
+                return '<div class="btn-group btn-group-sm">' . $detail . $delete . '</div>';
             })
             ->rawColumns(['tanggal', 'nota', 'konsigner', 'total', 'action'])
             ->make(true);
@@ -71,9 +85,23 @@ class KonsinyasiPusatController extends Controller
     public function konsinyasipusat()
     {
         $provinsi = DB::table('m_wil_provinsi')
+            ->orderBy('wp_name', 'asc')
             ->get();
 
+        // get list Consignor
+        $consignor = d_salescomp::where('sc_type', '=', 'K')
+        ->with('getComp')
+        ->groupBy('sc_comp')
+        ->get();
+
+        // get list Consignee
+        $consignee = d_salescomp::where('sc_type', '=', 'K')
+        ->with('getAgent')
+        ->groupBy('sc_comp')
+        ->get();
+
         // get pusat
+        $pusat = Auth::user()->getCompany->select('c_id', 'c_name')->first();
         $pusatCode = m_company::where('c_type', 'PUSAT')->select('c_id')->first();
         $pusatCode = $pusatCode->c_id;
 
@@ -84,7 +112,8 @@ class KonsinyasiPusatController extends Controller
             ->with('getAkun')
             ->get();
 
-        return view('marketing/konsinyasipusat/index', compact('provinsi', 'paymentMethod'));
+        return view('marketing/konsinyasipusat/index',
+            compact('provinsi', 'paymentMethod', 'consignor', 'consignee', 'pusat'));
     }
 
     public function detailKonsinyasi($id = null, $action = null)
@@ -120,7 +149,8 @@ class KonsinyasiPusatController extends Controller
                 ->first();
 
             return Response::json($detail);
-        } else {
+        }
+        else {
             $data = DB::table('d_salescomp')
                 ->where('sc_id', '=', $id)
                 ->join('d_salescompdt', function ($sd) {
@@ -1438,15 +1468,23 @@ class KonsinyasiPusatController extends Controller
     // retrive data-table konsinyasi-monitoring-penjualan
     public function getListMP(Request $request)
     {
-        $agentCode = $request->agent_code;
+        $consignor = $request->consignor;
+        $consignee = $request->consignee;
         $from = Carbon::parse($request->date_from)->format('Y-m-d');
         $to = Carbon::parse($request->date_to)->format('Y-m-d');
 
         $datas = d_salescomp::whereBetween('sc_date', [$from, $to])
-            ->where('sc_type', 'K')
-            ->where('sc_paidoff', 'N')
-            ->where('sc_member', $agentCode)
-            ->with(['getMutation' => function ($query) {
+            ->where('sc_type', 'K');
+            // ->where('sc_paidoff', 'N');
+
+        if ($consignor != 'all') {
+            $datas = $datas->where('sc_comp', $consignor);
+        }
+        if ($consignee != 'all') {
+            $datas = $datas->where('sc_member', $consignee);
+        }
+
+        $datas = $datas->with(['getMutation' => function ($query) {
                 $query->where('sm_mutcat', 12)->get();
             }])
             ->with(['getMutationReff'])
@@ -1458,24 +1496,21 @@ class KonsinyasiPusatController extends Controller
         // get total-qty each salescomp
         foreach ($datas as $data) {
             $totalQty = 0;
-            foreach ($data->getMutation as $mutation) {
-                $totalQty += $mutation->sm_qty;
-            }
-            $data->totalQty = $totalQty;
-        }
-        // get sold-status each salescomp
-        foreach ($datas as $data) {
             $totalSold = 0;
             foreach ($data->getMutation as $mutation) {
+                $totalQty += $mutation->sm_qty;
                 $totalSold += ($mutation->sm_qty - $mutation->sm_residue);
             }
+            $data->totalQty = $totalQty;
             $data->totalSold = $totalSold;
             $data->totalSoldPerc = $totalSold / $data->totalQty * 100;
-        }
-        // get sold-amount each salescomp
-        foreach ($datas as $data) {
+
+            // get sold-amount each salescomp
             $soldAmount = 0;
             foreach ($data->getMutationReff as $mutation) {
+                if ($mutation->sm_nota == $data->sc_nota) {
+                    continue;
+                }
                 $soldAmount += ($mutation->sm_qty * $mutation->sm_sell);
             }
             $data->soldAmount = $soldAmount;
@@ -1487,7 +1522,7 @@ class KonsinyasiPusatController extends Controller
                 return $datas->getAgent->c_name;
             })
             ->addColumn('items', function ($datas) {
-                return '<div><button class="btn btn-primary" onclick="showDetailSalescomp(' . $datas->sc_id . ')" type="button"><i class="fa fa-folder"></i></button></div>';
+                return '<div class="text-center"><button class="btn btn-sm btn-primary" onclick="showDetailSalescomp(' . $datas->sc_id . ')" type="button"><i class="fa fa-folder"></i></button></div>';
             })
             ->addColumn('total_qty', function ($datas) {
                 return number_format($datas->totalQty, 0, ',', '.');
@@ -1561,10 +1596,69 @@ class KonsinyasiPusatController extends Controller
             ->with('getAgent')
             ->with('getSalesCompDt.getItem')
             ->with('getSalesCompDt.getUnit')
+            ->with(['getMutationReff' => function ($q) {
+                $q->select('sm_stock', 'sm_date', 'sm_qty', 'sm_nota', 'sm_reff')
+                    ->with(['getStock' => function ($que) {
+                        $que->select('s_id', 's_item');
+                    }]);
+            }])
             ->first();
+
+        // get list nota-reff and list item-id
+        $listNotas = array();
+        $listQtyItems = array();
+        $listDates = array();
+
+        foreach ($detail->getMutationReff as $key => $value) {
+            // skip if nota is equal to reff
+            if ($value->sm_nota == $value->sm_reff) {
+                continue;
+            }
+            // skip if nota is 'PAID' type
+            if (strpos($value->sm_nota, 'PAID') !== false) {
+                continue;
+            }
+
+            $date = Carbon::parse($value->sm_date)->format('d F Y');
+            array_push($listNotas, $value->sm_nota);
+            array_push($listQtyItems, number_format($value->sm_qty, 0, ',', '.'));
+            array_push($listDates, $date);
+        }
+
+        // get all transaction based on nota-reff
+        $listBuyer = array();
+        foreach ($listNotas as $key => $nota) {
+            $sales = d_sales::where('s_nota', $nota)
+                ->with(['getMember' => function ($q) {
+                    $q->select('m_code', 'm_name');
+                }])
+                ->first();
+
+            if (!is_null($sales)) {
+                array_push($listBuyer, $sales->getMember->m_name);
+                continue;
+            }
+
+            $salesComp = d_salescomp::where('sc_nota', $nota)
+            ->with(['getAgent' => function ($q) {
+                $q->select('c_id', 'c_name');
+            }])
+            ->first();
+
+            if (!is_null($salesComp)) {
+                array_push($listBuyer, $salesComp->getAgent->c_name);
+            }
+        }
+
         $detail->dateFormated = Carbon::parse($detail->sc_date)->format('d M Y');
 
-        return response()->json($detail);
+        return response()->json([
+            'detail' => $detail,
+            'listNota' => $listNotas,
+            'listQtyItems' => $listQtyItems,
+            'listBuyer' => $listBuyer,
+            'listDates' => $listDates
+        ]);
     }
 
 
@@ -1576,6 +1670,7 @@ class KonsinyasiPusatController extends Controller
     {
         $agentCode = $request->agentCode;
         $listNota = d_salescomp::where('sc_member', $agentCode)
+            ->where('sc_comp', Auth::user()->u_company)
             ->where('sc_paidoff', 'N')
             ->select('sc_id', 'sc_nota')
             ->get();

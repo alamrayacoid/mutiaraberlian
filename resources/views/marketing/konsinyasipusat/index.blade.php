@@ -52,97 +52,55 @@
 
 @endsection
 @section('extra_script')
+<!-- ========================================================================-->
+<!-- script for Penempatan-Produk -->
 <script type="text/javascript">
-    var table_sup, table_pus, table_monitoring;
+	var table_sup, table_pus, table_monitoring;
+
 	$(document).ready(function(){
-		table_sup = $('#table_penempatan').DataTable({
-            responsive: true,
-            autoWidth: false,
-            serverSide: true,
-            ajax: {
-                url: "{{ route('konsinyasipusat.getData') }}",
-                type: "get"
-            },
-            columns: [
-                {data: 'tanggal'},
-                {data: 'nota'},
-                {data: 'konsigner'},
-                {data: 'total', className: "text-right"},
-                {data: 'action'}
-            ],
-        });
+		// set timeout
+		setTimeout(function () {
+			table_pus = $('#table_monitoringpenjualan').DataTable();
 
-		table_pus = $('#table_monitoringpenjualan').DataTable();
-
-        table_monitoring = $('#detail-monitoring').DataTable( {
-            "iDisplayLength" : 5
-        });
-
-		$(document).on('click', '.btn-disable-pp', function(){
-			var ini = $(this);
-			$.confirm({
-				animation: 'RotateY',
-				closeAnimation: 'scale',
-				animationBounce: 1.5,
-				icon: 'fa fa-exclamation-triangle',
-				title: 'Peringatan!',
-				content: 'Apa anda yakin mau menonaktifkan data ini?',
-				theme: 'disable',
-			    buttons: {
-			        info: {
-						btnClass: 'btn-blue',
-			        	text:'Ya',
-			        	action : function(){
-							$.toast({
-								heading: 'Information',
-								text: 'Data Berhasil di Nonaktifkan.',
-								bgColor: '#0984e3',
-								textColor: 'white',
-								loaderBg: '#fdcb6e',
-								icon: 'info'
-							})
-					        ini.parents('.btn-group').html('<button class="btn btn-success btn-enable" type="button" title="Enable"><i class="fa fa-check-circle"></i></button>');
-				        }
-			        },
-			        cancel:{
-			        	text: 'Tidak',
-					    action: function () {
-    			            // tutup confirm
-    			        }
-    			    }
-			    }
+			table_monitoring = $('#detail-monitoring').DataTable( {
+				"iDisplayLength" : 5
 			});
-		});
 
-		$(document).on('click', '.btn-enable-pp', function(){
-			$.toast({
-				heading: 'Information',
-				text: 'Data Berhasil di Aktifkan.',
-				bgColor: '#0984e3',
-				textColor: 'white',
-				loaderBg: '#fdcb6e',
-				icon: 'info'
-			})
-			$(this).parents('.btn-group').html('<button class="btn btn-warning btn-edit" type="button" title="Edit"><i class="fa fa-pencil"></i></button>'+
-	                                		'<button class="btn btn-danger btn-disable" type="button" title="Disable"><i class="fa fa-times-circle"></i></button>')
-		})
+			$("#search-list-agen").on("click", function() {
+				$(".table-modal").removeClass('d-none');
+			});
 
-		// $(document).on('click', '.btn-submit', function(){
-		// 	$.toast({
-		// 		heading: 'Success',
-		// 		text: 'Data Berhasil di Simpan',
-		// 		bgColor: '#00b894',
-		// 		textColor: 'white',
-		// 		loaderBg: '#55efc4',
-		// 		icon: 'success'
-		// 	})
-		// })
-
-		$("#search-list-agen").on("click", function() {
-			$(".table-modal").removeClass('d-none');
-		});
-
+			$('#consignor').on('select2:select', function() {
+				getListKonsinyasi();
+			});
+			getListKonsinyasi();
+		}, 10);
 	});
+
+	function getListKonsinyasi() {
+		let consignor = $('#consignor').val();
+		$('#table_penempatan').dataTable().fnDestroy();
+		table_sup = $('#table_penempatan').DataTable({
+			responsive: true,
+			autoWidth: false,
+			serverSide: true,
+			processing: true,
+			ajax: {
+				url: "{{ route('konsinyasipusat.getData') }}",
+				type: "get",
+				data: {
+					consignor: consignor
+				}
+			},
+			columns: [
+				{data: 'tanggal'},
+				{data: 'nota'},
+				{data: 'konsigner'},
+				{data: 'total', className: "text-right"},
+				{data: 'action'}
+			],
+		});
+	}
 
 	function detailKonsinyasi(id) {
 	    loadingShow();
@@ -169,6 +127,7 @@
                     responsive: true,
                     autoWidth: false,
                     serverSide: true,
+					processing: true,
                     ajax: {
                         url: baseUrl+'/marketing/konsinyasipusat/detail-konsinyasi/'+id+'/table',
                         type: "get"
@@ -249,69 +208,75 @@
 <!-- script for Data-Monitoring-Penjualan-Agen -->
 <script type="text/javascript">
 	$(document).ready(function() {
-		const cur_date = new Date();
-		const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
-		const last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
-		$('#date_from_mp').datepicker('setDate', first_day);
-		$('#date_to_mp').datepicker('setDate', last_day);
-
-		$('#date_from_mp').on('change', function() {
-			TableListMP();
-		});
-		$('#date_to_mp').on('change', function() {
-			TableListMP();
-		});
-		$('#btn_search_date_mp').on('click', function() {
-			TableListMP();
-		});
-		$('#btn_refresh_date_mp').on('click', function() {
-			$('#filter_agent_code_mp').val('');
-			$('#filter_agent_name_mp').val('');
+		// set timeout
+		setTimeout(function () {
+			const cur_date = new Date();
+			const first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+			const last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
 			$('#date_from_mp').datepicker('setDate', first_day);
 			$('#date_to_mp').datepicker('setDate', last_day);
-		});
-		// retrieve data-table
-		TableListMP();
-		// filter agent based on area (province and city)
-		$('.provMP').on('change', function() {
-			getCitiesMP();
-		});
-		$('.citiesMP').on('change', function(){
-			$(".table-modal").removeClass('d-none');
-			appendListAgentsMP();
-		});
-		// filter agent field
-		$('#filter_agent_name_mp').on('click', function() {
-			$(this).val('');
-			$('#filter_agent_code_mp').val('');
-		});
-		$('#filter_agent_name_mp').on('keyup', function() {
-			findAgentsByAuMP();
-		});
-		// btn applyt filter agent
-		$('#btn_filter_mp').on('click', function() {
-			// console.log($('#filter_agent_code_mp').val());
+
+			$('#date_from_mp').on('change', function() {
+				TableListMP();
+			});
+			$('#date_to_mp').on('change', function() {
+				TableListMP();
+			});
+			$('#btn_search_date_mp').on('click', function() {
+				TableListMP();
+			});
+			$('#btn_refresh_date_mp').on('click', function() {
+				$('#filter_agent_code_mp').val('');
+				$('#filter_agent_name_mp').val('');
+				$('#date_from_mp').datepicker('setDate', first_day);
+				$('#date_to_mp').datepicker('setDate', last_day);
+			});
+			// retrieve data-table
 			TableListMP();
-		});
+			// filter agent based on area (province and city)
+			$('.provMP').on('change', function() {
+				getCitiesMP();
+			});
+			$('.citiesMP').on('change', function(){
+				$(".table-modal").removeClass('d-none');
+				appendListAgentsMP();
+			});
+			// filter agent field
+			$('#filter_agent_name_mp').on('click', function() {
+				$(this).val('');
+				$('#filter_agent_code_mp').val('');
+			});
+			$('#filter_agent_name_mp').on('keyup', function() {
+				findAgentsByAuMP();
+			});
+			// btn applyt filter agent
+			$('#btn_filter_mp').on('click', function() {
+				// console.log($('#filter_agent_code_mp').val());
+				TableListMP();
+			});
+		}, 200);
 	});
 
 	// data-table -> function to retrieve DataTable server side
 	var tb_listmp;
 	function TableListMP()
 	{
-		loadingShow();
-		if ($('#filter_agent_code_mp').val() !== "") {
-			$('.table-monitoringpenjualan').removeClass('d-none');
-		} else {
-			$('.table-monitoringpenjualan').addClass('d-none');
-			loadingHide();
-			return 0;
-		}
+		// if ($('#filter_agent_code_mp').val() !== "") {
+		// 	$('.table-monitoringpenjualan').removeClass('d-none');
+		// } else {
+		// 	$('.table-monitoringpenjualan').addClass('d-none');
+		// 	return 0;
+		// }
+
+		// let consignee = $('#filter_agent_code_mp').val();
+		let consignor = $('#consignorMP').val();
+		let consignee = $('#consigneeMP').val();
 
 		$('#table_monitoringpenjualan').dataTable().fnDestroy();
 		tb_listmp = $('#table_monitoringpenjualan').DataTable({
 			responsive: true,
 			serverSide: true,
+			processing: true,
 			ajax: {
 				url: "{{ route('monitoringpenjualan.getListMP') }}",
 				type: "get",
@@ -319,22 +284,23 @@
 					"_token": "{{ csrf_token() }}",
 					"date_from": $('#date_from_mp').val(),
 					"date_to": $('#date_to_mp').val(),
-					"agent_code": $('#filter_agent_code_mp').val()
+					"consignor": consignor,
+					"consignee": consignee
 				}
 			},
 			columns: [
 				{data: 'DT_RowIndex'},
 				{data: 'placement'},
-				{data: 'items'},
+				// {data: 'items'},
 				{data: 'total_qty'},
 				{data: 'total_price'},
 				{data: 'sold_status'},
-				{data: 'sold_amount'}
+				// {data: 'sold_amount'}
+				{data: 'items'}
 			],
 			pageLength: 10,
 			lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
 		});
-		loadingHide();
 	}
 	// autocomple to find-agents
 	function findAgentsByAuMP()
@@ -415,12 +381,17 @@
 	// show detail-penjualan
 	function showDetailSalescomp(id)
 	{
-		loadingShow();
 		$.ajax({
 			url: baseUrl + "/marketing/konsinyasipusat/monitoringpenjualan/get-sales-detail/" + id,
 			type: "get",
-			success: function(response) {
+			beforeSend: function (){
+				loadingShow();
+			},
+			success: function(resp) {
 				$('#table_detailmp tbody').empty();
+				$('#table_detailtransaksimp tbody').empty();
+
+				let response = resp.detail;
 				if (response.length <= 0) {
 					return 0;
 				}
@@ -428,7 +399,7 @@
 				$('#date_dtmp').val(response.dateFormated);
 				$('#placement_dtmp').val(response.get_agent.c_name);
 				$('#total_dtmp').val(parseInt(response.sc_total));
-
+				// append detail konsinyasi
 				$.each(response.get_sales_comp_dt, function(index, val) {
 					let name = '<td>'+ val.get_item.i_code +' - '+ val.get_item.i_name +'</td>';
 					let qty = '<td>'+ val.scd_qty +'</td>';
@@ -437,6 +408,16 @@
 					let total_price = '<td class="rupiah">'+ parseInt(val.scd_totalnet) +'</td>';
 					$('#table_detailmp > tbody:last-child').append('<tr>'+ name + qty + unit + price + total_price +'</tr>');
 				});
+
+				// append detail transaksi using konsinyasi
+				$.each(resp.listNota, function (idx, val) {
+					let date = '<td>'+ resp.listDates[idx]  +'</td>';
+					let nota = '<td>'+ resp.listNota[idx]  +'</td>';
+					let pembeli = '<td>'+ resp.listBuyer[idx]  +'</td>';
+					let qty = '<td class="text-right">'+ resp.listQtyItems[idx]  +'</td>';
+					$('#table_detailtransaksimp > tbody:last-child').append('<tr>'+ date + nota + pembeli + qty +'</tr>');
+				})
+
 				// re-activate mask-money
 				$('.rupiah').inputmask("currency", {
 					radixPoint: ",",
@@ -453,8 +434,10 @@
 				$('#modalDetailMP').modal('show');
 			},
 			error: function(e) {
-				loadingHide();
 				messageWarning('Perhatian', 'terjadi kesalahan saat pengambilan data detail penjualan !');
+			},
+			complete: function() {
+				loadingHide();
 			}
 		})
 	}
@@ -464,37 +447,40 @@
 <!-- script for Data-Penerimaan-Pembayaran -->
 <script type="text/javascript">
 	$(document).ready(function() {
-		// filter agent based on area (province and city)
-		$('.provPP').on('change', function() {
-			getCitiesPP();
-		});
-		$('.citiesPP').on('change', function(){
-			$(".table-modal").removeClass('d-none');
-			appendListAgentsPP();
-		});
-		// filter agent field
-		$('#filter_agent_name_pp').on('click', function() {
-			resetFormPP();
-			// console.log($('#listNotaPP').val());
-		});
-		$('#filter_agent_name_pp').on('keyup', function() {
-			findAgentsByAuPP();
-		});
-		// get sales-comp-payment based on nota/id
-		$('#listNotaPP').on('select2:select', function() {
-			getPaymentPP();
-		});
-		$('#paymentValPP').on('keyup', function() {
-			if (parseInt($(this).val()) > parseInt($('#restBillPP').val())) {
-				$(this).val(parseInt($('#restBillPP').val()));
-				messageWarning('Perhatian', '\'Nominal Pembayaran\' tidak boleh melebihi \'Sisa Tagihan\' !');
-			} else if (parseInt($(this).val()) <= 0) {
-				messageWarning('Perhatian', '\'Nominal Pembayaran\' tidak boleh 0 atau dibawah 0 !');
-			}
-		});
-		$('#btn_simpanPP').on('click', function() {
+		// set timeout
+		setTimeout(function () {
+			// filter agent based on area (province and city)
+			$('.provPP').on('change', function() {
+				getCitiesPP();
+			});
+			$('.citiesPP').on('change', function(){
+				$(".table-modal").removeClass('d-none');
+				appendListAgentsPP();
+			});
+			// filter agent field
+			$('#filter_agent_name_pp').on('click', function() {
+				resetFormPP();
+				// console.log($('#listNotaPP').val());
+			});
+			$('#filter_agent_name_pp').on('keyup', function() {
+				findAgentsByAuPP();
+			});
+			// get sales-comp-payment based on nota/id
+			$('#listNotaPP').on('select2:select', function() {
+				getPaymentPP();
+			});
+			$('#paymentValPP').on('keyup', function() {
+				if (parseInt($(this).val()) > parseInt($('#restBillPP').val())) {
+					$(this).val(parseInt($('#restBillPP').val()));
+					messageWarning('Perhatian', '\'Nominal Pembayaran\' tidak boleh melebihi \'Sisa Tagihan\' !');
+				} else if (parseInt($(this).val()) <= 0) {
+					messageWarning('Perhatian', '\'Nominal Pembayaran\' tidak boleh 0 atau dibawah 0 !');
+				}
+			});
+			$('#btn_simpanPP').on('click', function() {
 			submitPayment();
 		});
+		}, 300);
 	});
 
 	// reset all field
