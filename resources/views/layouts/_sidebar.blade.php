@@ -424,12 +424,12 @@
                             @endif
                             @if ($sidebar[34]->ua_read == 'Y')
                                 <li class="{{Request::is('marketing/penjualanpusat/*') ? 'active' : ''}}">
-                                    <a href="{{route('penjualanpusat.index')}}">Manajemen Hutang Piutang</a>
+                                    <a href="#">Manajemen Hutang Piutang</a>
                                 </li>
                             @endif
                             @if ($sidebar[35]->ua_read == 'Y')
                                 <li class="{{Request::is('marketing/kosinyasipusat/*') ? 'active' : ''}}">
-                                    <a href="{{route('penjualanpusat.index')}}">Manajemen Pajak</a>
+                                    <a href="#">Manajemen Pajak</a>
                                 </li>
                             @endif
                             @if ($sidebar[36]->ua_read == 'Y')
@@ -447,7 +447,7 @@
                                     <ul class="sidebar-nav">
                                         @if ($sidebar[37]->ua_read == 'Y')
                                             <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                                <a href="{{ route('manajemenagen.index') }}">Analisa Progress Terhadap
+                                                <a href="#">Analisa Progress Terhadap
                                                     Perencanaan</a>
                                             </li>
                                         @endif
@@ -459,23 +459,23 @@
                                         @endif
                                         @if ($sidebar[39]->ua_read == 'Y')
                                             <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                                <a href="{{ route('manajemenagen.index') }}">Analisa Pertumbuhan Aset
+                                                <a href="{{ route('aset_eta.index') }}">Analisa Pertumbuhan Aset
                                                     Terhadap ETA</a>
                                             </li>
                                         @endif
                                         @if ($sidebar[40]->ua_read == 'Y')
                                             <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                                <a href="{{ route('manajemenagen.index') }}">Analisa Cashflow</a>
+                                                <a href="#">Analisa Cashflow</a>
                                             </li>
                                         @endif
                                         @if ($sidebar[41]->ua_read == 'Y')
                                             <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                                <a href="{{ route('manajemenagen.index') }}">Analisa Common Size</a>
+                                                <a href="#">Analisa Common Size</a>
                                             </li>
                                         @endif
                                         @if ($sidebar[42]->ua_read == 'Y')
                                             <li class="{{Request::is('marketing/agen/*') ? 'active' : ''}}">
-                                                <a href="{{ route('manajemenagen.index') }}">Analisa Ratio
+                                                <a href="#">Analisa Ratio
                                                     Liquiditas</a>
                                             </li>
                                         @endif
