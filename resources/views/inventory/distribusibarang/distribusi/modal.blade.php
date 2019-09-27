@@ -147,21 +147,21 @@
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="cabang">Pusat :</label>
-                        <input type="text" class="form-control-plaintext b-border border-bottom" id="cabang" value="">
+                        <input type="text" class="form-control-plaintext b-border border-bottom" id="cabang" value="" readonly>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="nota">Nomer Nota :</label>
-                        <input type="text" class="form-control-plaintext b-border border-bottom" id="nota" value="">
+                        <input type="text" class="form-control-plaintext b-border border-bottom" id="nota" value="" readonly>
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group col-md-6">
                         <label for="agen">Cabang :</label>
-                        <input type="text" class="form-control-plaintext b-border border-bottom" id="agen" value="">
+                        <input type="text" class="form-control-plaintext b-border border-bottom" id="agen" value="" readonly>
                     </div>
                     <div class="form-group col-md-6">
                         <label for="tanggal">Tanggal Order :</label>
-                        <input type="text" class="form-control-plaintext b-border border-bottom" id="tanggal" value="">
+                        <input type="text" class="form-control-plaintext b-border border-bottom" id="tanggal" value="" readonly>
                     </div>
                 </div>
                 <div class="table-responsive">

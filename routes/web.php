@@ -233,6 +233,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/produksi/penerimaanbarang/cari-histori', 'PenerimaanProduksiController@searchHistory')->name('penerimaan.histori');
     Route::get('/produksi/penerimaanbarang/edit-history-penerimaan/{id}', 'PenerimaanProduksiController@editHistoryPenerimaan')->name('penerimaan.edithistory');
     Route::get('/produksi/penerimaanbarang/get-list-history-po', 'PenerimaanProduksiController@getListHistoryPO')->name('penerimaan.getListHistoryPO');
+    Route::get('/produksi/penerimaanbarang/get-detail-history', 'PenerimaanProduksiController@getDetailHistory')->name('penerimaan.getDetailHistory');
     Route::get('/produksi/penerimaanbarang/get-detail-edit-po', 'PenerimaanProduksiController@getDetailEditPO')->name('penerimaan.getDetailEditPO');
     Route::post('/produksi/penerimaanbarang/update-detail-po', 'PenerimaanProduksiController@updateDetailPO')->name('penerimaan.updateDetailPO');
     Route::get('/produksi/penerimaanbarang/create', 'PenerimaanProduksiController@create_penerimaan_barang')->name('penerimaan.create');

@@ -32,5 +32,9 @@ class d_itemreceipt extends Model
     {
         return $this->hasMany('App\d_itemreceiptdt', 'ird_itemreceipt', 'ir_id');
     }
+    public function getProductionOrder()
+    {
+        return $this->belongsTo('App\d_productionorder', 'ir_notapo', 'po_nota');
+    }
 
 }

@@ -74,9 +74,9 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="simpanMasterTunjangan()">
+                <!-- <button type="button" class="btn btn-primary" onclick="simpanMasterTunjangan()">
                     <i class="glyphicon glyphicon-floppy-disk"></i> Simpan
-                </button>
+                </button> -->
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
             </div>
         </div>

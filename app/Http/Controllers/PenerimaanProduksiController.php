@@ -10,6 +10,7 @@ use App\d_productionorder;
 use App\d_productionorderdt;
 use App\d_productionordercode;
 use App\d_stock_mutation;
+use App\d_itemreceipt;
 use App\d_itemreceiptdt;
 use App\Helper\keuangan\jurnal\jurnal;
 use App\m_mutcat;
@@ -702,13 +703,70 @@ class PenerimaanProduksiController extends Controller
             })
             ->addColumn('action', function($datas) {
                 return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-info hint--top-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-folder"></i>
+                        <button class="btn btn-info hint--top-left hint--info" aria-label="Lihat Detail" onclick="detailHistory(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-folder"></i>
                         <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit" onclick="editHistory(\''.Crypt::encrypt($datas->po_id).'\')"><i class="fa fa-pencil"></i>
                         </button>
                     </div>';
             })
             ->rawColumns(['nota', 'supplier', 'tanggal', 'action'])
             ->make(true);
+    }
+
+    public function getDetailHistory(Request $request)
+    {
+        try {
+            $id = Crypt::decrypt($request->id);
+        }
+        catch (\DecryptException $e){
+            return Response::json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
+
+        DB::beginTransaction();
+        try {
+
+            $history = d_itemreceipt::whereHas('getProductionOrder', function ($q) use ($id) {
+                    $q->where('po_id', $id);
+                })
+                ->with(['getProductionOrder' => function ($q) {
+                    $q->select('po_id', 'po_supplier', 'po_nota', 'po_date', 'po_status')
+                        ->with(['getSupplier' => function ($que) {
+                            $que->select('s_id', 's_name');
+                        }]);
+                }])
+                ->with(['getIRDetail' => function ($q) {
+                    $q->select('ird_itemreceipt', 'ird_date', 'ird_nota_do', 'ird_item', 'ird_qty', 'ird_unit')
+                        ->with(['getItem' => function ($que) {
+                            $que->select('i_id', 'i_name');
+                        }])
+                        ->with(['getUnit' => function ($que) {
+                            $que->select('u_id', 'u_name');
+                        }]);
+                }])
+                ->first();
+
+            // format date
+            $history->getProductionOrder->po_date = Carbon::parse($history->getProductionOrder->po_date)->format('d M Y');
+            foreach ($history->getIRDetail as $key => $value) {
+                $value->ird_date = Carbon::parse($value->ird_date)->format('d M Y');
+                $value->ird_qty = number_format($value->ird_qty, 0, ',', '.');
+            }
+
+            DB::commit();
+            return Response::json([
+                'status' => 'success',
+                'data' => $history
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return Response::json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ]);
+        }
     }
 
     public function editHistoryPenerimaan($id)

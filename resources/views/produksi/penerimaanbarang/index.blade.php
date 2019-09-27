@@ -3,6 +3,7 @@
 @section('content')
 
 @include('produksi.penerimaanbarang.penerimaan.detail')
+@include('produksi.penerimaanbarang.history.detail')
 
 <article class="content animated fadeInLeft">
 
@@ -48,6 +49,13 @@
 <!-- History Penerimaan Barang -->
 <script type="text/javascript">
 	$(document).ready(function(){
+	    let cur_date = new Date();
+	    let first_day = new Date(cur_date.getFullYear(), cur_date.getMonth(), 1);
+	    let last_day =   new Date(cur_date.getFullYear(), cur_date.getMonth() + 1, 0);
+		// history peneriman
+	    $('#tgl_awal').datepicker('setDate', first_day);
+	    $('#tgl_akhir').datepicker('setDate', last_day);
+
 		var table_sup = $('#table_history').DataTable();
 
 		$("#btn_search").on('click', function(evt){
@@ -90,6 +98,48 @@
 			}
 		});
 	});
+
+	function detailHistory(id) {
+		$.ajax({
+			url: "{{ route('penerimaan.getDetailHistory') }}",
+			type: 'get',
+			data: {
+				id: id
+			},
+			beforeSend: function () {
+				loadingShow();
+			},
+			success: function (resp) {
+				console.log(resp);
+				$('.formDetailHistory').trigger('reset');
+
+				let data = resp.data;
+				$('#modHisSupplier').val(data.get_production_order.get_supplier.s_name);
+				$('#modHisNota').val(data.ir_notapo);
+				$('#modHisDate').val(data.get_production_order.po_date);
+				$('#modHisPayStats').val(data.get_production_order.po_status);
+
+				$('#table_detailhistory > tbody').empty();
+				$.each(data.get_i_r_detail, function (idx, val) {
+					let date = '<td>'+ val.ird_date +'</td>';
+					let nota = '<td>'+ val.ird_nota_do +'</td>';
+					let item = '<td>'+ val.get_item.i_name +'</td>';
+					let qty = '<td class="text-right">'+ val.ird_qty +'</td>';
+					let unit = '<td>'+ val.get_unit.u_name +'</td>';
+					let row = '<tr>'+ date + nota + item + qty + unit +'</tr>';
+					$('#table_detailhistory > tbody').append(row);
+				});
+
+				$('#detailPenerimaanProduksi').modal('show');
+			},
+			error: function (err) {
+				messageWarning('Error', 'Terjadi kesalahan : ' + err);
+			},
+			complete: function () {
+				loadingHide();
+			}
+		})
+	}
 
 	function editHistory(id) {
 		window.location.href = baseUrl + '/produksi/penerimaanbarang/edit-history-penerimaan/' + id;
