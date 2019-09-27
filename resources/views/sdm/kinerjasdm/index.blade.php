@@ -48,6 +48,10 @@
                             <a href="#masterkpi" class="nav-link" data-target="#masterkpi" aria-controls="masterkpi"
                                data-toggle="tab" role="tab">Master Indikator</a>
                         </li>
+                        <li class="nav-item">
+                            <a href="#sop" class="nav-link" data-target="#sop" aria-controls="Kelola SOP"
+                               data-toggle="tab" role="tab">Kelola SOP</a>
+                        </li>
                     </ul>
 
                     <div class="tab-content">
@@ -57,6 +61,7 @@
                         @include('sdm.kinerjasdm.kpipegawai.index')
                         @include('sdm.kinerjasdm.kpidivisi.index')
                         @include('sdm.kinerjasdm.masterkpi.tab_masterkpi')
+                        @include('sdm.kinerjasdm.sop.tab_sop')
 
                     </div>
 
@@ -90,6 +95,9 @@
     <!-- modal inputkpi -->
     @include('sdm.kinerjasdm.inputkpi.modal_tambah_datakpi')
     @include('sdm.kinerjasdm.inputkpi.modal_edit_datakpi')
+    <!-- end -->
+    <!-- modal SOP -->
+    @include('sdm.kinerjasdm.sop.modal')
     <!-- end -->
 @endsection
 @section('extra_script')
@@ -916,5 +924,206 @@
         });
     }
 
+</script>
+
+<!-- Kelola SOP -->
+<script type="text/javascript">
+    var tb_sopMaster;
+    $(document).ready(function() {
+        setTimeout(function () {
+            // timeout
+        }, 400);
+
+        // Master SOP
+        $('#btn_sop_master').on('click', function() {
+            $('#modal_master_sop').modal('show');
+        });
+        $('#modal_master_sop').on('hidden.bs.modal', function() {
+            $('#fil_sop_name').val('');
+            $('#fil_sop_level').val('1').trigger('change');
+        });
+        $('#modal_master_sop').on('show.bs.modal', function() {
+            getListMasterSOP();
+        })
+        $('#btn_sop_add').on('click', function() {
+            storeMasterSOP();
+        });
+
+        // record SOP
+        $('#btn_sop_record').on('click', function() {
+            $('#modal_record_sop').modal('show');
+        });
+        $('#modal_record_sop').on('hidden.bs.modal', function() {
+            $('#form_sopr').trigger('reset');
+            $('#fil_sopr_emp').prop('selectedIndex', 0).trigger('change');
+            $('#fil_sopr_trespass').prop('selectedIndex', 0).trigger('change');
+        });
+        $('#modal_record_sop').on('show.bs.modal', function() {
+            getListEmployee();
+        })
+        $('#btn_sopr_add').on('click', function() {
+            storeRecordSOP();
+        });
+    })
+
+    // get list master-sop
+    function getListMasterSOP() {
+        $.ajax({
+            url: "{{ route('sop.getListMaster') }}",
+            type: 'get',
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                tb_sopMaster = $('#table_sop_master').DataTable();
+                tb_sopMaster.clear().draw();
+                $.each(resp, function(idx, val) {
+                    let level;
+                    switch (val.r_level) {
+                        case '1':
+                            level = 'Ringan';
+                            break;
+                        case '2':
+                            level = 'Sedang';
+                            break;
+                        case '3':
+                            level = 'Berat';
+                            break;
+                    }
+                    // let actionEdit = '<button type="button" class="btn btn-warning btn-sm" onclick="editMasterSOP(\''+ val.r_id +'\')"><i class="fa fa-pencil" aria-hidden="true"></i></button>';
+                    let actionDelete = '<button type="button" class="btn btn-danger btn-sm" onclick="deleteMasterSOP(\''+ val.r_id +'\')"><i class="fa fa-trash" aria-hidden="true"></i></button>';
+                    let actions = '<div class="text-center"><div class="btn-group btn-group-sm">'+ actionDelete +'</div></div>';
+                    tb_sopMaster.row.add([
+                        val.r_name,
+                        level,
+                        actions
+                    ]).draw().node();
+                });
+                tb_sopMaster.columns.adjust();
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
+        });
+    }
+    // store new master-sop
+    function storeMasterSOP() {
+        let name = $('#fil_sop_name').val();
+        let level = $('#fil_sop_level').val();
+
+        $.ajax({
+            url: "{{ route('sop.storeMaster') }}",
+            type: 'post',
+            data: {
+                name: name,
+                level: level
+            },
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                if (resp.status == 'berhasil') {
+                    messageSuccess('Berhasil', 'Master SOP berhasil ditambahkan !');
+                    $('#modal_master_sop').trigger('hidden.bs.modal');
+                    $('#modal_master_sop').trigger('show.bs.modal');
+                }
+                else {
+                    messageWarning('Error', 'Terjadi kesalahan : ' + resp.message);
+                }
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
+        });
+    }
+    // delete master-sop
+    function deleteMasterSOP(id) {
+        $.ajax({
+            url: "{{ route('sop.deleteMaster') }}",
+            type: 'post',
+            data: {
+                id: id
+            },
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                if (resp.status == 'berhasil') {
+                    messageSuccess('Berhasil', 'Master SOP berhasil dihapus !');
+                    $('#modal_master_sop').trigger('hidden.bs.modal');
+                    $('#modal_master_sop').trigger('show.bs.modal');
+                }
+                else {
+                    messageWarning('Error', 'Terjadi kesalahan : ' + resp.message);
+                }
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
+        });
+    }
+
+    // get list employee
+    function getListEmployee() {
+        $.ajax({
+            url: "{{ route('sop.getListEmployee') }}",
+            type: 'get',
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                console.log(resp);
+                data = resp;
+                $('#fil_sopr_emp > option').remove();
+                // append list employee
+                $('#fil_sopr_emp').select2({
+                    data: data
+                });
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
+        });
+    }
+    // store new sop-record
+    function storeRecordSOP() {
+        let formData = $('#form_sopr').serialize();
+
+        $.ajax({
+            url: "{{ route('sop.storeRecord') }}",
+            type: 'post',
+            data: formData,
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                console.log(resp);
+                if (resp.status == 'berhasil') {
+
+                }
+                else {
+                    messageWarning('Error', 'Terjadi kesalahan : ' + resp.message);
+                }
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
+        });
+    }
 </script>
 @endsection

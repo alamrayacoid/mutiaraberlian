@@ -2,7 +2,8 @@
 
 @section('content')
 <article class="content dashboard-page">
-    <section class="section">
+    <h3>Selamat Datang !</h3>
+    <!-- <section class="section">
         <div class="row sameheight-container">
             <div class="col col-12 col-sm-12 col-md-6 col-xl-5 stats-col">
                 <div class="card sameheight-item stats" data-exclude="xs">
@@ -121,7 +122,6 @@
             </div>
         </div>
     </section>
-
     <section class="section">
         <div class="row sameheight-container">
             <div class="col-xl-8">
@@ -1422,6 +1422,6 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section> -->
 </article>
 @endsection

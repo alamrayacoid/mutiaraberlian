@@ -435,7 +435,6 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/kinerjasdm/input-kpi/get-kelola-kpi-divisi', 'SDM\MasterKPIController@getKelolaKpiDivisi')->name('inputkpi.getKelolaKpiDivisi');
     // Route::match(['get', 'post'], '/sdm/kinerjasdm/input-kpi/save', 'SDM\MasterKPIController@saveInputKpi')->name('inputkpi.save');
 
-
     //Master KPI
     Route::post('/sdm/kinerjasdm/master-kpi/create', 'SDM\MasterKPIController@create')->name('masterkpi.create');
     Route::post('/sdm/kinerjasdm/master-kpi/get-data', 'SDM\MasterKPIController@getData')->name('masterkpi.getData');
@@ -465,6 +464,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::post('/sdm/kinerjasdm/kpi-divisi/update-kpi-divisi', 'SDM\MasterKPIController@update_kpi_divisi')->name('kpidivisi.update_kpi_divisi');
     Route::post('/sdm/kinerjasdm/kpi-divisi/delete-kpi-divisi/{divs}', 'SDM\MasterKPIController@delete_kpi_divisi')->name('kpidivisi.delete_kpi_divisi');
     Route::post('/sdm/kinerjasdm/kpi-divisi/get-data-indikator-kpi-divisi', 'SDM\MasterKPIController@getIndikatorKpiDivisi')->name('kpidivisi.getIndikatorKpiDivisi');
+
+    // SOP
+    Route::get('/sdm/kinerjasdm/sop/get-list-master', 'SDM\SOP\SOPController@getListMaster')->name('sop.getListMaster');
+    Route::post('/sdm/kinerjasdm/sop/create-master', 'SDM\SOP\SOPController@storeMaster')->name('sop.storeMaster');
+    Route::post('/sdm/kinerjasdm/sop/delete-master', 'SDM\SOP\SOPController@deleteMaster')->name('sop.deleteMaster');
+    Route::get('/sdm/kinerjasdm/sop/get-list-employee', 'SDM\SOP\SOPController@getListEmployee')->name('sop.getListEmployee');
+    Route::post('/sdm/kinerjasdm/sop/create-record', 'SDM\SOP\SOPController@storeRecord')->name('sop.storeRecord');
+    Route::post('/sdm/kinerjasdm/sop/delete-record', 'SDM\SOP\SOPController@deleteRecord')->name('sop.deleteRecord');
+
 
     // Absensi -> presensi
     Route::get('/sdm/absensisdm/index', 'SDMController@absensi')->name('absensisdm.index');
