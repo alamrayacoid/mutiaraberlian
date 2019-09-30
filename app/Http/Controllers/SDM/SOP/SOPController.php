@@ -144,6 +144,14 @@ class SOPController extends Controller
             $reaction = $request->fil_sopr_react;
             $note = $request->fil_sopr_note;
 
+            if (is_null($tresPass) || is_null($empId)) {
+                return response()->json([
+                    'status' => 'gagal',
+                    'message' => 'Silahkan pilih SOP yang dilanggar terlebih dahulu !'
+                ]);
+            }
+
+
             // check is already exist
             $check = d_regulationaction::where('ra_date', $dateX)
                 ->where('ra_employee', $empId)
