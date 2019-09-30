@@ -4,8 +4,11 @@
         table {
             width: 100%;
         }
-        .th-number{
+        .th-number {
             width: 10% !important;
+        }
+        .read-only {
+            pointer-events: none;
         }
     </style>
 @endsection
@@ -640,10 +643,10 @@
     var month_years = new Date();
     const month_year = new Date(month_years.getFullYear(), month_years.getMonth());
 
-    $("#periode_kpi").datepicker( {
-    format: "mm-yyyy",
-    viewMode: "months",
-    minViewMode: "months"
+    $("#periode_kpi").datepicker({
+        format: "mm-yyyy",
+        viewMode: "months",
+        minViewMode: "months"
     });
 
     $('#periode_kpi').datepicker('setDate', month_year);
@@ -928,10 +931,29 @@
 
 <!-- Kelola SOP -->
 <script type="text/javascript">
-    var tb_sopMaster;
+    var tb_sopMaster, table_sop;
     $(document).ready(function() {
+        let todayDate;
         setTimeout(function () {
             // timeout
+            todayDate = new Date();
+            $('#fil_sopr_date').datepicker("setDate", new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate()));
+            let first_day = new Date(todayDate.getFullYear(), todayDate.getMonth(), 1);
+            let last_day = new Date(todayDate.getFullYear(), todayDate.getMonth() + 1, 0);
+            $('#fil_sopi_date_from').datepicker('setDate', first_day);
+            $('#fil_sopi_date_to').datepicker('setDate', last_day);
+            getListSOP();
+
+    		$('#fil_sopi_date_from').on('change', function() {
+    			getListSOP();
+    		});
+    		$('#fil_sopi_date_to').on('change', function() {
+    			getListSOP();
+    		});
+            $('#btn_sopi_refresh').on('click', function() {
+                $('#fil_sopi_date_from').datepicker('setDate', first_day);
+                $('#fil_sopi_date_to').datepicker('setDate', last_day);
+            })
         }, 400);
 
         // Master SOP
@@ -952,20 +974,32 @@
         // record SOP
         $('#btn_sop_record').on('click', function() {
             $('#modal_record_sop').modal('show');
+            $('#fil_sopr_type').val('create');
+            getListEmployee();
+            getListMasterForRecord();
         });
         $('#modal_record_sop').on('hidden.bs.modal', function() {
             $('#form_sopr').trigger('reset');
-            $('#fil_sopr_emp').prop('selectedIndex', 0).trigger('change');
-            $('#fil_sopr_trespass').prop('selectedIndex', 0).trigger('change');
+            $('#fil_sopr_date').datepicker("setDate", new Date(todayDate.getFullYear(), todayDate.getMonth(), todayDate.getDate()));
+            $('#fil_sopr_date').removeClass('read-only');
+            $('#fil_sopr_emp').attr('disabled', false);
+            $('#fil_sopr_trespass').attr('disabled', false);
+            $('#fil_sopr_react').removeClass('read-only');
+            $('#fil_sopr_note').removeClass('read-only');
+            $('#btn_sopr_add').removeClass('d-none');
+            $('#fil_sopr_type').val('create');
         });
-        $('#modal_record_sop').on('show.bs.modal', function() {
-            getListEmployee();
-        })
         $('#btn_sopr_add').on('click', function() {
-            storeRecordSOP();
+            if ($('#fil_sopr_type').val() == 'create') {
+                storeRecordSOP();
+            }
+            else if ($('#fil_sopr_type').val() == 'update') {
+                updateSOP();
+            }
         });
     })
 
+    // =========================== Master ===========================
     // get list master-sop
     function getListMasterSOP() {
         $.ajax({
@@ -975,10 +1009,13 @@
                 loadingShow();
             },
             success: function(resp) {
-                tb_sopMaster = $('#table_sop_master').DataTable();
+                $('#table_sop_master').dataTable().fnDestroy();
+                tb_sopMaster = $('#table_sop_master').DataTable({
+                    ordering: false,
+                });
                 tb_sopMaster.clear().draw();
                 $.each(resp, function(idx, val) {
-                    let level;
+                    let level, actions;
                     switch (val.r_level) {
                         case '1':
                             level = 'Ringan';
@@ -990,9 +1027,14 @@
                             level = 'Berat';
                             break;
                     }
-                    // let actionEdit = '<button type="button" class="btn btn-warning btn-sm" onclick="editMasterSOP(\''+ val.r_id +'\')"><i class="fa fa-pencil" aria-hidden="true"></i></button>';
+                    let actionReactivate = '<button type="button" class="btn btn-warning btn-sm" onclick="reactivateMasterSOP(\''+ val.r_id +'\')"><i class="fa fa-check" aria-hidden="true"></i></button>';
                     let actionDelete = '<button type="button" class="btn btn-danger btn-sm" onclick="deleteMasterSOP(\''+ val.r_id +'\')"><i class="fa fa-trash" aria-hidden="true"></i></button>';
-                    let actions = '<div class="text-center"><div class="btn-group btn-group-sm">'+ actionDelete +'</div></div>';
+                    if (val.r_isactive == 'Y') {
+                        actions = '<div class="text-center"><div class="btn-group btn-group-sm">'+ actionDelete +'</div></div>';
+                    }
+                    else {
+                        actions = '<div class="text-center"><div class="btn-group btn-group-sm">'+ actionReactivate +'</div></div>';
+                    }
                     tb_sopMaster.row.add([
                         val.r_name,
                         level,
@@ -1071,7 +1113,37 @@
             }
         });
     }
+    // re-activate master-sop
+    function reactivateMasterSOP(id) {
+        $.ajax({
+            url: "{{ route('sop.reActivateMaster') }}",
+            type: 'post',
+            data: {
+                id: id
+            },
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                if (resp.status == 'berhasil') {
+                    messageSuccess('Berhasil', 'Master SOP berhasil diaktifkan kembali !');
+                    $('#modal_master_sop').trigger('hidden.bs.modal');
+                    $('#modal_master_sop').trigger('show.bs.modal');
+                }
+                else {
+                    messageWarning('Error', 'Terjadi kesalahan : ' + resp.message);
+                }
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
+        });
+    }
 
+    // =========================== Record ===========================
     // get list employee
     function getListEmployee() {
         $.ajax({
@@ -1097,6 +1169,29 @@
             }
         });
     }
+    // get list master-sop for select-option
+    function getListMasterForRecord() {
+        $.ajax({
+            url: "{{ route('sop.getListMasterForRecord') }}",
+            type: 'get',
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                let data = resp;
+                $("#fil_sopr_trespass").empty();
+                $("#fil_sopr_trespass").select2({
+                    data: data
+                });
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
+        });
+    }
     // store new sop-record
     function storeRecordSOP() {
         let formData = $('#form_sopr').serialize();
@@ -1111,7 +1206,216 @@
             success: function(resp) {
                 console.log(resp);
                 if (resp.status == 'berhasil') {
+                    messageSuccess('Berhasil', 'Pencatatan Pelanggaran berhasil disimpan !');
+                    $('#modal_record_sop').modal('hide');
+                    table_sop.ajax.reload();
+                }
+                else if (resp.status == 'exist') {
+                    messageWarning('Perhatian', 'Data sudah ada !');
+                    $('#fil_sopr_react').val(resp.action);
+                    $('#fil_sopr_note').val(resp.note);
+                }
+                else {
+                    messageWarning('Error', 'Terjadi kesalahan : ' + resp.message);
+                }
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
+        });
+    }
 
+    // =========================== Index ===========================
+    function getListSOP() {
+        let dateFrom = $('#fil_sopi_date_from').val();
+        let dateTo = $('#fil_sopi_date_to').val();
+
+        $('#table_sop').dataTable().fnDestroy();
+        table_sop = $('#table_sop').DataTable({
+            serverSide: true,
+            bAutoWidth: true,
+            processing: true,
+            ajax: {
+                url: '{{ route("sop.getListSOP") }}',
+                type: "get",
+                data: {
+                    dateFrom: dateFrom,
+                    dateTo: dateTo
+                }
+            },
+            columns: [
+                {data: 'DT_RowIndex'},
+                {data: 'date',},
+                {data: 'employee'},
+                {data: 'regulation'},
+                {data: 'action'}
+            ],
+            pageLength: 10,
+            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']]
+        });
+    }
+    // detail record sop
+    function detailRecord(id, detailid) {
+        $.ajax({
+            url: "{{ route('sop.getDetailSOP') }}",
+            type: 'post',
+            data: {
+                id: id,
+                detailid: detailid
+            },
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                console.log(resp);
+                if (resp.status == 'berhasil') {
+                    $('#fil_sopr_date').addClass('read-only');
+                    $('#fil_sopr_emp').attr('disabled', true);
+                    $('#fil_sopr_trespass').attr('disabled', true);
+                    $('#fil_sopr_react').addClass('read-only');
+                    $('#fil_sopr_note').addClass('read-only');
+                    $('#fil_sopr_date').datepicker('setDate', new Date(resp.data.dateY, parseInt(resp.data.dateM) - 1, resp.data.dateD));
+                    $('#fil_sopr_emp').empty();
+                    $('#fil_sopr_emp').append(new Option(resp.data.get_reg_act.get_employee.e_name, resp.data.get_reg_act.get_employee.e_id));
+                    $('#fil_sopr_trespass').empty();
+                    $('#fil_sopr_trespass').append(new Option(resp.data.get_regulation.r_name, resp.data.get_regulation.r_id));
+                    $('#fil_sopr_react').val(resp.data.rad_action);
+                    $('#fil_sopr_note').val(resp.data.rad_note);
+                    $('#btn_sopr_add').addClass('d-none');
+                    $('#modal_record_sop').modal('show');
+                }
+                else {
+                    messageWarning('Error', 'Terjadi kesalahan : ' + resp.message);
+                }
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
+        });
+    }
+    // delete record sop
+    function deleteRecord(id, detailid) {
+        $.confirm({
+            animation: 'RotateY',
+            closeAnimation: 'scale',
+            animationBounce: 1.5,
+            icon: 'fa fa-exclamation-triangle',
+            title: 'Pesan!',
+            content: 'Apakah anda yakin ingin menghapus catatan pelanggaran ini ?',
+            theme: 'disable',
+            buttons: {
+                info: {
+                    btnClass: 'btn-blue',
+                    text: 'Ya',
+                    action: function() {
+                        callDeleteSOP(id, detailid);
+                    }
+                },
+                cancel: {
+                    text: 'Tidak',
+                    action: function(response) {
+                        loadingHide();
+                        messageWarning('Peringatan', 'Anda telah membatalkan!');
+                    }
+                }
+            }
+        });
+    }
+    function callDeleteSOP(id, detailid) {
+        $.ajax({
+            url: "{{ route('sop.deleteSOP') }}",
+            type: 'post',
+            data: {
+                id: id,
+                detailid: detailid
+            },
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                console.log(resp);
+                if (resp.status == 'berhasil') {
+                    messageSuccess('Berhasil', 'Catatan Pelanggaran berhasil dihapus !');
+                    table_sop.ajax.reload();
+                }
+                else {
+                    messageWarning('Error', 'Terjadi kesalahan : ' + resp.message);
+                }
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
+        });
+    }
+    // edit record sop
+    function editRecord(id, detailid) {
+        $.ajax({
+            url: "{{ route('sop.getDetailSOP') }}",
+            type: 'post',
+            data: {
+                id: id,
+                detailid: detailid
+            },
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                console.log(resp);
+                if (resp.status == 'berhasil') {
+                    $('#fil_sopr_type').val('update');
+                    $('#fil_sopr_id').val(id);
+                    $('#fil_sopr_detailid').val(detailid);
+
+                    $('#fil_sopr_date').addClass('read-only');
+                    $('#fil_sopr_emp').attr('disabled', true);
+                    $('#fil_sopr_trespass').attr('disabled', true);
+                    $('#fil_sopr_date').datepicker('setDate', new Date(resp.data.dateY, parseInt(resp.data.dateM) - 1, resp.data.dateD));
+                    $('#fil_sopr_emp').empty();
+                    $('#fil_sopr_emp').append(new Option(resp.data.get_reg_act.get_employee.e_name, resp.data.get_reg_act.get_employee.e_id));
+                    $('#fil_sopr_trespass').empty();
+                    $('#fil_sopr_trespass').append(new Option(resp.data.get_regulation.r_name, resp.data.get_regulation.r_id));
+                    $('#fil_sopr_react').val(resp.data.rad_action);
+                    $('#fil_sopr_note').val(resp.data.rad_note);
+                    $('#modal_record_sop').modal('show');
+                }
+                else {
+                    messageWarning('Error', 'Terjadi kesalahan : ' + resp.message);
+                }
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
+            }
+        });
+    }
+    // update record sop
+    function updateSOP() {
+        let formData = $('#form_sopr').serialize();
+
+        $.ajax({
+            url: "{{ route('sop.updateSOP') }}",
+            type: 'post',
+            data: formData,
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                console.log(resp);
+                if (resp.status == 'berhasil') {
+                    messageSuccess('Berhasil', 'Catatan Pelanggaran berhasil diperbarui !');
+                    $('#modal_record_sop').modal('hide');
+                    table_sop.ajax.reload();
                 }
                 else {
                     messageWarning('Error', 'Terjadi kesalahan : ' + resp.message);

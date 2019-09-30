@@ -52,15 +52,18 @@
 	<div class="modal-dialog modal-lg">
 		<div class="modal-content" style="border-radius: 5px;">
 			<div class="modal-header">
-				<h4 class="modal-title" id="myModalLabelRecord">Catat Pelanggaran </h4>
+				<h4 class="modal-title" id="myModalLabelRecord">Catatan Pelanggaran </h4>
 				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 		        	<span aria-hidden="true">&times;</span>
 		        </button>
 			</div>
 			<div class="modal-body">
-                
+
                 <form id="form_sopr">
-                    <div class="row mb-2">
+					<input type="hidden" name="type" id="fil_sopr_type">
+					<input type="hidden" name="fil_sopr_id" id="fil_sopr_id">
+					<input type="hidden" name="fil_sopr_detailid" id="fil_sopr_detailid">
+                    <div class="row">
                         <div class="col-md-3">
                             <label>Tanggal</label>
                         </div>

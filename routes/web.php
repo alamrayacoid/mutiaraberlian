@@ -469,9 +469,15 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/sdm/kinerjasdm/sop/get-list-master', 'SDM\SOP\SOPController@getListMaster')->name('sop.getListMaster');
     Route::post('/sdm/kinerjasdm/sop/create-master', 'SDM\SOP\SOPController@storeMaster')->name('sop.storeMaster');
     Route::post('/sdm/kinerjasdm/sop/delete-master', 'SDM\SOP\SOPController@deleteMaster')->name('sop.deleteMaster');
+    Route::post('/sdm/kinerjasdm/sop/reactivate-master', 'SDM\SOP\SOPController@reActivateMaster')->name('sop.reActivateMaster');
     Route::get('/sdm/kinerjasdm/sop/get-list-employee', 'SDM\SOP\SOPController@getListEmployee')->name('sop.getListEmployee');
+    Route::get('/sdm/kinerjasdm/sop/get-list-master-for-record', 'SDM\SOP\SOPController@getListMasterForRecord')->name('sop.getListMasterForRecord');
     Route::post('/sdm/kinerjasdm/sop/create-record', 'SDM\SOP\SOPController@storeRecord')->name('sop.storeRecord');
     Route::post('/sdm/kinerjasdm/sop/delete-record', 'SDM\SOP\SOPController@deleteRecord')->name('sop.deleteRecord');
+    Route::get('/sdm/kinerjasdm/sop/get-list-sop', 'SDM\SOP\SOPController@getListSOP')->name('sop.getListSOP');
+    Route::post('/sdm/kinerjasdm/sop/get-detail-sop', 'SDM\SOP\SOPController@getDetailSOP')->name('sop.getDetailSOP');
+    Route::post('/sdm/kinerjasdm/sop/update-sop', 'SDM\SOP\SOPController@updateSOP')->name('sop.updateSOP');
+    Route::post('/sdm/kinerjasdm/sop/delete-sop', 'SDM\SOP\SOPController@deleteSOP')->name('sop.deleteSOP');
 
 
     // Absensi -> presensi

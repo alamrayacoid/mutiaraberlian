@@ -17,4 +17,13 @@ class d_regulationactiondt extends Model
         ->where('rad_detailid', '=', $this->getAttribute('rad_detailid'));
         return $query;
     }
+
+    public function getRegAct()
+    {
+        return $this->belongsTo('App\d_regulationaction', 'rad_regulationaction', 'ra_id');
+    }
+    public function getRegulation()
+    {
+        return $this->belongsTo('App\m_regulations', 'rad_regulation', 'r_id');
+    }
 }

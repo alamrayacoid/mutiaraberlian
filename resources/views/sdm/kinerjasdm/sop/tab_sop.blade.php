@@ -12,27 +12,28 @@
 		<div class="card-block">
 			<section>
 				<div class="row">
-                    <div class="col-2">
-                        <label>Status</label>
+					<div class="col-2">
+                        <label>Tanggal</label>
                     </div>
-                    <div class="col-4">
-                        <select class="select2 form-control form-control-sm" name="statusACtion" id="btn_sop_statusAction">
-                            <option value="Y" selected>Aktif</option>
-                            <option value="N">Tidak Aktif</option>
-                            <option value="all">Semua</option>
-                        </select>
-                    </div>
+					<div class="input-group input-group-sm input-daterange col-md-6">
+						<input type="text" class="form-control" id="fil_sopi_date_from" name="fil_sopi_date_from">
+						<span class="input-group-addon">-</span>
+						<input type="text" class="form-control" id="fil_sopi_date_to" name="fil_sopi_date_to">
+						<div class="input-group-append">
+							<button class="btn btn-primary" type="button" id="btn_sopi_refresh"><i class="fa fa-refresh"></i></button>
+						</div>
+					</div>
 				</div>
 				<hr>
 				<div class="table-responsive">
-					<table class="table table-hover table-striped display nowrap w-100" cellspacing="0" id="table_sop">
+					<table class="table table-hover table-striped display w-100" cellspacing="0" id="table_sop">
 						<thead class="bg-primary">
 							<tr>
 								<th width="10%">No</th>
-								<th width="60%">Tanggal</th>
-								<th width="20%">Pegawai</th>
-								<th width="20%">Status</th>
-								<th width="20%">Aksi</th>
+								<th width="10%">Tanggal</th>
+								<th width="40%">Pegawai</th>
+								<th width="30%">SOP yang dilanggar</th>
+								<th width="10%">Aksi</th>
 							</tr>
 						</thead>
 					</table>
