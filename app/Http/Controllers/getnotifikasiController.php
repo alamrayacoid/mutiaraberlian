@@ -151,4 +151,30 @@ class getnotifikasiController extends Controller
 
         return response()->json($notif);
     }
+
+
+    // clear notifikasi
+    public function clearNotif()
+    {
+        DB::beginTransaction();
+        try {
+            $term = 'Notifikasi';
+            $listNotif = d_notification::where('n_name', 'LIKE', $term .'%')
+            ->delete();
+
+            DB::commit();
+            return response()->json([
+                'status' => 'berhasil'
+            ]);
+        }
+        catch (\Exception $e) {
+            DB::rollback();
+            return response()->json([
+                'status' => 'gagal',
+                'message' => $e->getMessage()
+            ]);
+        }
+
+
+    }
 }

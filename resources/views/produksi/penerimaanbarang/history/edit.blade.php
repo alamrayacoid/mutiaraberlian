@@ -125,12 +125,12 @@
                 loadingShow();
             },
             success: function(resp) {
-                if (resp.detail.get_mutation_dt.length > 0) {
+                if (resp.detail.get_prod_code.length > 0) {
                     $('#table_listProdCode').DataTable().clear().destroy();
 
-                    $.each(resp.detail.get_mutation_dt, function(idx, value) {
-                        kode = '<td><input type="text" class="form-control form-control-sm"  style="text-transform: uppercase" name="prodCode[]" value="'+ value.smd_productioncode +'"></td>';
-                        qty = '<td class="text-right"><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="'+ value.smd_qty +'"></td>';
+                    $.each(resp.detail.get_prod_code, function(idx, value) {
+                        kode = '<td><input type="text" class="form-control form-control-sm"  style="text-transform: uppercase" name="prodCode[]" value="'+ value.poc_productioncode +'"></td>';
+                        qty = '<td class="text-right"><input type="text" class="form-control form-control-sm digits qtyProdCode" name="qtyProdCode[]" value="'+ value.poc_qty +'"></td>';
                         if (idx == 0) {
                             aksi = '<td class="text-center"><button class="btn btn-success btnAddProdCode btn-sm rounded-circle" title="Tambah Kode Produksi" style="color:white;" type="button"><i class="fa fa-plus" aria-hidden="true"></i></button></td>';
                         }
@@ -149,11 +149,11 @@
                     });
                 }
 
-                $('#modalEditHistory .sm_stock').val(resp.detail.sm_stock);
-                $('#modalEditHistory .sm_detailid').val(resp.detail.sm_detailid);
-                $('#modalEditHistory #itemName').val(resp.detail.get_stock.get_item.i_name);
-                $('#modalEditHistory #itemUnit').val(resp.detail.get_stock.get_item.get_unit1.u_name);
-                $('#modalEditHistory #itemQty').val(resp.detail.sm_qty);
+                $('#modalEditHistory .ird_itemreceipt').val(resp.detail.ird_itemreceipt);
+                $('#modalEditHistory .ird_detailid').val(resp.detail.ird_detailid);
+                $('#modalEditHistory #itemName').val(resp.detail.get_item.i_name);
+                $('#modalEditHistory #itemUnit').val(resp.detail.get_unit.u_name);
+                $('#modalEditHistory #itemQty').val(resp.detail.ird_qty);
 
                 getEventsReady();
                 $('#modalEditHistory').modal('show');

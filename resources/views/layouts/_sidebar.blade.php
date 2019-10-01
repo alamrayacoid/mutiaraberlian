@@ -70,7 +70,7 @@
                         <footer>
                             <ul>
                                 <li>
-                                    <a href="#"> # </a>
+                                    <a href="#" class="btn btn-danger" id="btnClearNotif"> Hapus semua notifikasi </a>
                                 </li>
                             </ul>
                         </footer>

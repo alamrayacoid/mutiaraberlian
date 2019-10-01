@@ -987,6 +987,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/gettmpoto', 'getotorisasiController@gettmpoto');
 
     Route::get('/getnotif', 'getnotifikasiController@get');
+    Route::post('/clear-notif', 'getnotifikasiController@clearNotif')->name('notif.clearNotif');
     Route::get('/gettmpnotif', 'getnotifikasiController@gettmpnotif');
     // Route::get('/testoto', 'pushotorisasiController@otorisasiup');
 

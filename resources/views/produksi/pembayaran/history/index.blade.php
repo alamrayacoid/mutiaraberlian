@@ -16,7 +16,7 @@
                     </div>
                 </fieldset>
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover table-bordered display nowrap" cellspacing="0" id="table_history">
+                    <table class="table table-striped table-hover table-bordered display nowrap w-100" cellspacing="0" id="table_history">
                         <thead class="bg-primary">
                             <tr>
                                 <th width="1%">No</th>

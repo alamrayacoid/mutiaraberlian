@@ -194,45 +194,61 @@ class PenerimaanProduksiController extends Controller
                 return $data->pod_qty;
             })
             ->addColumn('terima', function($data){
-                if($data->ird_qty == NULL) {
+                // if($data->ird_qty == NULL) {
+                //     $qty_compare = 0;
+                // }
+                // else {
+                //     $data_check = DB::table('m_item')
+                //         ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                //             'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                //             'm_item.i_unit3 as unit3')
+                //         ->where('m_item.i_id', '=', $data->pod_item)
+                //         ->first();
+                //     $qty_compare = 0;
+                //     if ($data->pod_unit == $data_check->unit1) {
+                //         $qty_compare = $data->ird_qty/$data_check->compare1;
+                //     } else if ($data->pod_unit == $data_check->unit2) {
+                //         $qty_compare = $data->ird_qty/$data_check->compare2;
+                //     } else if ($data->pod_unit == $data_check->unit3) {
+                //         $qty_compare = $data->ird_qty/$data_check->compare3;
+                //     }
+                // }
+
+                if (is_null($data->ird_qty)) {
                     $qty_compare = 0;
-                } else {
-                    $data_check = DB::table('m_item')
-                        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-                            'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                            'm_item.i_unit3 as unit3')
-                        ->where('m_item.i_id', '=', $data->pod_item)
-                        ->first();
-                    $qty_compare = 0;
-                    if ($data->pod_unit == $data_check->unit1) {
-                        $qty_compare = $data->ird_qty/$data_check->compare1;
-                    } else if ($data->pod_unit == $data_check->unit2) {
-                        $qty_compare = $data->ird_qty/$data_check->compare2;
-                    } else if ($data->pod_unit == $data_check->unit3) {
-                        $qty_compare = $data->ird_qty/$data_check->compare3;
-                    }
+                }
+                else {
+                    $qty_compare = $data->ird_qty;
                 }
 
                 return $qty_compare;
             })
             ->addColumn('action', function($data) {
-                if($data->ird_qty == NULL) {
+                // if($data->ird_qty == NULL) {
+                //     $qty_compare = 0;
+                // }
+                // else {
+                //     $data_check = DB::table('m_item')
+                //         ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+                //             'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+                //             'm_item.i_unit3 as unit3')
+                //         ->where('m_item.i_id', '=', $data->pod_item)
+                //         ->first();
+                //     $qty_compare = 0;
+                //     if ($data->pod_unit == $data_check->unit1) {
+                //         $qty_compare = $data->ird_qty/$data_check->compare1;
+                //     } else if ($data->pod_unit == $data_check->unit2) {
+                //         $qty_compare = $data->ird_qty/$data_check->compare2;
+                //     } else if ($data->pod_unit == $data_check->unit3) {
+                //         $qty_compare = $data->ird_qty/$data_check->compare3;
+                //     }
+                // }
+
+                if (is_null($data->ird_qty)) {
                     $qty_compare = 0;
-                } else {
-                    $data_check = DB::table('m_item')
-                        ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-                            'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                            'm_item.i_unit3 as unit3')
-                        ->where('m_item.i_id', '=', $data->pod_item)
-                        ->first();
-                    $qty_compare = 0;
-                    if ($data->pod_unit == $data_check->unit1) {
-                        $qty_compare = $data->ird_qty/$data_check->compare1;
-                    } else if ($data->pod_unit == $data_check->unit2) {
-                        $qty_compare = $data->ird_qty/$data_check->compare2;
-                    } else if ($data->pod_unit == $data_check->unit3) {
-                        $qty_compare = $data->ird_qty/$data_check->compare3;
-                    }
+                }
+                else {
+                    $qty_compare = $data->ird_qty;
                 }
 
                 if ($qty_compare < $data->pod_qty) {
@@ -241,7 +257,8 @@ class PenerimaanProduksiController extends Controller
                             <i class="fa fa-arrow-down"></i>&nbsp Terima Barang
                         </button>
                     </div>';
-                } else {
+                }
+                else {
                    // return '<div class="text-center"><span class="status-approve" style="padding: 5px;">Diterima</span></div>';
                     return '<div class="status-termin-lunas"><p>Diterima</p></div>';
                 }
@@ -296,26 +313,33 @@ class PenerimaanProduksiController extends Controller
             })
             ->first();
 
-        if($data->terima == NULL) {
+        // if($data->terima == NULL) {
+        //     $qty_compare = 0;
+        // }
+        // else {
+        //     $check = DB::table('m_item')
+        //         ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+        //             'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+        //             'm_item.i_unit3 as unit3')
+        //         ->where('m_item.i_id', '=', $item)
+        //         ->first();
+        //     $qty_compare = 0;
+        //     if ($data->unit == $check->unit1) {
+        //         $qty_compare = $data->terima/$check->compare1;
+        //     }
+        //     else if ($data->unit == $check->unit2) {
+        //         $qty_compare = $data->terima/$check->compare2;
+        //     }
+        //     else if ($data->unit == $check->unit3) {
+        //         $qty_compare = $data->terima/$check->compare3;
+        //     }
+        // }
+
+        if (is_null($data->terima)) {
             $qty_compare = 0;
         }
         else {
-            $check = DB::table('m_item')
-                ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-                    'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                    'm_item.i_unit3 as unit3')
-                ->where('m_item.i_id', '=', $item)
-                ->first();
-            $qty_compare = 0;
-            if ($data->unit == $check->unit1) {
-                $qty_compare = $data->terima/$check->compare1;
-            }
-            else if ($data->unit == $check->unit2) {
-                $qty_compare = $data->terima/$check->compare2;
-            }
-            else if ($data->unit == $check->unit3) {
-                $qty_compare = $data->terima/$check->compare3;
-            }
+            $qty_compare = $data->terima;
         }
 
        // $sisa = (int)$data->jumlah - (int)$qty_compare;
@@ -349,17 +373,7 @@ class PenerimaanProduksiController extends Controller
         }
 
         DB::beginTransaction();
-        try{
-            $totalqty = 0;
-            for ($i = 0; $i < count($request->prodCode); $i++){
-                if ($request->prodCode[$i] != " " && $request->prodCode[$i] !== null){
-                    $totalqty = $totalqty + (int)$request->qtyProdCode[$i];
-                }
-            }
-            if ((int)$request->qty !=  $totalqty){
-                return Response::json(['status' => 'Failed', 'message' => "Jumlah kode produksi tidak sesuai"]);
-            }
-
+        try {
             $data_check = DB::table('d_productionorder')
                 ->select('d_productionorder.po_nota as nota', 'd_productionorderdt.pod_item as item',
                     'd_productionorderdt.pod_qty as jumlah', 'd_productionorderdt.pod_unit', DB::raw('sum(d_itemreceiptdt.ird_qty) as terima'), 'm_unit.u_name as satuan')
@@ -383,26 +397,46 @@ class PenerimaanProduksiController extends Controller
             $result = null;
             $message = null;
 
-            if($data_check->terima == NULL) {
+            // if($data_check->terima == NULL) {
+            //     $qty_compare = 0;
+            // }
+            // else {
+            //     $check = DB::table('m_item')
+            //         ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
+            //             'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
+            //             'm_item.i_unit3 as unit3')
+            //         ->where('m_item.i_id', '=', $item)
+            //         ->first();
+            //     $qty_compare = 0;
+            //     if ($data_check->pod_unit == $check->unit1) {
+            //         $qty_compare = $data_check->terima/$check->compare1;
+            //     }
+            //     else if ($data_check->pod_unit == $check->unit2) {
+            //         $qty_compare = $data_check->terima/$check->compare2;
+            //     }
+            //     else if ($data_check->pod_unit == $check->unit3) {
+            //         $qty_compare = $data_check->terima/$check->compare3;
+            //     }
+            // }
+
+            if (is_null($data_check->terima)) {
                 $qty_compare = 0;
             }
             else {
-                $check = DB::table('m_item')
-                    ->select('m_item.i_unitcompare1 as compare1', 'm_item.i_unitcompare2 as compare2',
-                        'm_item.i_unitcompare3 as compare3', 'm_item.i_unit1 as unit1', 'm_item.i_unit2 as unit2',
-                        'm_item.i_unit3 as unit3')
-                    ->where('m_item.i_id', '=', $item)
-                    ->first();
-                $qty_compare = 0;
-                if ($data_check->pod_unit == $check->unit1) {
-                    $qty_compare = $data_check->terima/$check->compare1;
+                $qty_compare = $data_check->terima;
+            }
+
+            $totalqty = 0;
+            for ($i = 0; $i < count($request->prodCode); $i++){
+                if ($request->prodCode[$i] != " " && $request->prodCode[$i] !== null){
+                    $totalqty = $totalqty + (int)$request->qtyProdCode[$i];
                 }
-                else if ($data_check->pod_unit == $check->unit2) {
-                    $qty_compare = $data_check->terima/$check->compare2;
-                }
-                else if ($data_check->pod_unit == $check->unit3) {
-                    $qty_compare = $data_check->terima/$check->compare3;
-                }
+            }
+            if ($request->qty !=  $totalqty){
+                return Response::json([
+                    'status' => 'Failed',
+                    'message' => "Jumlah kode produksi tidak sesuai dengan jumlah item yang diterima !"
+                ]);
             }
 
             $sisa = (int)$data_check->jumlah - (int)$qty_compare;
@@ -418,7 +452,8 @@ class PenerimaanProduksiController extends Controller
 
             DB::commit();
             return Response::json(['status' => 'Success', 'result' => $result, 'message' => $message]);
-        }catch (\Exception $e){
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return Response::json(['status' => 'Failed', 'message' => $e]);
         }
@@ -440,17 +475,19 @@ class PenerimaanProduksiController extends Controller
             ->where('ird_item', '=', $item)
             ->get();
 
-        //konversi ke satuan terkecil
-        $pesan = 0;
-        if ($data[0]->pod_unit == $data[0]->i_unit1){
-            $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare1;
-        }
-        elseif ($data[0]->pod_unit == $data[0]->i_unit2){
-            $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare2;
-        }
-        elseif ($data[0]->pod_unit == $data[0]->i_unit3){
-            $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare3;
-        }
+        // //konversi ke satuan terkecil
+        // $pesan = 0;
+        // if ($data[0]->pod_unit == $data[0]->i_unit1){
+        //     $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare1;
+        // }
+        // elseif ($data[0]->pod_unit == $data[0]->i_unit2){
+        //     $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare2;
+        // }
+        // elseif ($data[0]->pod_unit == $data[0]->i_unit3){
+        //     $pesan = $data[0]->pod_qty * $data[0]->i_unitcompare3;
+        // }
+
+        $pesan = $data[0]->pod_qty;
 
         if ($pesan == $terima[0]->diterima){
             DB::table('d_productionorderdt')
@@ -495,30 +532,31 @@ class PenerimaanProduksiController extends Controller
             // set date received
             $receiveDate = Carbon::createFromFormat('d-m-Y', $request->receiveDate);
             if ($nota_receipt->count() > 0) {
+                $id = $nota_receipt->first()->ir_id;
                 $detail_receipt = (DB::table('d_itemreceiptdt')->where('ird_itemreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) ? (DB::table('d_itemreceiptdt')->where('ird_itemreceipt', '=', $nota_receipt->first()->ir_id)->max('ird_detailid')) + 1 : 1;
 
-                $qty_compare = 0;
-                if ($request->satuan == $data_check->unit1) {
-                    $qty_compare = $request->qty;
-                }
-                else if ($request->satuan == $data_check->unit2) {
-                    $qty_compare = $request->qty * $data_check->compare2;
-                }
-                else if ($request->satuan == $data_check->unit3) {
-                    $qty_compare = $request->qty * $data_check->compare3;
-                }
-
-                $values = [
-                    'ird_itemreceipt'  => $nota_receipt->first()->ir_id,
-                    'ird_detailid'      => $detail_receipt,
-                    'ird_nota_do'       => $request->nota,
-                    'ird_date'          => $receiveDate,
-                    'ird_item'          => $item,
-                    'ird_qty'           => $qty_compare,
-                    'ird_unit'          => $data_check->unit1,
-                    'ird_user'          => Auth::user()->u_id
-                ];
-                DB::table('d_itemreceiptdt')->insert($values);
+                // $qty_compare = 0;
+                // if ($request->satuan == $data_check->unit1) {
+                //     $qty_compare = $request->qty;
+                // }
+                // else if ($request->satuan == $data_check->unit2) {
+                //     $qty_compare = $request->qty * $data_check->compare2;
+                // }
+                // else if ($request->satuan == $data_check->unit3) {
+                //     $qty_compare = $request->qty * $data_check->compare3;
+                // }
+                //
+                // $values = [
+                //     'ird_itemreceipt'  => $nota_receipt->first()->ir_id,
+                //     'ird_detailid'      => $detail_receipt,
+                //     'ird_nota_do'       => $request->nota,
+                //     'ird_date'          => $receiveDate,
+                //     'ird_item'          => $item,
+                //     'ird_qty'           => $qty_compare,
+                //     'ird_unit'          => $data_check->unit1,
+                //     'ird_user'          => Auth::user()->u_id
+                // ];
+                // DB::table('d_itemreceiptdt')->insert($values);
             }
             else {
                 $id = (DB::table('d_itemreceipt')->max('ir_id')) ? (DB::table('d_itemreceipt')->max('ir_id'))+1 : 1;
@@ -530,28 +568,44 @@ class PenerimaanProduksiController extends Controller
 
                 $detail_receipt = (DB::table('d_itemreceiptdt')->where('ird_itemreceipt', '=', $id)->max('ird_detailid')) ? (DB::table('d_itemreceiptdt')->where('ird_itemreceipt', '=', $id)->max('ird_detailid')) + 1 : 1;
 
-                $qty_compare = 0;
-                if ($request->satuan == $data_check->unit1) {
-                    $qty_compare = $request->qty;
-                } else if ($request->satuan == $data_check->unit2) {
-                    $qty_compare = $request->qty * $data_check->compare2;
-                } else if ($request->satuan == $data_check->unit3) {
-                    $qty_compare = $request->qty * $data_check->compare3;
-                }
+                // $qty_compare = 0;
+                // if ($request->satuan == $data_check->unit1) {
+                //     $qty_compare = $request->qty;
+                // } else if ($request->satuan == $data_check->unit2) {
+                //     $qty_compare = $request->qty * $data_check->compare2;
+                // } else if ($request->satuan == $data_check->unit3) {
+                //     $qty_compare = $request->qty * $data_check->compare3;
+                // }
 
-                $values = [
-                    'ird_itemreceipt'  => $id,
-                    'ird_detailid'      => $detail_receipt,
-                    'ird_nota_do'       => $request->nota,
-                    'ird_date'          => $receiveDate,
-                    'ird_item'          => $item,
-                    'ird_qty'           => $qty_compare,
-                    'ird_unit'          => $data_check->unit1,
-                    'ird_user'          => Auth::user()->u_id
-                ];
                 DB::table('d_itemreceipt')->insert($receipt);
-                DB::table('d_itemreceiptdt')->insert($values);
             }
+
+            $qty_compare = 0;
+            if ($request->satuan == $data_check->unit1) {
+                $qty_compare = $request->qty;
+                $listSellPrice = $data_check->value;
+                $listHPP = $data_check->value;
+            } else if ($request->satuan == $data_check->unit2) {
+                $qty_compare = $request->qty * $data_check->compare2;
+                $listSellPrice = $data_check->value / $data_check->compare2;
+                $listHPP = $data_check->value / $data_check->compare2;
+            } else if ($request->satuan == $data_check->unit3) {
+                $qty_compare = $request->qty * $data_check->compare3;
+                $listSellPrice = $data_check->value / $data_check->compare3;
+                $listHPP = $data_check->value / $data_check->compare3;
+            }
+
+            $values = [
+                'ird_itemreceipt'  => $id,
+                'ird_detailid'      => $detail_receipt,
+                'ird_nota_do'       => $request->nota,
+                'ird_date'          => $receiveDate,
+                'ird_item'          => $item,
+                'ird_qty'           => $request->qty,
+                'ird_unit'          => $request->satuan,
+                'ird_user'          => Auth::user()->u_id
+            ];
+            DB::table('d_itemreceiptdt')->insert($values);
 
             $prodCodeId = DB::table('d_productionorder')
                                 ->where('po_id', $order)
@@ -559,12 +613,21 @@ class PenerimaanProduksiController extends Controller
                                 ->first() ;
 
             // insert production-code for each item
+            $listQtyPC = array();
             if ($request->prodCode !== null) {
                 $valuesProdCode = array();
                 foreach ($request->prodCode as $key => $val) {
+                    $qtyPC = 0;
+                    if ($request->prodUnit == $data_check->unit1) {
+                        $qtyPC = $request->qtyProdCode[$key];
+                    } else if ($request->prodUnit == $data_check->unit2) {
+                        $qtyPC = $request->qtyProdCode[$key] * $data_check->compare2;
+                    } else if ($request->prodUnit == $data_check->unit3) {
+                        $qtyPC = $request->qtyProdCode[$key] * $data_check->compare3;
+                    }
+
                     $detailId = d_productionordercode::where('poc_productionorder', $prodCodeId->po_id)
                     ->max('poc_detailid') + ($key + 1);
-
                     $detailProdCode = array(
                         'poc_productionorder' => $prodCodeId->po_id,
                         'poc_detailid' => $detailId,
@@ -572,19 +635,21 @@ class PenerimaanProduksiController extends Controller
                         'poc_item' => $item,
                         'poc_productioncode' => strtoupper($val),
                         'poc_qty' => $request->qtyProdCode[$key],
-                        'poc_unit' => $request->satuan
+                        'poc_unit' => $request->prodUnit
                     );
+                    array_push($listQtyPC, $qtyPC);
                     array_push($valuesProdCode, $detailProdCode);
                 }
                 d_productionordercode::insert($valuesProdCode);
             }
-            // dd($receiveDate);
+
             $listPC = array($request->prodCode);
-            $listQtyPC = array($request->qtyProdCode);
+            $listQtyPC = array($listQtyPC);
             $listUnitPC = array();
-            $listSellPrice = array($data_check->value);
-            $listHPP = array($data_check->value);
+            $listSellPrice = array($listSellPrice);
+            $listHPP = array($listHPP);
             $listSmQty = array($qty_compare);
+
             // insert mutation using sales-in, 'cause it create item with new owner and position
             $mutationIn = Mutasi::salesIn(
                 Auth::user()->u_company, // destination
@@ -789,42 +854,56 @@ class PenerimaanProduksiController extends Controller
         catch (\DecryptException $e){
             abort('404');
         }
-        // get list of 'in' mutcat-list
-        $inMutcatList = m_mutcat::where('m_status', 'M')
-            ->select('m_id')
-            ->get();
-        for ($i = 0; $i < count($inMutcatList); $i++) {
-            $tmp[] = $inMutcatList[$i]->m_id;
-        }
-        $inMutcatList = $tmp;
+        // // get list of 'in' mutcat-list
+        // $inMutcatList = m_mutcat::where('m_status', 'M')
+        //     ->select('m_id')
+        //     ->get();
+        // for ($i = 0; $i < count($inMutcatList); $i++) {
+        //     $tmp[] = $inMutcatList[$i]->m_id;
+        // }
+        // $inMutcatList = $tmp;
 
         $dataPO = d_productionorder::where('po_id', $id)
-            ->with(['getMutation' => function ($q) use ($inMutcatList) {
-                $q
-                    ->whereIn('sm_mutcat', $inMutcatList)
-                    ->with('getStock.getItem.getUnit1');
+            // ->with(['getMutation' => function ($q) use ($inMutcatList) {
+            //     $q
+            //         ->whereIn('sm_mutcat', $inMutcatList)
+            //         ->with('getStock.getItem.getUnit1');
+            // }])
+            ->with(['getItemReceipt' => function ($q) {
+                $q->with(['getIRDetail' => function ($q) {
+                    $q->select(
+                        'ird_itemreceipt', 'ird_detailid', 'ird_date',
+                        'ird_item', 'ird_qty', 'ird_unit'
+                    )
+                    ->with(['getItem' => function ($q) {
+                        $q->select(
+                            'i_id', 'i_name'
+                        );
+                    }])
+                    ->with('getUnit');
+                }]);
             }])
             ->first();
 
-        $datas = $dataPO->getMutation;
+        $datas = $dataPO->getItemReceipt->getIRDetail;
 
         return DataTables::of($datas)
         ->addIndexColumn()
         ->addColumn('date', function($datas){
-            return Carbon::parse($datas->sm_date)->format('d M Y');
+            return Carbon::parse($datas->ird_date)->format('d M Y');
         })
         ->addColumn('item', function($datas){
-            return $datas->getStock->getItem->i_name;
+            return $datas->getItem->i_name;
         })
         ->addColumn('unit', function($datas){
-            return $datas->getStock->getItem->getUnit1->u_name;
+            return $datas->getUnit->u_name;
         })
         ->addColumn('qty', function($datas){
-            return number_format($datas->sm_qty, 0, ',', '.');
+            return number_format($datas->ird_qty, 0, ',', '.');
         })
         ->addColumn('action', function($datas) {
             return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit" onclick="edit(\''.Crypt::encrypt($datas->sm_stock).'\',\''.Crypt::encrypt($datas->sm_detailid).'\')"><i class="fa fa-pencil"></i>
+            <button class="btn btn-warning hint--top-left hint--warning" aria-label="Edit" onclick="edit(\''.Crypt::encrypt($datas->ird_itemreceipt).'\',\''.Crypt::encrypt($datas->ird_detailid).'\')"><i class="fa fa-pencil"></i>
             </button>
             </div>';
         })
@@ -847,11 +926,42 @@ class PenerimaanProduksiController extends Controller
         }
 
         try {
-            $detail = d_stock_mutation::where('sm_stock', $id)
-            ->where('sm_detailid', $detailId)
-            ->with('getMutationDt')
-            ->with('getStock.getItem.getUnit1')
-            ->first();
+            // $detail = d_stock_mutation::where('sm_stock', $id)
+            // ->where('sm_detailid', $detailId)
+            // ->with('getMutationDt')
+            // ->with('getStock.getItem.getUnit1')
+            // ->first();
+
+            $detail = d_itemreceiptdt::where('ird_itemreceipt', $id)
+                ->where('ird_detailid', $detailId)
+                ->select(
+                    'ird_itemreceipt', 'ird_detailid', 'ird_date',
+                    'ird_nota_do', 'ird_item', 'ird_qty', 'ird_unit'
+                )
+                ->with(['getItem' => function ($q) {
+                    $q->select(
+                        'i_id', 'i_name', 'i_unit1', 'i_unit2',
+                        'i_unit3', 'i_unitcompare1', 'i_unitcompare2',
+                        'i_unitcompare3'
+                    );
+                }])
+                ->with('getUnit')
+                ->with('getProdCode')
+                ->first();
+
+            // foreach ($detail->getProdCode as $key => $value) {
+            //     $qty_compare = 0;
+            //     if ($detail->ird_unit == $detail->getItem->i_unit1) {
+            //         $qty_compare = $value->poc_qty / $detail->getItem->i_unitcompare1;
+            //     }
+            //     elseif ($detail->ird_unit == $detail->getItem->i_unit2) {
+            //         $qty_compare = $value->poc_qty / $detail->getItem->i_unitcompare2;
+            //     }
+            //     elseif ($detail->ird_unit == $detail->getItem->i_unit3) {
+            //         $qty_compare = $value->poc_qty / $detail->getItem->i_unitcompare3;
+            //     }
+            //     $value->poc_qty = $qty_compare;
+            // }
 
             DB::commit();
             return Response::json([
@@ -878,9 +988,20 @@ class PenerimaanProduksiController extends Controller
                 throw new Exception("Jumlah kode produksi harus sesuai dengan jumlah item !", 1);
             }
 
-            // get current stock-mutation (used qty, qtyProdCode)
-            $current = d_stock_mutation::where('sm_stock', $request->sm_stock)
-                ->where('sm_detailid', $request->sm_detailid)
+            // // get current stock-mutation (used qty, qtyProdCode)
+            // $current = d_stock_mutation::where('sm_stock', $request->sm_stock)
+            //     ->where('sm_detailid', $request->sm_detailid)
+            //     ->with('getMutationDt.getStockDt')
+            //     ->with('getStock.getStockDt')
+            //     ->first();
+
+            $itemReceiptDt = d_itemreceiptdt::where('ird_itemreceipt', $request->ird_itemreceipt)
+                ->where('ird_detailid', $request->ird_detailid)
+                ->with('getProdCode')
+                ->with('getItem')
+                ->first();
+
+            $current = d_stock_mutation::where('sm_reff', $itemReceiptDt->ird_nota_do)
                 ->with('getMutationDt.getStockDt')
                 ->with('getStock.getStockDt')
                 ->first();
@@ -892,19 +1013,34 @@ class PenerimaanProduksiController extends Controller
 
             // get listpc and new $listQtyPC
             $listQtyPC = array();
+            $listReqQtyPC = array();
             $listPC = array();
             foreach ($current->getMutationDt as $key => $value) {
                 array_push($listQtyPC, $value->getStockDt->sd_qty - $value->smd_qty);
                 array_push($listPC, $value->smd_productioncode);
             }
+
             // update list qty-prodCode
             foreach ($request->prodCode as $key => $value) {
                 $value = strtoupper($value);
                 $idx = array_search($value, $listPC);
+
+                if ($itemReceiptDt->ird_unit == $itemReceiptDt->getItem->i_unit1) {
+                    $qty_compare = $request->qtyProdCode[$key] * $itemReceiptDt->getItem->i_unitcompare1;
+                }
+                elseif ($itemReceiptDt->ird_unit == $itemReceiptDt->getItem->i_unit2) {
+                    $qty_compare = $request->qtyProdCode[$key] * $itemReceiptDt->getItem->i_unitcompare2;
+                }
+                elseif ($itemReceiptDt->ird_unit == $itemReceiptDt->getItem->i_unit3) {
+                    $qty_compare = $request->qtyProdCode[$key] * $itemReceiptDt->getItem->i_unitcompare3;
+                }
+                array_push($listReqQtyPC, $qty_compare);
+
                 if ($idx !== false) {
-                    $listQtyPC[$idx] += $request->qtyProdCode[$key];
+                    $listQtyPC[$idx] += $qty_compare;
                 }
             }
+
             // validate qty-prodCode
             foreach ($listQtyPC as $key => $value) {
                 if ($value < 0) {
@@ -919,15 +1055,15 @@ class PenerimaanProduksiController extends Controller
                 $current->sm_detailid,
                 $request->itemQty,
                 $request->prodCode,
-                $request->qtyProdCode
+                $listReqQtyPC
             );
             if ($updateMut->original['status'] !== 'success') {
                 return $updateMut;
             }
 
             // get production-order and item-receipt
-            $notaDO = $current->sm_reff;
-            $itemId = $current->getStock->s_item;
+            $notaDO = $itemReceiptDt->ird_nota_do;
+            $itemId = $itemReceiptDt->ird_item;
             // get temp-po
             $tempPO = d_productionorder::where('po_nota', $current->sm_nota)->first();
 
@@ -937,16 +1073,16 @@ class PenerimaanProduksiController extends Controller
             ->delete();
 
             $productionOrder = d_productionorder::where('po_nota', $current->sm_nota)
-            ->with(['getPODt' => function ($query) use ($itemId) {
-                $query
-                ->where('pod_item', $itemId);
-            }])
-            ->with(['getItemReceipt.getIRDetail' => function($q) use ($notaDO) {
-                $q
-                ->where('ird_nota_do', $notaDO)
-                ->with('getProdCode');
-            }])
-            ->first();
+                ->with(['getPODt' => function ($query) use ($itemId) {
+                    $query
+                    ->where('pod_item', $itemId);
+                }])
+                ->with(['getItemReceipt.getIRDetail' => function($q) use ($notaDO) {
+                    $q
+                    ->where('ird_nota_do', $notaDO)
+                    ->with('getProdCode');
+                }])
+                ->first();
 
             $valuesProdCode = array();
             // update production-order-code
@@ -960,7 +1096,7 @@ class PenerimaanProduksiController extends Controller
                     'poc_nota_do' => $productionOrder->getItemReceipt->getIRDetail[0]->ird_nota_do,
                     'poc_item' => $productionOrder->getPODt[0]->pod_item,
                     'poc_productioncode' => strtoupper($val),
-                    'poc_qty' => $request->qtyProdCode[$key],
+                    'poc_qty' => $listReqQtyPC[$key],
                     'poc_unit' => $productionOrder->getPODt[0]->pod_unit
                 );
                 array_push($valuesProdCode, $detailProdCode);
@@ -1017,7 +1153,7 @@ class PenerimaanProduksiController extends Controller
                     ]);
                 }
                 $jrValue = $productionOrder->getPODt[0]->pod_value * $request->itemQty;
-// dd($productionOrder->getPODt[0]->pod_value, $request->itemQty, $jrValue, $notaDO);
+
                 array_push($details, [
                     "jrdt_nomor"        => 1,
                     "jrdt_akun"         => $acc_persediaan->pd_acc,

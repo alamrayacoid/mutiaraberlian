@@ -10,8 +10,8 @@
             </div>
             <div class="modal-body">
                 <form class="myForm">
-                    <input type="hidden" name="sm_stock" class="sm_stock">
-                    <input type="hidden" name="sm_detailid" class="sm_detailid">
+                    <input type="hidden" name="ird_itemreceipt" class="ird_itemreceipt">
+                    <input type="hidden" name="ird_detailid" class="ird_detailid">
                     <div class="row">
                         <div class="col-md-1 col-sm-4 col-12">
                             <label>Item</label>

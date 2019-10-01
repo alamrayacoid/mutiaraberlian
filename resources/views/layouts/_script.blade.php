@@ -608,21 +608,9 @@
             // call notifikasi
             notifikasi('starting');
 
-            // get list 'notifikasi - notifikasi'
-            // $.ajax({
-            //     type: 'get',
-            //     dataType: 'json',
-            //     url: baseUrl + '/gettmpnotif',
-            //     success : function(response){
-            //         if (response.length != 0) {
-            //             for (var i = 0; i < response.length; i++) {
-            //                 if (parseInt(response[i].n_qty) != 0) {
-            //                     notifikasi(response[i].n_name);
-            //                 }
-            //             }
-            //         }
-            //     }
-            // });
+            $('#btnClearNotif').on('click', function() {
+                clearNotif();
+            })
         @endif
     @endif
     // validate and update 'notif - otorisasi' (create if is_null)
@@ -711,6 +699,33 @@
                 }
                 $('#shownotifikasi').html(html);
                 $('#counternotif').text(response.count);
+            }
+        });
+    }
+
+    // clear notif
+    function clearNotif() {
+        $.ajax({
+            url: "{{ route('notif.clearNotif') }}",
+            type: "post",
+            beforeSend: function() {
+                loadingShow();
+            },
+            success: function(resp) {
+                if (resp.status == 'berhasil') {
+                    messageSuccess('Berhasil', 'Seluruh notifikasi berhasil dihapus !');
+                    // call notifikasi
+                    notifikasi('reload');
+                }
+                else {
+                    messageWarning('Gagal', 'Terjadi kesalahan : ' + resp.message);
+                }
+            },
+            error: function(err) {
+                messageWarning('Error', 'Terjadi kesalahan : ' + err);
+            },
+            complete: function() {
+                loadingHide();
             }
         });
     }

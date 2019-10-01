@@ -129,6 +129,7 @@
             var terima = 0;
             axios.get(baseUrl+'/produksi/penerimaanbarang/terimalistitem'+'/'+id+'/'+item)
                 .then(function (response) {
+                    console.log(response);
                     // handle success
                     if (response.data.status == "Success") {
                         if (response.data.data.terima == null) {
@@ -146,8 +147,8 @@
                         $("#txtJumlah").text(response.data.data.jumlah);
                         $("#txtTerima").text(terima);
                         $("#txtSisa").text(sisa);
-                        $('#qtyName').text(response.data.satuan.unit1);
-                        $('#prodUnit').val(response.data.satuan.id1);
+                        $('#qtyName').text(response.data.data.satuan);
+                        $('#prodUnit').val(response.data.data.unit);
                         $("#nota").val('');
                         $("#satuan").val(response.data.data.unit);
                         $("#qty").val(0);
@@ -289,10 +290,12 @@
                         if (response.data.result == "Over qty") {
                             loadingHide();
                             messageWarning("Pesan", response.data.message);
-                        } else if (totalQtyProdCode > parseInt($("#txtSisa").text())) {
-                            loadingHide();
-                            messageWarning("Pesan", "Jumlah qty pada \'Kode Produksi\' melebihi kebutuhan !");
-                        } else {
+                        }
+                        // else if (totalQtyProdCode > parseInt($("#txtSisa").text())) {
+                        //     loadingHide();
+                        //     messageWarning("Pesan", "Jumlah qty pada \'Kode Produksi\' melebihi kebutuhan !");
+                        // }
+                        else {
                             check = true;
                         }
                     } else {
