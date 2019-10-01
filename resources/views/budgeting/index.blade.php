@@ -225,7 +225,7 @@
                                             layoutBebanBreak += '<div class="col-md-12 p-2 border-bot mt-2" style="background-color:'+ status +';color:#fff">\n' +
                                                 '<div class="row">\n' +
                                                 '<p class="col-md-6">'+ akun.ak_nomor +' - '+ akun.ak_nama +'</p>\n' +
-                                                '<p class="col-md-6 rupiah">'+ parseInt(akun.diff_value) +'</p>\n' +
+                                                '<p class="col-md-6 rupiah">'+ akun.diff_value +'</p>\n' +
                                                 '</div>\n' +
                                                 '</div>';
                                         }
@@ -251,7 +251,7 @@
                                             layoutPendBreak += '<div class="col-md-12 p-2 border-bot mt-2" style="background-color:'+status+';color:#fff">\n' +
                                                 '<div class="row">\n' +
                                                 '<p class="col-md-6">'+ akun.ak_nomor +' - '+ akun.ak_nama +'</p>\n' +
-                                                '<p class="col-md-6 rupiah">'+ parseInt(akun.diff_value) +'</p>\n' +
+                                                '<p class="col-md-6 rupiah">'+ akun.diff_value +'</p>\n' +
                                                 '</div>\n' +
                                                 '</div>';
                                         }
@@ -268,7 +268,7 @@
                     $('#breakdown_beban').html(layoutBebanBreak);
                     $('#breakdown').html(layoutPendBreak);
 
-                    $('.rupiah').inputmask("currency", {
+                    $('.rupiah').inputmask("numeric", {
                         radixPoint: ",",
                         groupSeparator: ".",
                         digits: 0,
@@ -277,6 +277,7 @@
                         rightAlign: true,
                         autoUnmask: true,
                         nullable: false,
+                        allowMinus: true
                         // unmaskAsNumber: true,
                     });
                 },

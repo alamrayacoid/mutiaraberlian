@@ -61,8 +61,8 @@ class BudgetingController extends Controller
                                     'ak_nama',
                                     'ak_posisi',
                                     'd_budgeting.b_value AS budgeting_value',
-                                    DB::RAW('coalesce((as_saldo_akhir - as_saldo_awal), 2) as saldo_akhir'),
-                                    DB::RAW('coalesce((as_saldo_akhir - as_saldo_awal), 2) - d_budgeting.b_value AS diff_value')
+                                    DB::RAW('coalesce(as_saldo_akhir - as_saldo_awal) as saldo_akhir'),
+                                    DB::RAW('coalesce(as_saldo_akhir - as_saldo_awal) - d_budgeting.b_value AS diff_value')
                                 );
                             }
                         ]);
@@ -72,7 +72,7 @@ class BudgetingController extends Controller
         ])
         ->select('hs_id', 'hs_nama')
         ->get();
-        
+
         return response()->json([
             'data' => $data
         ]);
@@ -279,48 +279,4 @@ class BudgetingController extends Controller
         ]);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
-    {
-        //
-    }
 }
