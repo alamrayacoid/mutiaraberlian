@@ -22,11 +22,14 @@ class ProfileController extends Controller
         ->with('getEmployee')
         ->first();
 
+        $birthDate = '';
         if (Auth::user()->u_user == 'E') {
-            if (!is_null($detailUser->getEmployee)) {
-                $birthDate = Carbon::parse($detailUser->getEmployee->e_birth)->format('d M Y');
-            }
-        } elseif (Auth::user()->u_user == 'A') {
+            $detailUser = m_employee::where('e_id', Auth::user()->u_code)
+                ->with('getCompany.getCity')
+                ->first();
+            $birthDate = Carbon::parse($detailUser->e_birth)->format('d M Y');
+        }
+        elseif (Auth::user()->u_user == 'A') {
             if (!is_null($detailUser->getAgent)) {
                 $birthDate = Carbon::parse($detailUser->getAgent->a_birthday)->format('d M Y');
             }

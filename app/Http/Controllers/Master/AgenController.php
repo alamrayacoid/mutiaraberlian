@@ -683,7 +683,7 @@ class AgenController extends Controller
                 if ($c_type == 'MMA'){
                     $c_type = 'CABANG';
                 }
-dd($request->all());
+
                 DB::table('m_company')
                     ->where('c_user', $agentCode->a_code)
                     ->update([

@@ -34,9 +34,13 @@
 		                            <div class="row">
 										<div class="profil-image text-center col-md-4">
 											@if (Auth::user()->u_user == 'E')
-												<img class="rounded-circle circle-border " id="profile-img" src="{{ asset('storage/app/'.$detailUser->getEmployee->e_foto) }}" alt="profil" style="width:100%; height:100%;">
+												<img class="rounded-circle circle-border " id="profile-img" src="{{ asset('storage/app/'. $detailUser->e_foto) }}" alt="profil" style="width:100%; height:100%;">
 											@elseif (Auth::user()->u_user == 'A')
-												<img class="rounded-circle circle-border " id="profile-img" src="{{ asset('storage/app/'.$detailUser->getAgent->a_img) }}" alt="profil" style="width:100%; height:100%;">
+												@if (!is_null($detailUser->getAgent))
+													<img class="rounded-circle circle-border " id="profile-img" src="{{ asset('storage/app/'. $detailUser->getAgent->a_img) }}" alt="profil" style="width:100%; height:100%;">
+												@else
+													<img class="rounded-circle circle-border " id="profile-img" src="{{ asset('assets/img/default.jpg') }}" alt="profil" style="width:100%; height:100%;">
+												@endif
 											@else
 												<img class="rounded-circle circle-border " id="profile-img" src="{{ asset('assets/img/default.jpg') }}" alt="profil" style="width:100%; height:100%;">
 											@endif
@@ -51,12 +55,18 @@
 										</div>
 		                                <div class="profil-info col-md-8">
 		                                    <div>
-		                                        <h2 class="mb-4">{{ $detailUser->c_name }}</h2>
-		                                        <h4>{{ $detailUser->c_type }}</h4>
-												@if ($detailUser->getCity == null)
-													<p>{{ $detailUser->getAgent->getArea->wc_name }}</p>
+												@if(Auth::user()->u_user == 'E')
+													<h2 class="mb-4">{{ $detailUser->getCompany->c_name }}</h2>
+													<h4>{{ $detailUser->getCompany->c_type }}</h4>
+													<p>{{ $detailUser->getCompany->getCity->wc_name }}</p>
 												@else
-													<p>{{ $detailUser->getCity->wc_name }}</p>
+			                                        <h2 class="mb-4">{{ $detailUser->c_name }}</h2>
+			                                        <h4>{{ $detailUser->c_type }}</h4>
+													@if ($detailUser->getCity == null)
+														<p>{{ $detailUser->getAgent->getArea->wc_name }}</p>
+													@else
+														<p>{{ $detailUser->getCity->wc_name }}</p>
+													@endif
 												@endif
 		                                    </div>
 		                                </div>
@@ -69,7 +79,11 @@
 		                                        <td>
 		                                            <strong>Perusahaan</strong>
 		                                        </td>
-		                                        <td>{{ $detailUser->c_name }}</td>
+												@if(Auth::user()->u_user == 'E')
+			                                        <td>{{ $detailUser->getCompany->c_name }}</td>
+												@else
+													<td>{{ $detailUser->c_name }}</td>
+												@endif
 		                                    </tr>
 		                                    <tr>
 		                                        <td>
@@ -119,7 +133,7 @@
 									</div>
 									<div class="col-lg-7 col-sm-12">
 										<div class="form-group">
-											<input type="text" readonly="" class="form-control form-control-sm" name="" value="{{ $detailUser->getEmployee->e_name }}">
+											<input type="text" readonly="" class="form-control form-control-sm" name="" value="{{ $detailUser->e_name }}">
 										</div>
 									</div>
 
@@ -137,7 +151,7 @@
 									</div>
 									<div class="col-lg-7 col-sm-12">
 										<div class="form-group">
-											<textarea readonly="" class="form-control" name="">{{ $detailUser->getEmployee->e_address }}</textarea>
+											<textarea readonly="" class="form-control" name="">{{ $detailUser->e_address }}</textarea>
 										</div>
 									</div>
 
@@ -146,7 +160,7 @@
 									</div>
 									<div class="col-lg-7 col-sm-12">
 										<div class="form-group">
-											<input type="text" readonly="" class="form-control form-control-sm hp" name="" value="{{ $detailUser->getEmployee->e_telp }}">
+											<input type="text" readonly="" class="form-control form-control-sm hp" name="" value="{{ $detailUser->e_telp }}">
 										</div>
 									</div>
 
@@ -155,7 +169,7 @@
 									</div>
 									<div class="col-lg-7 col-sm-12">
 										<div class="form-group">
-											@if ($detailUser->getEmployee->e_gender == 'L')
+											@if ($detailUser->e_gender == 'L')
 												<input type="text" readonly="" class="form-control form-control-sm" name="" value="Laki laki">
 											@else
 												<input type="text" readonly="" class="form-control form-control-sm" name="" value="Perempuan">
@@ -172,7 +186,7 @@
 									</div>
 									<div class="col-lg-7 col-sm-12">
 										<div class="form-group">
-											<input type="text" readonly="" class="form-control form-control-sm" name="" value="{{ $detailUser->getEmployee->e_education }}">
+											<input type="text" readonly="" class="form-control form-control-sm" name="" value="{{ $detailUser->e_education }}">
 										</div>
 									</div>
 
@@ -181,7 +195,7 @@
 									</div>
 									<div class="col-lg-7 col-sm-12">
 										<div class="form-group">
-											<input type="text" readonly="" class="form-control form-control-sm" name="" value="{{ $detailUser->getEmployee->e_religion }}">
+											<input type="text" readonly="" class="form-control form-control-sm" name="" value="{{ $detailUser->e_religion }}">
 										</div>
 									</div>
 
@@ -190,7 +204,7 @@
 									</div>
 									<div class="col-lg-7 col-sm-12">
 										<div class="form-group">
-											@if ($detailUser->getEmployee->e_maritalstatus == 'Y')
+											@if ($detailUser->e_maritalstatus == 'Y')
 												<input type="text" readonly="" class="form-control form-control-sm" name="" value="Sudah Menikah">
 											@else
 												<input type="text" readonly="" class="form-control form-control-sm" name="" value="Belum Menikah">
@@ -203,7 +217,7 @@
 									</div>
 									<div class="col-lg-7 col-sm-12">
 										<div class="form-group">
-											<input type="text" readonly="" class="form-control form-control-sm" name="" value="{{ $detailUser->getEmployee->e_rekening }}">
+											<input type="text" readonly="" class="form-control form-control-sm" name="" value="{{ $detailUser->e_rekening }}">
 										</div>
 									</div>
 

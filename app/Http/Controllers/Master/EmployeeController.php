@@ -103,7 +103,10 @@ class EmployeeController extends Controller
         $jabatan = DB::table('m_jabatan')->select('m_jabatan.*')->get();
         $divisi = DB::table('m_divisi')->select('m_divisi.*')->get();
         $company = DB::table('m_company')->select('m_company.*')
-            ->where('c_type', '!=', 'AGEN')
+            ->where(function ($q) {
+                $q->where('c_type', 'CABANG')
+                    ->orWhere('c_type', 'PUSAT');
+            })
             ->where('c_isactive', '=', 'Y')
             ->get();
         return view('masterdatautama.datapegawai.create', compact('jabatan', 'divisi', 'company'));
@@ -199,11 +202,12 @@ class EmployeeController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (\Exception $e) {
+        }
+        catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'Gagal',
-                'message' => $e
+                'message' => $e->getMessage()
             ]);
         }
     }
