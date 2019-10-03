@@ -171,30 +171,16 @@ class CabangController extends Controller
             $codeAgen = CodeGenerator::code('m_agen', 'a_code', 7, 'A');
             $id = DB::table('m_agen')->max('a_id') + 1;
 
-            // $photo = $this->uploadImage(
-            //     $request->file('photo'),
-            //     $codeAgen,
-            //     'photo'
-            // );
-
             if ($request->hasFile('photo')) {
-                // $photo = $this->uploadImage(
-                //     $request->file('photo'),
-                //     $request->code,
-                //     'photo'
-                // );
-
                 $imageName = $codeAgen . '-photo';
-                // delete current photo
-                // Storage::delete('Agents/'.$imageName);
-                // insert new photo
                 $photo = $request->file('photo')->storeAs('Agents', $imageName);
             } else {
                 $photo = null;
             }
-            if ($request->type_hidden == 'APOTEK'){
-                $request->type_hidden = 'APOTEK/RADIO';
-            }
+
+            // if ($request->type_hidden == 'APOTEK'){
+            //     $request->type_hidden = 'APOTEK/RADIO';
+            // }
             DB::table('m_agen')
                 ->insert([
                     'a_id'        => $id,
@@ -242,7 +228,7 @@ class CabangController extends Controller
                     'c_update'  => Carbon::now()
                 ]);
 
-            if ($c_type != 'APOTEK/RADIO'){
+            if ($c_type != 'APOTEK/RADIO') {
                 $cek = DB::table('d_username')
                     ->where('u_username', '=', $request->username)
                     ->first();
@@ -299,7 +285,8 @@ class CabangController extends Controller
                             array_push($insert, $temp);
                         }
                     }
-                } elseif ($c_type == 'AGEN'){
+                }
+                elseif ($c_type == 'AGEN'){
                     for ($i = 0; $i < count($akses); $i++) {
                         if ($akses[$i]->a_id == 7 || $akses[$i]->a_id == 23){
                             $temp = array(
@@ -323,7 +310,8 @@ class CabangController extends Controller
                             array_push($insert, $temp);
                         }
                     }
-                } elseif ($c_type == 'SUB AGEN'){
+                }
+                elseif ($c_type == 'SUB AGEN'){
                     for ($i = 0; $i < count($akses); $i++) {
                         if ($akses[$i]->a_id == 7 || $akses[$i]->a_id == 23){
                             $temp = array(
@@ -453,16 +441,7 @@ class CabangController extends Controller
                 $agentCode = m_agen::where('a_id', $id)->select('a_code')->first();
 
                 if ($request->hasFile('photo')) {
-                    // $photo = $this->uploadImage(
-                    //     $request->file('photo'),
-                    //     $request->code,
-                    //     'photo'
-                    // );
-
                     $imageName = $agentCode->a_code . '-photo';
-                    // delete current photo
-                    // Storage::delete('Agents/'.$imageName);
-                    // insert new photo
                     $photo = $request->file('photo')->storeAs('Agents', $imageName);
                 } else {
                     $photo = $request->current_photo;
@@ -492,13 +471,19 @@ class CabangController extends Controller
                         'a_update'    => Carbon::now()
                     ]);
 
+                $c_type = $request->type_hidden;
+
+                if ($c_type == 'MMA'){
+                    $c_type = 'CABANG';
+                }
+
                 DB::table('m_company')
                     ->where('c_user', $agentCode->a_code)
                     ->update([
                         'c_name'    => $request->name,
                         'c_address' => $request->address,
                         'c_tlp'     => $request->telp,
-                        'c_type'    => 'AGEN',
+                        'c_type'    => $c_type,
                         'c_area'    => $request->area_city,
                         'c_update'  => Carbon::now()
                     ]);
@@ -507,7 +492,8 @@ class CabangController extends Controller
                 return response()->json([
                     'status' => 'berhasil'
                 ]);
-            } catch (\Exception $e) {
+            }
+            catch (\Exception $e) {
                 DB::rollback();
                 return response()->json([
                     'status' => 'gagal',

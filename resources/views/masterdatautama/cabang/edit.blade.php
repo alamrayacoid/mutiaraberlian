@@ -265,7 +265,7 @@
                         </div>
                         <div class="card-footer text-right">
                             <button class="btn btn-primary btn-submit" type="button" id="btn_simpan">Simpan</button>
-                            <a href="{{route('agen.index')}}" class="btn btn-secondary">Kembali</a>
+                            <a href="{{route('cabang.index')}}" class="btn btn-secondary">Kembali</a>
                         </div>
                     </form>
                 </div>
@@ -287,8 +287,8 @@
         });
 
         $(document).ready(function() {
-            $('#type_hidden').val($('#type').val());
-            if ($('#type').val() == 'SUB AGEN' || $('#type').val() == 'APOTEK') {
+            // $('#type_hidden').val($('#type').val());
+            if ($('#type').val() == 'SUB AGEN' || $('#type').val() == 'APOTEK/RADIO') {
                 $('.userlogin').hide();
                 $('.div_parent').show();
                 $('.harga-beli').show();
@@ -311,7 +311,7 @@
 
         $('#type').on('change', function() {
             $('#type_hidden').val($('#type').val());
-            if ($(this).val() == 'SUB AGEN' || $(this).val() == 'APOTEK') {
+            if ($(this).val() == 'SUB AGEN' || $(this).val() == 'APOTEK/RADIO') {
                 $('#parent_city').empty();
                 $('#parent').empty();
                 $('#parent_prov').val('').trigger('change');

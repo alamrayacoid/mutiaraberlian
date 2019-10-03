@@ -279,7 +279,7 @@
 
         $('#type').on('change', function() {
             $('#type_hidden').val($('#type').val());
-            if ($(this).val() == 'SUB AGEN' || $(this).val() == 'APOTEK') {
+            if ($(this).val() == 'SUB AGEN' || $(this).val() == 'APOTEK/RADIO') {
                 $('.userlogin').hide();
                 $('.div_parent').show();
                 $('.harga-beli').show();

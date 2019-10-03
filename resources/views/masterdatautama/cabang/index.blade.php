@@ -46,7 +46,7 @@
                             </div>
 
                             <div class="table-responsive">
-                                <table class="table table-hover display nowrap" cellspacing="0" id="table_cabang">
+                                <table class="table table-hover display nowrap w-100" cellspacing="0" id="table_cabang">
                                     <thead class="bg-primary">
                                         <tr>
                                             <th>Nama Cabang</th>

@@ -163,7 +163,7 @@ class AgenController extends Controller
     {
         $data = DB::table('m_company')
             ->where('c_isactive', 'Y')
-            ->where('c_type', '!=', 'APOTEK')
+            ->where('c_type', '!=', 'APOTEK/RADIO')
             ->join('m_agen', 'c_user', 'a_code')
             ->where('a_area', '=', $id)
             ->get();
@@ -370,9 +370,9 @@ class AgenController extends Controller
             } else {
                 $photo = null;
             }
-            if ($request->type_hidden == 'APOTEK'){
-                $request->type_hidden = 'APOTEK/RADIO';
-            }
+            // if ($request->type_hidden == 'APOTEK'){
+            //     $request->type_hidden = 'APOTEK/RADIO';
+            // }
             DB::table('m_agen')
                 ->insert([
                     'a_id'        => $id,
@@ -559,12 +559,12 @@ class AgenController extends Controller
         $data['agen'] = DB::table('m_agen')
             ->where('a_id', $id)
             ->first();
+        //
+        // if ($data['agen']->a_type == "APOTEK/RADIO"){
+        //     $data['agen']->a_type = "APOTEK";
+        // }
 
-        if ($data['agen']->a_type == "APOTEK/RADIO"){
-            $data['agen']->a_type = "APOTEK";
-        }
-
-        if ($data['agen']->a_type == "APOTEK" || $data['agen']->a_type == "SUB AGEN"){
+        if ($data['agen']->a_type == "APOTEK/RADIO" || $data['agen']->a_type == "SUB AGEN"){
             $data['infoparent'] = DB::table('m_agen')
                 ->where('a_code', '=', $data['agen']->a_parent)
                 ->first();
@@ -575,7 +575,7 @@ class AgenController extends Controller
                 ->join('m_agen', 'c_user', 'a_code')
                 ->where('a_code', '!=', $data['agen']->a_code)
                 ->where('a_area', '=', $data['infoparent']->a_area)
-                ->where('c_type', '!=', 'APOTEK')
+                ->where('c_type', '!=', 'APOTEK/RADIO')
                 ->where('c_isactive', 'Y')
                 ->get();
         }
@@ -683,7 +683,7 @@ class AgenController extends Controller
                 if ($c_type == 'MMA'){
                     $c_type = 'CABANG';
                 }
-
+dd($request->all());
                 DB::table('m_company')
                     ->where('c_user', $agentCode->a_code)
                     ->update([
