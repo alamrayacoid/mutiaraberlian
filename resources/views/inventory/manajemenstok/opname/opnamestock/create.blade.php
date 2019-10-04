@@ -61,7 +61,7 @@
                       </select>
                     </div>
                   </div>
-                  <div class="col-md-2 col-sm-6 col-xs-12">
+                  <!-- <div class="col-md-2 col-sm-6 col-xs-12">
                     <label>Kondisi</label>
                   </div>
                   <div class="col-md-10 col-sm-6 col-xs-12">
@@ -71,7 +71,7 @@
                         <option value="BROKEN">Rusak</option>
                       </select>
                     </div>
-                  </div>
+                  </div> -->
                   <div class="col-12"><hr></div>
                   <div class="col-md-6">
                     <div class="title-block">
@@ -96,7 +96,7 @@
                         <th class="text-center">Qty</th>
                       </thead>
                       <tbody>
-                        
+
                       </tbody>
                     </table>
                   </div>
@@ -116,7 +116,7 @@
                       <input type="number" class="form-control form-control-sm" id="qty_real" name="qty_real">
                       <span class="text-danger errorQtyR1 d-none">Harap masukkan qty!</span>
                     </div>
-                    
+
                     <div class="form-group" style="margin-bottom: 1.1rem !important;">
                       <div class="row">
                         <div class="col-6">
@@ -140,7 +140,7 @@
                         <th class="text-center">Action</th>
                       </thead>
                       <tbody>
-                        
+
                       </tbody>
                     </table>
                   </div>
@@ -169,10 +169,10 @@
   });
 
   $(document).ready(function(){
-    var code, qty, idX, tb_code_produksi, tb_addCodeReal, 
+    var code, qty, idX, tb_code_produksi, tb_addCodeReal,
     codeExist = false,
     idxCode = null;
-    
+
     $('#tb_code_produksi').dataTable({
       "searching": false,
       "lengthChange": false,
@@ -207,10 +207,10 @@
       getCodeProduksi();
     });
 
-    $('#condition').on('select2:select', function() {
-      updateUnitSys();
-      getCodeProduksi();
-    });
+    // $('#condition').on('select2:select', function() {
+    //   updateUnitSys();
+    //   getCodeProduksi();
+    // });
 
     $('#unit_sys').on('select2:select', function() {
       $.ajax({
@@ -292,7 +292,8 @@
             $('#unit_sys').append('<option value="'+ data.unit3_id +'" data-qty="">'+ data.unit3_name +'</option>');
             $('#unit_real').append('<option value="'+ data.unit3_id +'" data-qty="">'+ data.unit3_name +'</option>');
           }
-
+          $('#unit_sys').prop('selectedIndex', 0);
+          $('#unit_sys').trigger('select2:select');
           $('#unit_sys').select2('open');
         } else {
           messageWarning('Perhatian', 'Data tidak ditemukan !');
@@ -305,7 +306,7 @@
     var item      = $('#itemId').val();
     var owner     = $('#owner').val();
     var position  = $('#position').val();
-    var condition = $('#condition').val();
+    // var condition = $('#condition').val();
 
     $('#tb_code_produksi').dataTable().fnDestroy();
     tb_code_produksi = $('#tb_code_produksi').DataTable({
@@ -318,7 +319,12 @@
         ajax: {
           url: '{{url('/inventory/manajemenstok/opnamestock/list-code-produksi')}}',
           type: 'get',
-          data: {item: item, owner: owner, position: position, condition: condition},
+          data: {
+              item: item,
+              owner: owner,
+              position: position,
+              // condition: condition
+          },
         },
         columns: [
             {data: 'sd_code', className: 'text-left'},
@@ -410,8 +416,8 @@
     if (codeExist == true) {
       var qty_r = $('.qty_r').eq(idxCode).val();
       qty_r = parseInt(qty_r) + parseInt(qty);
-      $('.qty_r').eq(idxCode).val(qty_r);  
-      $('.qty_s').eq(idxCode).val(qty_r);  
+      $('.qty_r').eq(idxCode).val(qty_r);
+      $('.qty_s').eq(idxCode).val(qty_r);
     } else {
       $('#tb_addCodeReal tbody').append(`<tr>
                                           <td style="padding: 8px;">

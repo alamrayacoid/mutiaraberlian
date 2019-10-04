@@ -94,6 +94,7 @@ class OpnameController extends Controller
         ->where('s_item', $request->itemId)
         ->first();
         $qtySystem = $itemStock->s_qty;
+        $qty = 0;
         if ($request->unit_sys == $item->i_unit1) {
             $qty = $itemStock->s_qty / $item->i_unitcompare1;
         } elseif ($request->unit_sys == $item->i_unit2) {
@@ -198,35 +199,46 @@ class OpnameController extends Controller
 
     public function list_codeProduksi(Request $req)
     {
-        $stock = DB::table('d_stock')->where('s_item', '=', $req->item)
-        ->where('s_comp', '=', $req->owner)
-        ->where('s_position', '=', $req->position)
-        // ->where('s_condition', '=', $req->condition)
-        ->where('s_status', '=', 'ON DESTINATION')
-        ->get();
+        // $stock = DB::table('d_stock')->where('s_item', '=', $req->item)
+        //     ->where('s_comp', '=', $req->owner)
+        //     ->where('s_position', '=', $req->position)
+        //     ->where('s_status', '=', 'ON DESTINATION')
+        //     ->where('s_condition', '=', 'FINE')
+        //     ->get();
+        //
+        // if (count($stock) > 0) {
+        //     $stockId = $stock[0]->s_id;
+        // } else {
+        //     $stockId = 0;
+        // }
+        //
+        // $codes = DB::table('d_stockdt')
+        // ->where('sd_stock', '=', $stockId)
+        // ->get();
 
-        if (count($stock) > 0) {
-            $stockId = $stock[0]->s_id;
-        } else {
-            $stockId = 0;
-        }
+        $stock = DB::table('d_stockdt')
+            ->join('d_stock', 'sd_stock', 's_id')
+            ->where('s_item', '=', $req->item)
+            ->where('s_comp', '=', $req->owner)
+            ->where('s_position', '=', $req->position)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->get();
 
-        $codes = DB::table('d_stockdt')
-        ->where('sd_stock', '=', $stockId)
-        ->get();
-
-        return Datatables::of($codes)
+        return Datatables::of($stock)
         ->make(true);
     }
 
     public function list_codeOpname(Request $req)
     {
         $stock = DB::table('d_stockdt')
-        ->join('d_stock', 'sd_stock', 's_id')
-        ->where('s_item', '=', $req->item)
-        ->where('s_comp', '=', $req->owner)
-        ->where('s_position', '=', $req->position)
-        ->get();
+            ->join('d_stock', 'sd_stock', 's_id')
+            ->where('s_item', '=', $req->item)
+            ->where('s_comp', '=', $req->owner)
+            ->where('s_position', '=', $req->position)
+            ->where('s_status', '=', 'ON DESTINATION')
+            ->where('s_condition', '=', 'FINE')
+            ->get();
 
         return Datatables::of($stock)
         ->make(true);
@@ -365,7 +377,7 @@ class OpnameController extends Controller
             $opname->oa_qtyreal    = $request->qty_real;
             $opname->oa_unitreal   = $request->unit_real;
             $opname->oa_qtysystem  = $request->qty_sys_hidden;
-            $opname->oa_unitsystem = 1;
+            $opname->oa_unitsystem = $request->unit_sys;
             $opname->oa_insert     = Carbon::now();
             $opname->save();
 

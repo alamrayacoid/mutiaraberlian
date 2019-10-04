@@ -34,7 +34,7 @@
                   <div class="col-md-10 col-sm-6 col-xs-12">
                     <div class="form-group">
                       <input type="hidden" name="itemId" id="itemId" value="{{ $data['opname']->oa_item }}">
-                      <input type="text" class="form-control form-control-sm" id="name" name="name" style="text-transform:uppercase" value="{{ $data['opname']->i_code }} - {{ $data['opname']->i_name }}">
+                      <input type="text" class="form-control form-control-sm" id="name" name="name" style="text-transform:uppercase" value="{{ $data['opname']->i_code }} - {{ $data['opname']->i_name }}" disabled>
                     </div>
                   </div>
                   <div class="col-md-2 col-sm-6 col-xs-12">
@@ -43,11 +43,14 @@
                   <div class="col-md-10 col-sm-6 col-xs-12">
                     <div class="form-group">
                       <input type="hidden" id="owner_hidden" value="{{ $data['opname']->oa_comp }}">
-                      <select name="owner" id="owner" class="form-control form-control-sm select2">
+                      <input type="text" class="form-control form-control-sm" value="{{ $data['opname']->oa_comp }}" disabled>
+                      {{--
+                      <!-- <select name="owner" id="owner" class="form-control form-control-sm select2 read-only">
                         @foreach($data['company'] as $position)
-                        <option value="{{$position->c_id}}" @if($position->c_id == $data['opname']->oa_comp) selected @endif>{{$position->c_name}}</option>
+                            <option value="{{$position->c_id}}" @if($position->c_id == $data['opname']->oa_comp) selected @endif>{{$position->c_name}}</option>
                         @endforeach
-                      </select>
+                      </select> -->
+                      --}}
                     </div>
                   </div>
                   <div class="col-md-2 col-sm-6 col-xs-12">
@@ -56,13 +59,30 @@
                   <div class="col-md-10 col-sm-6 col-xs-12">
                     <div class="form-group">
                       <input type="hidden" id="position_hidden" value="{{ $data['opname']->oa_position }}">
-                      <select name="position" id="position" class="form-control form-control-sm select2">
+                      <input type="text" class="form-control form-control-sm" value="{{ $data['opname']->oa_position }}" disabled>
+                      {{--
+                      <!-- <select name="position" id="position" class="form-control form-control-sm select2 read-only">
                         @foreach($data['company'] as $position)
-                        <option value="{{$position->c_id}}" @if($position->c_id == $data['opname']->oa_position) selected @endif>{{$position->c_name}}</option>
+                            <option value="{{$position->c_id}}" @if($position->c_id == $data['opname']->oa_position) selected @endif>{{$position->c_name}}</option>
                         @endforeach
-                      </select>
+                    </select> -->
+                    --}}
                     </div>
                   </div>
+                  {{--
+                  <!-- <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>Kondisi</label>
+                  </div>
+                  <div class="col-md-10 col-sm-6 col-xs-12">
+                    <div class="form-group">
+                      <input type="text" name="" value="">
+                      <select name="condition" id="condition" class="form-control form-control-sm select2">
+                        <option value="FINE" selected>Baik</option>
+                        <option value="BROKEN">Rusak</option>
+                      </select>
+                    </div>
+                  </div> -->
+                  --}}
                   <div class="col-12"><hr></div>
                   <div class="col-md-6">
                     <div class="title-block">
@@ -88,7 +108,7 @@
                         <th class="text-center">Qty</th>
                       </thead>
                       <tbody>
-                        
+
                       </tbody>
                     </table>
                   </div>
@@ -109,7 +129,7 @@
                       <input type="number" class="form-control form-control-sm" id="qty_real" name="qty_real">
                       <span class="text-danger errorQtyR1 d-none">Harap masukkan qty!</span>
                     </div>
-                    
+
                     <div class="form-group" style="margin-bottom: 1.1rem !important;">
                       <div class="row">
                         <div class="col-6">
@@ -177,7 +197,6 @@
   });
 
   $(document).ready(function(){
-
     $('#name').autocomplete({
       source: baseUrl+'/inventory/manajemenstok/opnamestock/getItemAutocomplete',
       minLength: 2,
@@ -369,8 +388,8 @@
     if (codeExist == true) {
       var qty_r = $('.qty_r').eq(idxCode).val();
       qty_r = parseInt(qty_r) + parseInt(qty);
-      $('.qty_r').eq(idxCode).val(qty_r);  
-      $('.qty_s').eq(idxCode).val(qty_r);  
+      $('.qty_r').eq(idxCode).val(qty_r);
+      $('.qty_s').eq(idxCode).val(qty_r);
     } else {
       $('#tb_addCodeReal tbody').append(`<tr>
                                           <td style="padding: 8px;">
