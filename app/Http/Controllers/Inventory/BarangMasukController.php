@@ -140,7 +140,7 @@ class BarangMasukController extends Controller
             ->join('m_mutcat', 'sm_mutcat', '=', 'm_id')
             ->join('m_item', 'i_id', '=', 's_item')
             ->join('m_unit', 'u_id', '=', 'i_unit1')
-            ->select('sm_stock','sm_detailid',DB::raw('date_format(sm_date, "%d/%m/%Y") as sm_date'), DB::raw('concat(sm_qty, " ", u_name) as sm_qty'), 'pemilik.c_name as pemilik', 'posisi.c_name as posisi', 's_condition', 'm_name', 'i_name')
+            ->select('sm_stock','sm_detailid',DB::raw('date_format(sm_date, "%d/%m/%Y") as sm_date'),'sm_qty as qty', DB::raw('concat(sm_qty, " ", u_name) as sm_qty'), 'pemilik.c_name as pemilik', 'posisi.c_name as posisi', 's_condition', 'm_name', 'i_name')
             ->where('s_status', '=', 'ON DESTINATION')
             ->where('m_status', '=', 'M');
 
@@ -168,24 +168,31 @@ class BarangMasukController extends Controller
         }
 
         $datas = $datas->get();
+        foreach ($datas as $key => $value) {
+          $value->action  = '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                  <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.$value->sm_stock.'\',\''.$value->sm_detailid.'\')"><i class="fa fa-folder"></i>
+                  </button>
+              </div>';
+        }
+        $qty = $this->getQty($datas);
 
-        return Datatables::of($datas)
-        ->addIndexColumn()
-        ->addColumn('kondisi', function($datas) {
-            if($datas->s_condition == 'FINE'){
-                return 'BAIK';
-            } else {
-                return 'RUSAK';
-            }
-        })
-        ->addColumn('action', function($datas) {
-            return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="detail(\''.$datas->sm_stock.'\',\''.$datas->sm_detailid.'\')"><i class="fa fa-folder"></i>
-                        </button>
-                    </div>';
-        })
-        ->rawColumns(['kondisi','action'])
-        ->make(true);
+        return response()->json([
+              'datatable' => [
+                  'msg' => '201',
+                  'data' => $datas,
+                  'qty' => $qty,
+              ]
+          ], '201')->header('Content-Type', 'application/x-www-form-urlencoded');
+
+    }
+
+    public function getQty($datas)
+    {
+      $arrays=array();
+      foreach ($datas as $key => $value) {
+        array_push($arrays,$value->qty);
+      }
+      return array_sum($arrays);
     }
 
     public function create()

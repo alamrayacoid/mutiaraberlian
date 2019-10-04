@@ -106,23 +106,21 @@
                                         </div>
                                     </div>
                                 </div>
-							</div>
+							               </div>
                         	<div class="table-responsive">
 	                            <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_barangmasuk">
 	                                <thead class="bg-primary">
-	                                    <tr>
+	                                  <tr>
 	                                		<th>Tanggal Masuk</th>
-                                            <th>Pemilik Barang</th>
-                                            <th>Lokasi Masuk</th>
-                                            <th>Nama</th>
+                                      <th>Pemilik Barang</th>
+                                      <th>Lokasi Masuk</th>
+                                      <th>Nama</th>
 	                                		<th>Jumlah</th>
-											<th>Keterangan</th>
+											                <th>Keterangan</th>
 	                                		<th>Aksi</th>
 	                                	</tr>
 	                                </thead>
-	                                <tbody>
-
-	                                </tbody>
+	                                <tbody></tbody>
 	                            </table>
 	                        </div>
                         </section>
@@ -286,63 +284,46 @@ $(document).ready(function(){
 });
 
 function TableCabang() {
-	$('#table_barangmasuk').dataTable().fnDestroy();
-    tb_barangmasuk = $('#table_barangmasuk').DataTable({
-        responsive: true,
-        serverSide: true,
-        searching: false,
-        ajax: {
-            url : "{{ route('barangmasuk.list') }}",
-            type: "get",
-            data: {
-                "_token": "{{ csrf_token() }}",
-				"date_from": $('#date_from').val(),
-				"date_to": $('#date_to').val(),
-                "pemilik" : $('#filter_pemilik').val(),
-                "posisi" : $('#filter_posisi').val(),
-                "produk" : $('#filter_produk').val(),
-                "kodeproduksi" : $('#filter_kodeproduksi').val(),
-                "mutcat" : $('#filter_mutcat').val()
-            }
-        },
-        columns: [
-            {data: 'sm_date', name: 'sm_date'},
-            {data: 'pemilik', name: 'pemilik'},
-            {data: 'posisi', name: 'posisi'},
-            {data: 'i_name', name: 'i_name'},
-            {data: 'sm_qty', name: 'sm_qty'},
-            {data: 'm_name', name: 'm_name'},
-            {data: 'action', name: 'action'}
-        ],
-        pageLength: 10,
-        lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
-        dom: 'Bfrtip',
-        buttons: [
-            'excel', 'pdf', 'print'
-        ],
-        initComplete: function () {
-            // this.api().columns().every( function () {
-            //     var column = this;
-            //     console.log(column);
-            //     var select = $('<select><option value=""></option></select>')
-            //         .appendTo( $(column.header()).empty() )
-            //         .on( 'change', function () {
-            //             var val = $.fn.dataTable.util.escapeRegex(
-            //                 $(this).val()
-            //             );
-            //
-            //             column
-            //                 .search( val ? '^'+val+'$' : '', true, false )
-            //                 .draw();
-            //         } );
-            //
-            //     column.data().unique().sort().each( function ( d, j ) {
-            //         select.append( '<option value="'+d+'">'+d+'</option>' )
-            //     } );
-            // } );
-        }
-    });
-    $('.dt-button').addClass('btn-secondary btn btn-sm');
+  $.ajax({
+    type: "GET",
+    url: "{{ route('barangmasuk.list') }}",
+    data: {
+          "_token": "{{ csrf_token() }}",
+          "date_from": $('#date_from').val(),
+          "date_to": $('#date_to').val(),
+          "pemilik": $('#filter_pemilik').val(),
+          "posisi": $('#filter_posisi').val(),
+          "produk": $('#filter_produk').val(),
+          "kodeproduksi" : $('#filter_kodeproduksi').val(),
+          "mutcat": $('#filter_mutcat').val()
+          },
+    dataType: 'json',
+    success: function (obj) {
+      $('#total_qty').val(obj.datatable.qty);
+          $('#table_barangmasuk').dataTable().fnDestroy();
+            $('#table_barangmasuk').DataTable({
+                data: obj.datatable.data,
+                columns: [
+                  {data: 'sm_date', name: 'sm_date'},
+                  {data: 'pemilik', name: 'pemilik'},
+                  {data: 'posisi', name: 'posisi'},
+                  {data: 'i_name', name: 'i_name'},
+                  {data: 'sm_qty', name: 'sm_qty'},
+                  {data: 'm_name', name: 'm_name'},
+                  {data: 'action', name: 'action'}
+                ],
+                pageLength: 10,
+                lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
+                dom: 'Bfrtip',
+                buttons: [
+                    'excel', 'pdf', 'print'
+                ],
+            });
+    },
+    error: function (obj) {
+        alert(obj.msg);
+    }
+  });
 }
 
 function detail(stock, detail)
@@ -359,7 +340,7 @@ function detail(stock, detail)
         dataType : "json",
         success : function(response){
             loadingShow();
-            console.log(response.data.nota)
+            // console.log(response.data.nota)
             document.getElementById("namaB").setAttribute("value", response.data.i_name);
             document.getElementById("pemilikB").setAttribute("value", response.data.pemilik);
             document.getElementById("posisiB").setAttribute("value", response.data.posisi);
@@ -368,7 +349,7 @@ function detail(stock, detail)
             document.getElementById("hppB").setAttribute("value", response.hpp);
             document.getElementById("satuanB").setAttribute("value", response.data.u_name);
             document.getElementById("notaB").setAttribute("value", response.data.nota);
-            console.log(response.detail);
+            // console.log(response.detail);
             $('#table_detail').DataTable().clear().destroy();
             var tb_detail = $('#table_detail').DataTable({
                 responsive: true,
