@@ -105,11 +105,17 @@
                       <button class="btn btn-primary btn-sm" type="button" id="btn_refresh_date"><i class="fa fa-refresh"></i></button>
                     </div>
                   </div>
+
+                  <div class="col-4 input-group">
+                    <label class="form-control" for="total_qty">Jumlah Qty :</label>
+                    <input type="text" class="form-control" style="color:black" id="total_qty" value="0">
+                  </div>
                   <!-- <div class="col-4">
                     <p>Kosongkan field jika ingin menampilkan semua hasil pencarian</p>
                   </div> -->
                 </div>
               </div>
+
               <div class="table-responsive">
                 <table class="table table-striped table-hover display nowrap" cellspacing="0" id="table_barangkeluar">
                   <thead class="bg-primary">
@@ -288,42 +294,46 @@
     var tb_barangkeluar;
 
     function TableBarangKeluar() {
-        $('#table_barangkeluar').dataTable().fnDestroy();
-        tb_barangkeluar = $('#table_barangkeluar').dataTable({
-            responsive: true,
-            serverSide: true,
-            searching: false,
-            ajax: {
-                url: "{{ route('barangkeluar.list') }}",
-                type: "get",
-                data: {
-                    "_token": "{{ csrf_token() }}",
-                    "date_from": $('#date_from').val(),
-                    "date_to": $('#date_to').val(),
-                    "pemilik": $('#filter_pemilik').val(),
-                    "posisi": $('#filter_posisi').val(),
-                    "produk": $('#filter_produk').val(),
-                    "kodeproduksi" : $('#filter_kodeproduksi').val(),
-                    "mutcat": $('#filter_mutcat').val()
-                }
-            },
-            columns: [
-                {data: 'sm_date', name: 'sm_date'},
-                {data: 'pemilik', name: 'pemilik'},
-                {data: 'posisi', name: 'posisi'},
-                {data: 'i_name', name: 'i_name'},
-                {data: 'sm_qty', name: 'sm_qty'},
-                {data: 'm_name', name: 'm_name'},
-                {data: 'action', name: 'action'}
-            ],
-            pageLength: 10,
-            lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
-            dom: 'Bfrtip',
-            buttons: [
-                'excel', 'pdf', 'print'
-            ],
-        });
-        $('.dt-button').addClass('btn-secondary btn btn-sm');
+      $.ajax({
+        type: "GET",
+        url: "{{ route('barangkeluar.list') }}",
+        data: {
+              "_token": "{{ csrf_token() }}",
+              "date_from": $('#date_from').val(),
+              "date_to": $('#date_to').val(),
+              "pemilik": $('#filter_pemilik').val(),
+              "posisi": $('#filter_posisi').val(),
+              "produk": $('#filter_produk').val(),
+              "kodeproduksi" : $('#filter_kodeproduksi').val(),
+              "mutcat": $('#filter_mutcat').val()
+              },
+        dataType: 'json',
+        success: function (obj) {
+          $('#total_qty').val(obj.datatable.qty);
+              $('#table_barangkeluar').dataTable().fnDestroy();
+                $('#table_barangkeluar').DataTable({
+                    data: obj.datatable.data,
+                    columns: [
+                      {data: 'sm_date', name: 'sm_date'},
+                      {data: 'pemilik', name: 'pemilik'},
+                      {data: 'posisi', name: 'posisi'},
+                      {data: 'i_name', name: 'i_name'},
+                      {data: 'sm_qty', name: 'sm_qty'},
+                      {data: 'm_name', name: 'm_name'},
+                      {data: 'action', name: 'action'}
+                    ],
+                    pageLength: 10,
+                    lengthMenu: [[10, 20, 50, -1], [10, 20, 50, 'All']],
+                    dom: 'Bfrtip',
+                    buttons: [
+                        'excel', 'pdf', 'print'
+                    ],
+                });
+        },
+        error: function (obj) {
+            alert(obj.msg);
+        }
+      });
     }
 
     function detail(id, detail) {
@@ -333,7 +343,7 @@
             type: 'get',
             success: function (response) {
                 loadingShow();
-                console.log(response.data.nota)
+                // console.log(response.data.nota)
                 document.getElementById("namaB").setAttribute("value", response.data.i_name);
                 document.getElementById("pemilikB").setAttribute("value", response.data.pemilik);
                 document.getElementById("posisiB").setAttribute("value", response.data.posisi);
@@ -342,7 +352,7 @@
                 document.getElementById("hppB").setAttribute("value", response.hpp);
                 document.getElementById("satuanB").setAttribute("value", response.data.u_name);
                 document.getElementById("notaB").setAttribute("value", response.data.nota);
-                console.log(response.detail);
+                // console.log(response.detail);
                 $('#table_detail').DataTable().clear().destroy();
                 var tb_detail = $('#table_detail').DataTable({
                     responsive: true,
