@@ -6,7 +6,6 @@ use App\Http\Controllers\AksesUser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-use App\d_itemout;
 use App\d_stock;
 use App\d_stockdt;
 use App\d_stock_mutation;
@@ -187,38 +186,6 @@ class BarangKeluarController extends Controller
             })
             ->rawColumns(['kondisi','action'])
             ->make(true);
-
-//        $datas = d_itemout::whereBetween('io_date', [$from, $to])
-//            ->orderBy('io_id', 'asc')
-//            ->with('getUnit')
-//            ->with('getMutcat')
-//            ->with('getItem')
-//            ->get();
-//        return Datatables::of($datas)
-//            ->addIndexColumn()
-//            ->addColumn('code', function ($datas) {
-//                return $datas->getItem['i_code'];
-//            })
-//            ->addColumn('name', function ($datas) {
-//                return $datas->getItem['i_name'];
-//            })
-//            ->addColumn('qty', function ($datas) {
-//                return '<span class="pull-right">' . number_format($datas->io_qty, 0, ',', '.') . '</span>';
-//            })
-//            ->addColumn('unit', function ($datas) {
-//                return $datas->getUnit['u_name'];
-//            })
-//            ->addColumn('mutcat', function ($datas) {
-//                return $datas->getMutcat['m_name'];
-//            })
-//            ->addColumn('action', function ($datas) {
-//                return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-//            <button class="btn btn-info hint--bottom-left hint--info" aria-label="Lihat Detail" onclick="Detail(' . $datas->io_id . ', \'' . $datas->io_nota . '\')"><i class="fa fa-folder"></i>
-//            </button>
-//            </div>';
-//            })
-//            ->rawColumns(['code', 'name', 'qty', 'unit', 'mutcat', 'action'])
-//            ->make(true);
     }
 
     /**
@@ -250,12 +217,6 @@ class BarangKeluarController extends Controller
             "detail" => $detail,
             "hpp" => 'Rp. '.number_format($data->sm_hpp, 0,',','.')
         ]);
-        // $data = d_itemout::where('io_id', $id)
-        //     ->with('getItem')
-        //     ->with('getItem.getUnit1')
-        //     ->with('getMutationDetail')
-        //     ->firstOrFail();
-        // return $data;
     }
 
     /**
