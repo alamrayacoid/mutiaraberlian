@@ -420,20 +420,20 @@
                     axios.post(baseUrl + '/produksi/pembayaran/bayar', $("#fromBayarTermin").serialize())
                         .then(function (response) {
                             if (response.data.status == "Failed") {
-                                loadingHide();
                                 messageFailed("Peringatan", response.data.message);
                             } else if (response.data.status == "Success") {
                                 tb_pembayaran.ajax.reload();
                                 $("#modalBayar").modal("hide");
-                                loadingHide();
                                 messageSuccess("Berhasil", response.data.message);
                                 // printNota(id, termin);
                                 window.open("{{ url("/produksi/pembayaran/nota?") }}" + "id=" + id + "&termin=" + termin, '_blank')
                             }
                         })
                         .catch(function (error) {
-                            loadingHide();
                             messageWarning("Error", error);
+                        })
+                        .then(function () {
+                            loadingHide();
                         });
 
                 }
@@ -495,12 +495,13 @@
                     }
                 })
                 .then(function (response) {
+                    console.log(response);
                     if (response.data.status == "Failed") {
                         loadingHide();
                         messageFailed("Gagal", "Terjadi kesalahan sistem");
                     } else if (response.data.status == "Success") {
                         loadingHide();
-                        $("#nilai_bayar").val('');
+                        $("#nilai_bayar").val('0');
                         $("#poid").val(response.data.data.poid);
                         $("#nota").val(response.data.data.nota);
                         $("#supplier").val(response.data.data.supplier);
@@ -509,6 +510,14 @@
                         $("#tagihan").val(convertToRupiah(response.data.data.tagihan));
                         $("#terbayar").val(convertToRupiah(response.data.data.terbayar));
                         $("#kekurangan").val(convertToRupiah(response.data.data.kekurangan));
+
+                        $('#cashAccountPP').empty();
+                        $('#cashAccountPP').select2({
+                            data: response.data.data.payment_method,
+                            dropdownAutoWidth : true
+                        });
+                        $('#cashAccountPP').prop('selectedIndex', 0).trigger('select2:select');
+                        console.log($('#cashAccountPP').val());
                         $("#modalBayar").modal("show");
                     }
                 })
@@ -523,27 +532,6 @@
         }
 
         function Detail(idx, termin) {
-            // loadingShow();
-            // axios.get(baseUrl + "/produksi/pembayaran/show/" + idx + "/" + termin)
-            //     .then(function (response) {
-            //         // handle success
-            //         console.log(response);
-            //         if (response.data.status == "Failed") {
-            //             loadingHide();
-            //             messageFailed("Gagal", "Terjadi kesalahan sistem");
-            //         } else if (response.data.status == "Success") {
-            //             loadingHide();
-            //         }
-            //     })
-            //     .catch(function (error) {
-            //         // handle error
-            //         loadingHide();
-            //         messageWarning("Error", error);
-            //     })
-            //     .then(function () {
-            //         // always executed
-            //     });
-
             $.ajax({
                 url: baseUrl + "/produksi/pembayaran/show/" + idx + "/" + termin,
                 type: 'get',
@@ -560,17 +548,12 @@
                     $('#total_nominal').val('Rp ' + formatRupiah(response.data.po_totalnet));
                     $('#nominal_termin_lbl').html('Nominal termin ' + response.data.get_p_o_payment[0].pop_termin);
                     $('#nominal_termin').val('Rp ' + formatRupiah(response.data.get_p_o_payment[0].pop_value));
-                    $('#nilai_bayar').val('Rp. 0');
+                    $('#nilai_bayar').val('0');
                     updateSisaPembayaran();
                     $('#detail').modal('show');
                 }
             })
         }
-
-        // $("#nilai_bayar").on('keyup', function (evt) {
-        //     evt.preventDefault();
-        //     updateSisaPembayaran();
-        // })
 
         function lunasiTermin() {
             $('#nilai_bayar').val($('#nominal_termin').val());

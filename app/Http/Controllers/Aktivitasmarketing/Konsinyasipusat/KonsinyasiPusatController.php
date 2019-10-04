@@ -104,7 +104,7 @@ class KonsinyasiPusatController extends Controller
         $pusat = Auth::user()->getCompany->select('c_id', 'c_name')->first();
         $pusatCode = m_company::where('c_type', 'PUSAT')->select('c_id')->first();
         $pusatCode = $pusatCode->c_id;
-
+        // get list akun-payment
         $paymentMethod = m_paymentmethod::where('pm_isactive', 'Y')
             ->whereHas('getAkun', function ($q) use ($pusatCode) {
                 $q->where('ak_comp', $pusatCode);

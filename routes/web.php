@@ -966,6 +966,7 @@ Route::group(['middleware' => 'auth'], function () {
     //Aproval Promosi
     Route::get('/notifikasiotorisasi/otorisasi/promotion/index', 'OtorisasiController@promotion')->name('promotion');
     Route::get('/notifikasiotorisasi/otorisasi/promotion/data-promotion', 'OtorisasiController@getDataPromotion')->name('promotion.data');
+    Route::get('/notifikasiotorisasi/otorisasi/promotion/get-list-payment-method', 'OtorisasiController@getListPaymentMethod')->name('promotion.getListPaymentMethod');
     Route::post('/notifikasiotorisasi/otorisasi/promotion/approve-promotion', 'OtorisasiController@approvePromotion')->name('promotion.approve');
     Route::post('/notifikasiotorisasi/otorisasi/promotion/reject-promotion', 'OtorisasiController@rejectPromotion')->name('promotion.reject');
 

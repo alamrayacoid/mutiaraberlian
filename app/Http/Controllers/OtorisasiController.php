@@ -13,6 +13,7 @@ use App\Http\Controllers\pushotorisasiController as pushOtorisasi;
 use App\d_stockdt;
 use App\m_item;
 use App\m_item_auth;
+use App\m_paymentmethod;
 use Carbon\Carbon;
 use CodeGenerator;
 use Currency;
@@ -1202,9 +1203,33 @@ class OtorisasiController extends Controller
             ->rawColumns(['action'])
             ->make(true);
     }
+    public function getListPaymentMethod()
+    {
+        // get list akun-payment
+        $userCode = Auth::user()->u_company;
+        $paymentMethod = m_paymentmethod::where('pm_isactive', 'Y')
+            ->where('pm_comp', $userCode)
+            ->get();
+
+        $listPaymentMethod = [];
+        $opt = [
+            'id' => '-',
+            'text' => 'Pilih Akun Kas'
+        ];
+        array_push($listPaymentMethod, $opt);
+        foreach ($paymentMethod as $key => $value) {
+            $opt = [
+                'id' => $value->pm_akun,
+                'text' => $value->pm_name
+            ];
+            array_push($listPaymentMethod, $opt);
+        }
+        return response()->json([
+            'listPaymentMethod' => $listPaymentMethod
+        ]);
+    }
     public function approvePromotion(Request $request)
     {
-
         $id = Crypt::decrypt($request->id);
         $realisasi = $request->realisasi;
 
@@ -1255,14 +1280,28 @@ class OtorisasiController extends Controller
                 "jrdt_cashflow"     => $acc_promosi_beban->pd_cashflow
             ]);
 
-            array_push($details, [
-                "jrdt_nomor"        => 2,
-                "jrdt_akun"         => $acc_promosi_kas->pd_acc,
-                "jrdt_value"        => $request->realisasi,
-                "jrdt_dk"           => "K",
-                "jrdt_keterangan"   => $acc_promosi_kas->pd_keterangan,
-                "jrdt_cashflow"     => $acc_promosi_kas->pd_cashflow
-            ]);
+            // set cash-account to auto-generate
+            if ($request->cashAccount == '-') {
+                array_push($details, [
+                    "jrdt_nomor"        => 2,
+                    "jrdt_akun"         => $acc_promosi_kas->pd_acc,
+                    "jrdt_value"        => $request->realisasi,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => $acc_promosi_kas->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_promosi_kas->pd_cashflow
+                ]);
+            }
+            // set cash-account to selected paymentMethod
+            else {
+                array_push($details, [
+                    "jrdt_nomor"        => 2,
+                    "jrdt_akun"         => $request->cashAccount,
+                    "jrdt_value"        => $request->realisasi,
+                    "jrdt_dk"           => "K",
+                    "jrdt_keterangan"   => $acc_promosi_kas->pd_keterangan,
+                    "jrdt_cashflow"     => $acc_promosi_kas->pd_cashflow
+                ]);
+            }
 
             $nota = DB::table('d_promotion')->where('p_id', $id)->first();
             $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $nota->p_reff, $parrent->pe_nama, 'TK', Auth::user()->u_company);

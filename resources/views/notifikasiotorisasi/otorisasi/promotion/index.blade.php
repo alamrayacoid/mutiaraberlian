@@ -77,6 +77,29 @@
         })
 
         function ApprovePromosi(id, budget){
+            $.ajax({
+                url: "{{ route('promotion.getListPaymentMethod') }}",
+                type: 'get',
+                beforeSend: function() {
+                    loadingShow()
+                },
+                success: function(resp) {
+                    console.log(resp);
+                    $('#cashAccountPP').empty();
+                    $('#cashAccountPP').select2({
+                        data: resp.listPaymentMethod,
+                        dropdownAutoWidth : true
+                    });
+                    $('#cashAccountPP').prop('selectedIndex', 0).trigger('select2:select');
+                },
+                error: function(err) {
+                    messageWarning('Error', 'Terjadi kesalahan : ' + err);
+                },
+                complete: function() {
+                    loadingHide();
+                }
+            })
+
             $('#approve_usulan').val(convertToRupiah(budget));
             $('#id_promosi').val(id);
             $('#modal_approve').modal('show');
@@ -87,6 +110,7 @@
             axios.post('{{ route("promotion.approve") }}', {
                 'id': $('#id_promosi').val(),
                 'realisasi': convertToAngka($('#approve_realisasi').val()),
+                'cashAccount': $('#cashAccountPP').val(),
                 '_token': '{{ csrf_token() }}'
             }).then(function (response) {
                 loadingHide();

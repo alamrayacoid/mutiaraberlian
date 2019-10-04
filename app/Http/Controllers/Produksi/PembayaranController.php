@@ -10,6 +10,7 @@ use App\Http\Controllers\pushnotifikasiController as pushNotif;
 use App\d_productionorder;
 use App\d_productionorderpayment;
 use App\d_username;
+use App\m_paymentmethod;
 use App\m_supplier;
 use Carbon\Carbon;
 use Crypt;
@@ -178,6 +179,29 @@ class PembayaranController extends Controller
         }
 
         $kekurangan = $data->pop_value - $pay;
+        // get list akun-payment
+        $userCode = Auth::user()->u_company;
+        $paymentMethod = m_paymentmethod::where('pm_isactive', 'Y')
+            // ->whereHas('getAkun', function ($q) use ($userCode) {
+            //     $q->where('ak_comp', $userCode);
+            // })
+            // ->with('getAkun')
+            ->where('pm_comp', $userCode)
+            ->get();
+
+        $listPaymentMethod = [];
+        $opt = [
+            'id' => '-',
+            'text' => 'Pilih Akun Kas'
+        ];
+        array_push($listPaymentMethod, $opt);
+        foreach ($paymentMethod as $key => $value) {
+            $opt = [
+                'id' => $value->pm_akun,
+                'text' => $value->pm_name
+            ];
+            array_push($listPaymentMethod, $opt);
+        }
 
         $data = [
             'poid' => Crypt::encrypt($data->po_id),
@@ -187,7 +211,8 @@ class PembayaranController extends Controller
             'termin' => $data->pop_termin,
             'tagihan' => number_format($data->pop_value, 0, ',', ''),
             'terbayar' => number_format($pay, 0, ',', ''),
-            'kekurangan' => number_format($kekurangan, 0, ',', '')
+            'kekurangan' => number_format($kekurangan, 0, ',', ''),
+            'payment_method' => $listPaymentMethod
         ];
 
         return Response::json(['status' => "Success", 'data' => $data]);
@@ -329,14 +354,29 @@ class PembayaranController extends Controller
                     "jrdt_cashflow"     => $acc_kas->pd_cashflow
                 ]);
 
-                array_push($details, [
-                    "jrdt_nomor"        => 2,
-                    "jrdt_akun"         => $hutang->pd_acc,
-                    "jrdt_value"        => $bayar,
-                    "jrdt_dk"           => "D",
-                    "jrdt_keterangan"   => $pembukuan->pe_keterangan,
-                    "jrdt_cashflow"     => null
-                ]);
+                // set cash-account to auto-generate
+                if ($request->cashAccount == '-') {
+                    array_push($details, [
+                        "jrdt_nomor"        => 2,
+                        "jrdt_akun"         => $hutang->pd_acc,
+                        "jrdt_value"        => $bayar,
+                        "jrdt_dk"           => "D",
+                        "jrdt_keterangan"   => $pembukuan->pe_keterangan,
+                        "jrdt_cashflow"     => null
+                    ]);
+                }
+                // set cash-account to selected paymentMethod
+                else {
+                    array_push($details, [
+                        "jrdt_nomor"        => 2,
+                        "jrdt_akun"         => $request->cashAccount,
+                        "jrdt_value"        => $bayar,
+                        "jrdt_dk"           => "D",
+                        "jrdt_keterangan"   => $pembukuan->pe_keterangan,
+                        "jrdt_cashflow"     => null
+                    ]);
+                }
+
 
                 $nota = $request->nota.'-'.$termin;
 

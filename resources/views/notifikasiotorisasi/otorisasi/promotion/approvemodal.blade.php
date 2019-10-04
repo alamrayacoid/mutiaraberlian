@@ -10,7 +10,6 @@
             </div>
             <div class="modal-body col-12">
                 <div class="row">
-
                     <div class="col-4">
                         <label for="">Usulan Baiaya Promosi</label>
                     </div>
@@ -23,6 +22,15 @@
                     </div>
                     <div class="col-8 mb-2">
                         <input type="text" class="form-control input-rupiah" id="approve_realisasi" value="">
+                    </div>
+
+                    <div class="col-4">
+                        <label for="">Pilih Akun Kas</label>
+                    </div>
+                    <div class="col-8 mb-2">
+                        <select name="cashAccount" id="cashAccountPP" class="form-control form-control-sm select2 w-100">
+                            <option value="">Pilih Akun Kas</option>
+                        </select>
                     </div>
                     <input type="hidden" name="id_promosi" id="id_promosi">
                 </div>

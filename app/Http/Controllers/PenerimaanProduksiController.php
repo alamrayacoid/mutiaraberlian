@@ -489,12 +489,20 @@ class PenerimaanProduksiController extends Controller
 
         $pesan = $data[0]->pod_qty;
 
-        if ($pesan == $terima[0]->diterima){
+        if ($pesan == $terima[0]->diterima) {
             DB::table('d_productionorderdt')
                 ->where('pod_item', '=', $item)
                 ->where('pod_productionorder', '=', $id)
                 ->update([
                     'pod_received' => 'Y'
+                ]);
+        }
+        else {
+            DB::table('d_productionorderdt')
+                ->where('pod_item', '=', $item)
+                ->where('pod_productionorder', '=', $id)
+                ->update([
+                    'pod_received' => 'N'
                 ]);
         }
     }
@@ -673,7 +681,7 @@ class PenerimaanProduksiController extends Controller
                 return $mutationIn;
             }
 
-            // update received-status of an item
+            // update received-status of an item ('Y' and 'N')
             $this->UpdateStatus($order, $item);
 
             // tambahan dirga
@@ -854,21 +862,8 @@ class PenerimaanProduksiController extends Controller
         catch (\DecryptException $e){
             abort('404');
         }
-        // // get list of 'in' mutcat-list
-        // $inMutcatList = m_mutcat::where('m_status', 'M')
-        //     ->select('m_id')
-        //     ->get();
-        // for ($i = 0; $i < count($inMutcatList); $i++) {
-        //     $tmp[] = $inMutcatList[$i]->m_id;
-        // }
-        // $inMutcatList = $tmp;
 
         $dataPO = d_productionorder::where('po_id', $id)
-            // ->with(['getMutation' => function ($q) use ($inMutcatList) {
-            //     $q
-            //         ->whereIn('sm_mutcat', $inMutcatList)
-            //         ->with('getStock.getItem.getUnit1');
-            // }])
             ->with(['getItemReceipt' => function ($q) {
                 $q->with(['getIRDetail' => function ($q) {
                     $q->select(
@@ -987,13 +982,6 @@ class PenerimaanProduksiController extends Controller
             if ($request->itemQty != $totalQtyPC) {
                 throw new Exception("Jumlah kode produksi harus sesuai dengan jumlah item !", 1);
             }
-
-            // // get current stock-mutation (used qty, qtyProdCode)
-            // $current = d_stock_mutation::where('sm_stock', $request->sm_stock)
-            //     ->where('sm_detailid', $request->sm_detailid)
-            //     ->with('getMutationDt.getStockDt')
-            //     ->with('getStock.getStockDt')
-            //     ->first();
 
             $itemReceiptDt = d_itemreceiptdt::where('ird_itemreceipt', $request->ird_itemreceipt)
                 ->where('ird_detailid', $request->ird_detailid)
@@ -1124,6 +1112,9 @@ class PenerimaanProduksiController extends Controller
                 $x = $request->itemQty - abs($limitQty);
                 throw new Exception("Jumlah permintaan tidak boleh lebih dari : ". $x, 1);
             }
+
+            // update received-status of an item ( 'Y' or 'N')
+            $this->UpdateStatus($productionOrder->po_id, $productionOrder->getPODt[0]->pod_item);
 
             // start : update jurnal
                 $acc_persediaan = DB::table('dk_pembukuan_detail')
