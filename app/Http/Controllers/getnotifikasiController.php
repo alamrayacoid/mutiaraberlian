@@ -26,8 +26,9 @@ class getnotifikasiController extends Controller
 
         if ($name == 'Notifikasi_payment') {
           $link = route('masterdatautama.masterpembayaran');
-          $message = 'Batas maksimal termin untuk no nota  !'.$po_nota;
+          $message = 'Batas maksimal termin untuk no nota  : '.$po_nota;
           $this->insertNotif($name, $link, $message);
+
         }else{
 
         switch ($name) {
