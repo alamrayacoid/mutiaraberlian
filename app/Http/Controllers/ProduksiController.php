@@ -1075,11 +1075,15 @@ class ProduksiController extends Controller
     {
         $position = Auth::user()->u_company;
         $itemId = $request->itemId;
+        $sd_code = $request->prodCode;
+        $condition = $request->condition;
 
-        $data = Stock::where('s_position', $position)
+        $data = Stock::join('d_stockdt','s_id','=','sd_stock')
+            ->where('s_position', $position)
             ->where('s_item', $itemId)
             ->where('s_status', 'ON DESTINATION')
-            ->where('s_condition', 'FINE')
+            ->where('sd_code',$sd_code)
+            ->where('s_condition',$condition)
             ->with('getItem')
             ->first();
 
