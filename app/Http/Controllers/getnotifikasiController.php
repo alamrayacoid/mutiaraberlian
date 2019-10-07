@@ -118,7 +118,9 @@ class getnotifikasiController extends Controller
       $date = DB::table('d_productionorderpayment')
       ->select('po_nota')
       ->join('d_productionorder','pop_productionorder','=','po_id')
-      ->whereBetween('pop_datetop',array(Carbon::today(),Carbon::tomorrow()))->get();
+      ->whereBetween('pop_datetop',array(Carbon::today(),Carbon::tomorrow()))
+      ->groupBy('po_nota')
+      ->get();
       return $date;
     }
     // format teks for 'notifikasi'
@@ -166,8 +168,9 @@ class getnotifikasiController extends Controller
 
     // get list 'notifikasi'
     public function gettmpnotif(){
-        $notif = d_notification::where('n_name', 'LIKE', '%Notifikasi%')->where('n_date',Carbon::today())
-            ->get();
+        $notif = d_notification::where('n_name', 'LIKE', '%Notifikasi%')
+        ->where('n_date',Carbon::today())
+        ->get();
 
         return response()->json($notif);
     }
