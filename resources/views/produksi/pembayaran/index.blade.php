@@ -426,7 +426,6 @@
                                 $("#modalBayar").modal("hide");
                                 messageSuccess("Berhasil", response.data.message);
                                 // printNota(id, termin);
-                                window.open("{{ url("/produksi/pembayaran/nota?") }}" + "id=" + id + "&termin=" + termin, '_blank')
                             }
                         })
                         .catch(function (error) {
@@ -440,6 +439,8 @@
             });
 
         });
+
+
 
         $('#po_nota').on('select2:select', function () {
             TablePembayaran();
@@ -485,6 +486,9 @@
         }
 
         // view-data -> append data to modal with dataTable
+        function openNota(id, termin){
+          window.open("{{ url("/produksi/pembayaran/nota?") }}" + "id=" + id + "&termin=" + termin, '_blank')
+        }
 
         function bayar(id, termin) {
             loadingShow();
