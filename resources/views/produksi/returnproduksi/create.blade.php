@@ -94,7 +94,7 @@
                                 <div class="col-md-4 col-sm-6 col-12">
 									<div class="form-group">
                                         <input type="checkbox" id="brokenItemToggle" value="broken"> Barang rusak ?<br>
-                                        <input type="hidden" name="statusItem" id="statusItem" value="FINE">
+                                        <input type="text" name="statusItem" id="statusItem" value="FINE">
 										<select id="returnType" name="returnType" class="form-control form-control-sm select2 prodcode">
 											<option value="" selected disabled>=== Pilih Tipe Pengembalian ===</option>
 											<option value="SB">Stock Baru</option>
@@ -159,7 +159,7 @@
                             </div>
 
                             <!-- form for 'stock baru' -->
-                            <input type="hidden" name="itemId" value="" id="itemId">
+                            <input type="text" name="itemId" value="" id="itemId">
                             <div class="row formSB">
                                 <div class="col-md-2 col-sm-6 col-12">
                                     <label>Kode Produksi</label>
@@ -874,13 +874,13 @@
 	function getProdCode()
 	{
 		let supplierCode = $('#supplier').val();
-        let statusItem = $('#statusItem').val();
+    let statusItem = $('#statusItem').val();
 		$.ajax({
 			url: "{{ route('return.getProdCode') }}",
 			type: "get",
 			data: {
-                itemStatus: statusItem,
-				supplierCode: supplierCode
+            itemStatus: statusItem,
+						supplierCode: supplierCode
 			},
 			beforeSend: function () {
 				loadingShow();
@@ -911,23 +911,25 @@
 	{
 		let itemId = $('#itemId').val();
 		let prodCode = $("#kodeproduksi").val();
-        let agentCode = $('#agent').val();
+    let agentCode = $('#agent').val();
+		let condition = $('#statusItem').val();
 
 		$.ajax({
 			url: "{{ route('return.getData') }}",
 			data: {
 				agentCode: agentCode,
 				itemId: itemId,
-				prodCode: prodCode
+				prodCode: prodCode,
+				condition: condition
 			},
 			type: 'get',
             beforeSend: function(){
                 loadingShow();
             },
 			success: function(resp) {
-				console.log(resp);
+				// console.log(resp);
 				$('#item').val(resp.data.get_item.i_name);
-				$('#qty').val(resp.data.s_qty);
+				$('#qty').val(resp.data.sd_qty);
                 $('#qtyReturn').val(0);
                 $('#returnValue').val(0);
                 $('#subsValue').val(0);

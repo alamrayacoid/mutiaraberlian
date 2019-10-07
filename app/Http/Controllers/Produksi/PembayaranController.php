@@ -56,6 +56,7 @@ class PembayaranController extends Controller
                 return date('d-m-Y', strtotime($datas->pop_date));
             })
             ->addColumn('status', function ($datas) {
+
                 if ($datas->pop_status == 'Y') {
                     return '<div class="text-center">LUNAS</div>';
                     // return '<div class="text-center">
@@ -75,10 +76,18 @@ class PembayaranController extends Controller
             ->addColumn('action', function ($datas) {
                 if ($datas->pop_status == 'N') {
                     return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
-                        <button class="btn btn-danger hint--top-left hint--info" aria-label="Bayar" onclick="bayar(\'' . Crypt::encrypt($datas->pop_productionorder) . '\', \'' . Crypt::encrypt($datas->pop_termin) . '\')"><i class="fa fa-money"></i>
-                        </button>
-                    </div>';
+                              <button class="btn btn-danger hint--top-left hint--info" aria-label="Bayar" onclick="bayar(\'' . Crypt::encrypt($datas->pop_productionorder) . '\', \'' . Crypt::encrypt($datas->pop_termin) . '\')"><i class="fa fa-money"></i>
+                                </button>
+                              <button class="btn btn-success hint--top-left hint--info" style="margin-left:3px" aria-label="Print Nota" onclick="openNota(\'' . Crypt::encrypt($datas->pop_productionorder) . '\', \'' . $datas->pop_termin . '\')"><i class="fa fa-print "></i>
+                                </button>
+                            </div>';
+                }else {
+                  return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
+                          <button class="btn btn-success hint--top-left hint--info" style="margin-left:3px" aria-label="Print Nota" onclick="openNota(\'' . Crypt::encrypt($datas->pop_productionorder) . '\', \'' . $datas->pop_termin . '\')"><i class="fa fa-print "></i>
+                            </button>
+                          </div>';
                 }
+
 
                 // return '<div class="text-center"><div class="btn-group btn-group-sm text-center">
                 //               <button class="btn btn-info hint--top-left hint--info" aria-label="Detail" onclick="Detail(\''.Crypt::encrypt($datas->pop_productionorder).'\', \''.Crypt::encrypt($datas->pop_termin).'\')"><i class="fa fa-list"></i>

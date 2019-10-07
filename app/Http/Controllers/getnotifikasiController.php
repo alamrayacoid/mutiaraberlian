@@ -17,12 +17,20 @@ class getnotifikasiController extends Controller
     public function get(Request $request)
     {
         // insert to table 'd_notification'
-        $name = $request->name;
-
         // if notif payment-po
             // insert new notif payment-po
         // else
             // run switch-case below
+        $name = $request->name;
+        $po_nota = $request->po_nota;
+
+        if ($name == 'Notifikasi_payment') {
+          $link = route('masterdatautama.masterpembayaran');
+          $message = 'Batas maksimal termin untuk no nota  : '.$po_nota;
+          $this->insertNotif($name, $link, $message);
+
+        }else{
+
         switch ($name) {
             case 'Notifikasi Perubahan Order Produksi':
                 $link = route('order.index');
@@ -75,6 +83,7 @@ class getnotifikasiController extends Controller
             default:
                 break;
         }
+      }
 
         // filter data to set teks in 'notifikasi'
         $this->set();
@@ -104,7 +113,17 @@ class getnotifikasiController extends Controller
             );
         }
     }
-
+    // check date payment
+    public function checkDatePayment()
+    {
+      $date = DB::table('d_productionorderpayment')
+      ->select('po_nota')
+      ->join('d_productionorder','pop_productionorder','=','po_id')
+      ->whereBetween('pop_datetop',array(Carbon::today(),Carbon::tomorrow()))
+      ->groupBy('po_nota')
+      ->get();
+      return $date;
+    }
     // format teks for 'notifikasi'
     public function pushdata($name, $count, $date, $link, $message)
     {
@@ -151,7 +170,8 @@ class getnotifikasiController extends Controller
     // get list 'notifikasi'
     public function gettmpnotif(){
         $notif = d_notification::where('n_name', 'LIKE', '%Notifikasi%')
-            ->get();
+        ->where('n_date',Carbon::today())
+        ->get();
 
         return response()->json($notif);
     }

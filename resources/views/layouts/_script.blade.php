@@ -612,12 +612,23 @@
                 clearNotif();
             });
 
+            axios({
+              method: 'get',
+              url: baseUrl+'/checkdate',
+              responseType: 'stream'
+            })
+              .then(function (response) {
+                $.each(response.data , function(index,value){
+                  notifikasiPayment('Notifikasi_payment',value['po_nota']);
+                })
+
+
+              });
             // create 'notifikasi-payment' function with 2 parameter (name, nota-PO)
             // get list production-order-payment where termin-of-payment is h-1 and h
                 // start loop
                     // call 'notifikasi-payment' (name, nota-PO)
                 // end loop
-
         @endif
     @endif
     // validate and update 'notif - otorisasi' (create if is_null)
@@ -670,6 +681,48 @@
         });
     }
 
+
+    // validate and update 'notif - notifikasi' (create if is_null)
+    // name = Notifikasi_payment and po_nota from get data in controller
+    function notifikasiPayment(name,po_nota) {
+        var html = "";
+        $.ajax({
+            type: 'get',
+            data: {
+                name,
+                po_nota
+            },
+            dataType: 'json',
+            url: baseUrl + '/getnotif',
+            success : function(response){
+                if (response.count == 0) {
+                    html = '<center><li>'
+                    +'<a href="#" class="notification-item">'
+                    +'<div class="body-col">'
+                    +'<p>'
+                    +      '<span class="accent">Tidak ada data</span>'
+                    +'</p>'
+                    +'</div>'
+                    +'</a>'
+                    '</li></center>';
+                } else {
+                    for (var i = 0; i < response.data.length; i++) {
+                        html += '<li>'
+                        +'<a href="'+response.data[i].link+'" class="notification-item">'
+                        +'<div class="body-col">'
+                        +'<p>'
+                        +      '<span class="accent"> '+response.data[i].name+' </span>: '+response.data[i].isi+''
+                        +      '<span class="accent"> ' + response.data[i].date+' </span> . </p>'
+                        +'</div>'
+                        +'</a>'
+                        '</li>';
+                    }
+                }
+                $('#shownotifikasi').html(html);
+                $('#counternotif').text(response.count);
+            }
+        });
+    }
     // validate and update 'notif - notifikasi' (create if is_null)
     function notifikasi(name) {
         var html = "";

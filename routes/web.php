@@ -990,6 +990,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::get('/getnotif', 'getnotifikasiController@get');
     Route::post('/clear-notif', 'getnotifikasiController@clearNotif')->name('notif.clearNotif');
     Route::get('/gettmpnotif', 'getnotifikasiController@gettmpnotif');
+    Route::get('/checkdate', 'getnotifikasiController@checkDatePayment');
     // Route::get('/testoto', 'pushotorisasiController@otorisasiup');
 
     //Otorisasi Stock Opname
