@@ -51,9 +51,8 @@
                                         </div>
                                     </div>
                                     <div class="container">
-                                        <hr style="border:0.7px solid grey; margin-bottom:30px;">
                                         <div class="table-responsive">
-                                            <table class="table table-striped table-hover" cellspacing="0"
+                                            <table class="table table-striped table-hover w-100" cellspacing="0"
                                                 id="table_target">
                                                 <thead class="bg-primary">
                                                     <tr>
@@ -278,7 +277,7 @@
                 });
             });
         });
-        
+
         function validasiBarang() {
             var barang = document.getElementsByClassName( 'barang' ),
                 item  = [].map.call(barang, function( input ) {

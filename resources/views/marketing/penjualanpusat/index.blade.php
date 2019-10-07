@@ -180,70 +180,11 @@
                 $('#cari_idbarang').val(data.item.id);
             }
         });
-        //
-        // $(document).on('click', '.btn-rejected', function () {
-        //     var ini = $(this);
-        //     $.confirm({
-        //         animation: 'RotateY',
-        //         closeAnimation: 'scale',
-        //         animationBounce: 1.5,
-        //         icon: 'fa fa-exclamation-triangle',
-        //         title: 'Peringatan!',
-        //         content: 'Apa anda yakin?',
-        //         theme: 'disable',
-        //         buttons: {
-        //             info: {
-        //                 btnClass: 'btn-blue',
-        //                 text: 'Ya',
-        //                 action: function () {
-        //                     $.toast({
-        //                         heading: 'Information',
-        //                         text: 'Promosi Ditolak.',
-        //                         bgColor: '#0984e3',
-        //                         textColor: 'white',
-        //                         loaderBg: '#fdcb6e',
-        //                         icon: 'info'
-        //                     })
-        //                     ini.parents('.btn-group').html('<button class="btn btn-danger btn-sm btn-cancel-reject">Batalkan Penelokan</button>');
-        //                 }
-        //             },
-        //             cancel: {
-        //                 text: 'Tidak',
-        //                 action: function () {
-        //                     // tutup confirm
-        //                 }
-        //             }
-        //         }
-        //     });
-        // });
-
         $("#datepicker").datepicker({
             format: "mm/yyyy",
             viewMode: "months",
             minViewMode: "months"
         });
-        //
-        // $(document).on('click', '.btn-cancel-reject', function () {
-        //     $(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>' +
-        //         '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
-        // })
-        //
-        // $(document).on('click', '.btn-approval', function () {
-        //     $.toast({
-        //         heading: 'Information',
-        //         text: 'Promosi Diterima.',
-        //         bgColor: '#0984e3',
-        //         textColor: 'white',
-        //         loaderBg: '#fdcb6e',
-        //         icon: 'info'
-        //     })
-        //     $(this).parents('.btn-group').html('<button class="btn btn-primary btn-sm btn-cancel-approve">Batalkan Penerimaan</button>')
-        // })
-
-        // $(document).on('click', '.btn-cancel-approve', function () {
-        //     $(this).parents('.btn-group').html('<button class="btn btn-success btn-approval" type="button" title="approve"><i class="fa fa-check"></i></button>' +
-        //         '<button class="btn btn-danger btn-rejected" type="button" title="reject"><i class="fa fa-close"></i></button>')
-        // })
 
         // targetReal();
         cariTarget();

@@ -358,8 +358,9 @@ class PenjualanPusatController extends Controller
         $company = DB::table('m_company')
             ->select('m_company.*')
             ->where('c_isactive', '=', 'Y')
-            ->where('c_type', '!=', 'AGEN')
+            ->where('c_type', 'CABANG')
             ->get();
+
         return view('marketing.penjualanpusat.targetrealisasi.create', compact('company'));
     }
 
