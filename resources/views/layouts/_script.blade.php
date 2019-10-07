@@ -610,7 +610,14 @@
 
             $('#btnClearNotif').on('click', function() {
                 clearNotif();
-            })
+            });
+
+            // create 'notifikasi-payment' function with 2 parameter (name, nota-PO)
+            // get list production-order-payment where termin-of-payment is h-1 and h
+                // start loop
+                    // call 'notifikasi-payment' (name, nota-PO)
+                // end loop
+
         @endif
     @endif
     // validate and update 'notif - otorisasi' (create if is_null)

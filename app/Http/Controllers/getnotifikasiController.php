@@ -17,8 +17,12 @@ class getnotifikasiController extends Controller
     public function get(Request $request)
     {
         // insert to table 'd_notification'
-        // $user = $request->user;
         $name = $request->name;
+
+        // if notif payment-po
+            // insert new notif payment-po
+        // else
+            // run switch-case below
         switch ($name) {
             case 'Notifikasi Perubahan Order Produksi':
                 $link = route('order.index');
