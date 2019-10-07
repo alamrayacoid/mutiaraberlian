@@ -166,7 +166,7 @@ class getnotifikasiController extends Controller
 
     // get list 'notifikasi'
     public function gettmpnotif(){
-        $notif = d_notification::where('n_name', 'LIKE', '%Notifikasi%')
+        $notif = d_notification::where('n_name', 'LIKE', '%Notifikasi%')->where('n_date',Carbon::today())
             ->get();
 
         return response()->json($notif);
