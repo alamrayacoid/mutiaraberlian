@@ -127,7 +127,7 @@
                     responsive: true,
                     autoWidth: false,
                     serverSide: true,
-					processing: true,
+										processing: true,
                     ajax: {
                         url: baseUrl+'/marketing/konsinyasipusat/detail-konsinyasi/'+id+'/table',
                         type: "get"

@@ -126,24 +126,30 @@ class KonsinyasiPusatController extends Controller
                 'message' => $e
             ]);
         }
-
         if ($action == "detail") {
+
             $detail = DB::table('d_salescomp')
                 ->where('d_salescomp.sc_id', '=', $id)
-                ->join('m_company', function ($c) {
+                ->leftJoin('m_company', function ($c) {
                     $c->on('m_company.c_id', '=', 'd_salescomp.sc_member');
                 })
-                ->join('m_agen', function ($a) {
+                ->leftJoin('m_agen', function ($a) {
                     $a->on('m_agen.a_code', '=', 'm_company.c_user');
                 })
-                ->join('m_wil_provinsi', function ($p) {
-                    $p->on('m_wil_provinsi.wp_id', '=', 'm_agen.a_provinsi');
+                //rev join
+                ->leftJoin('m_wil_kota', function ($k) {
+                    $k->on('m_wil_kota.wc_id', '=', 'm_agen.a_area');
                 })
-                ->join('m_wil_kota', function ($k) {
-                    $k->on('m_wil_kota.wc_id', '=', 'm_agen.a_kabupaten');
-                })
+                // old join
+                // ->leftJoin('m_wil_provinsi', function ($p) {
+                //     $p->on('m_wil_provinsi.wp_id', '=', 'm_agen.a_provinsi');
+                // })
+                // ->leftJoin('m_wil_kota', function ($k) {
+                //     $k->on('m_wil_kota.wc_id', '=', 'm_agen.a_kabupaten');
+                // })
+                // select area delete concate
                 ->select(DB::raw('DATE_FORMAT(sc_date, "%d-%m-%Y") AS tanggal'),
-                    DB::raw("CONCAT(m_wil_provinsi.wp_name, ' - ', m_wil_kota.wc_name) as area"),
+                    DB::raw("m_wil_kota.wc_name as area"),
                     'd_salescomp.sc_nota as nota', 'm_company.c_name as konsigner', 'd_salescomp.sc_type as tipe',
                     DB::raw("CONCAT('Rp. ',FORMAT(d_salescomp.sc_total, 0, 'de_DE')) as total"))
                 ->first();
@@ -151,6 +157,7 @@ class KonsinyasiPusatController extends Controller
             return Response::json($detail);
         }
         else {
+
             $data = DB::table('d_salescomp')
                 ->where('sc_id', '=', $id)
                 ->join('d_salescompdt', function ($sd) {

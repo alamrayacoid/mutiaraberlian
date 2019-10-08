@@ -399,18 +399,15 @@
                 url: baseUrl+'/marketing/konsinyasipusat/cari-konsigner-select2/'+$("#provinsi").val()+'/'+$("#kota").val(),
                 type: 'get',
                 success: function( data ) {
-                    // console.log(data);
                     $('#konsigner').find('option').remove();
                     $('#konsigner').append('<option value="" selected>Pilih Konsigner</option>')
                     $.each(data, function(index, val) {
-                        // console.log(val, val.a_id);
                         $('#konsigner').append('<option value="'+ val.c_id +'" data-code="'+ val.a_code +'">'+ val.a_name +'</option>');
                     })
                     loadingHide();
                 },
                 error: function(e) {
                     loadingHide();
-                    // console.log('get konsigner error: ');
                 }
             });
         }
@@ -837,7 +834,6 @@
                 url: '{{ url('/marketing/konsinyasipusat/get-satuan/') }}'+'/'+idItem,
                 type: 'GET',
                 success: function( resp ) {
-                    console.log('getSatuan: '+ resp);
                     $(".satuan").eq(idxBarang).find('option').remove();
                     var option = '';
                     option += '<option value="'+resp.i_unit1+'" data-unitcmp="'+ resp.i_unitcompare1 +'">'+resp.get_unit1.u_name+'</option>';
