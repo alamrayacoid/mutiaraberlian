@@ -105,6 +105,10 @@
                                             <button class="btn btn-primary btn-sm" type="button" id="btn_refresh_date"><i class="fa fa-refresh"></i></button>
                                         </div>
                                     </div>
+                                    <div class="col-4 input-group">
+                                      <label class="form-control" for="total_qty">Jumlah Qty :</label>
+                                      <input type="text" class="form-control" style="color:black" id="total_qty" value="0">
+                                    </div>
                                 </div>
 							               </div>
                         	<div class="table-responsive">
