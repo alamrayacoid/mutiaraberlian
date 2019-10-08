@@ -346,14 +346,8 @@ class KonsinyasiPusatController extends Controller
             ->first();
 
         $data = DB::table('d_stock')
-            ->join('d_stock_mutation', function ($sm) {
-                $sm->on('sm_stock', '=', 's_id');
-            })
             ->where('s_id', '=', $stock)
-            ->where('s_item', '=', $item)
-            ->where('s_status', '=', 'ON DESTINATION')
-            ->where('s_condition', '=', 'FINE')
-            ->select('sm_residue as sisa')
+            ->select('s_qty as sisa')
             ->first();
 
         $qty_compare = 0;
