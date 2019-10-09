@@ -89,16 +89,16 @@
 							</div>
 							<div class="row">
 								<div class="col-md-2 col-sm-6 col-12">
-                                    <label>Tipe Pengembalian</label>
-                                </div>
-                                <div class="col-md-4 col-sm-6 col-12">
+                      <label>Tipe Pengembalian</label>
+                  </div>
+                  <div class="col-md-4 col-sm-6 col-12">
 									<div class="form-group">
                   <input type="checkbox" id="brokenItemToggle" value="broken"> Barang rusak ?<br>
                   <input type="hidden" name="statusItem" id="statusItem" value="FINE">
 										<select id="returnType" name="returnType" class="form-control form-control-sm select2 prodcode">
 											<option value="" selected disabled>=== Pilih Tipe Pengembalian ===</option>
 											<option value="SB">Stock Baru</option>
-											<option value="SL">Stock Lama</option>
+											{{-- <option value="SL">Stock Lama</option> --}}
 										</select>
 									</div>
                   </div>
@@ -310,8 +310,6 @@
                                 <!-- end: detail Ganti Barang -->
 
 																{{-- Potong Tagihan --}}
-
-																{{-- <div class="d-none col-12" id="div4"> --}}
 																<div class="col-md-2 col-sm-6 col-12 d-none" id="lblNota">
 																		<label>Nota </label>
 																</div>
@@ -323,9 +321,6 @@
 																				</select>
 																		</div>
 																</div>
-															{{-- </div> --}}
-
-
 																{{-- End Potong Tagihan --}}
                                 <div class="col-md-2 col-sm-6 col-12">
                                     <label>Keterangan </label>
