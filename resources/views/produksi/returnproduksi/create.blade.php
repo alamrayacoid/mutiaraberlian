@@ -93,15 +93,15 @@
                                 </div>
                                 <div class="col-md-4 col-sm-6 col-12">
 									<div class="form-group">
-                                        <input type="checkbox" id="brokenItemToggle" value="broken"> Barang rusak ?<br>
-                                        <input type="text" name="statusItem" id="statusItem" value="FINE">
+                  <input type="checkbox" id="brokenItemToggle" value="broken"> Barang rusak ?<br>
+                  <input type="hidden" name="statusItem" id="statusItem" value="FINE">
 										<select id="returnType" name="returnType" class="form-control form-control-sm select2 prodcode">
 											<option value="" selected disabled>=== Pilih Tipe Pengembalian ===</option>
 											<option value="SB">Stock Baru</option>
 											<option value="SL">Stock Lama</option>
 										</select>
 									</div>
-                                </div>
+                  </div>
 							</div>
 
                             <!-- form for 'stok lama'  -->
@@ -150,7 +150,7 @@
                                     <div class="form-group">
                                         <select class="form-control select2" name="typeSL" id="typeSL">
                                             <option value="" selected disabled>=== Pilih Jenis Penggantian ===</option>
-                                            <option value="PN">Potong Nota</option>
+                                            <option value="PN">Potong Nota Order Selanjutnya</option>
                                             <option value="GB">Ganti Barang</option>
                                             <!-- <option value="GU">Ganti Uang</option> -->
                                         </select>
@@ -159,7 +159,7 @@
                             </div>
 
                             <!-- form for 'stock baru' -->
-                            <input type="text" name="itemId" value="" id="itemId">
+                            <input type="hidden" name="itemId" value="" id="itemId">
                             <div class="row formSB">
                                 <div class="col-md-2 col-sm-6 col-12">
                                     <label>Kode Produksi</label>
@@ -215,7 +215,8 @@
 											<div class="form-group">
 												<select class="form-control select2" name="type" id="type">
 													<option value="" selected disabled>=== Pilih Jenis Penggantian ===</option>
-                                                    <option value="PN">Potong Nota</option>
+													<option value="PN">Potong Nota Order Selanjutnya</option>
+													<option value="PT">Potong Tagihan</option>
 													<option value="GB">Ganti Barang</option>
 													<!-- <option value="GU">Ganti Uang</option> -->
 												</select>
@@ -303,10 +304,29 @@
                                             </tbody>
                                         </table>
                                     </div>
+
                                 </div>
 
                                 <!-- end: detail Ganti Barang -->
 
+																{{-- Potong Tagihan --}}
+
+																{{-- <div class="d-none col-12" id="div4"> --}}
+																<div class="col-md-2 col-sm-6 col-12 d-none" id="lblNota">
+																		<label>Nota </label>
+																</div>
+																<div class="col-md-10 col-sm-6 col-12  d-none" id="choiceNota" >
+																		<div class="form-group">
+																				<select class="form-control select2 choiceNota d-none" id="nota" name="nota">
+																					<option value="" selected disabled>=== Pilih Nota ===</option>
+
+																				</select>
+																		</div>
+																</div>
+															{{-- </div> --}}
+
+
+																{{-- End Potong Tagihan --}}
                                 <div class="col-md-2 col-sm-6 col-12">
                                     <label>Keterangan </label>
                                 </div>
@@ -315,6 +335,8 @@
                                         <input type="text" class="form-control" id="keterangan" name="keterangan">
                                     </div>
                                 </div>
+
+
 
                             </div>
 
@@ -349,10 +371,10 @@
 	$(document).ready(function() {
 		$('#supplier').on('select2:select', function() {
 			$('#kodeproduksi').attr('disabled', false);
-            $('#div3').addClass('d-none');
+      $('#div3').addClass('d-none');
 			$('#returnType').attr('disabled', false);
-            $('#returnType').val('').trigger('change.select2');
-            $('#returnType').select2('open');
+      $('#returnType').val('').trigger('change.select2');
+      $('#returnType').select2('open');
 		});
         $('#brokenItemToggle').on('click', function() {
             let checkedIt = $(this).prop('checked');
@@ -371,7 +393,9 @@
                 $('#typeSL').val('').trigger('change');
                 $('.formSB').addClass('d-none');
                 $('#div3').addClass('d-none');
+                $('#lblNota').addClass('d-none');
                 $('.detailGB').addClass('d-none');
+                $('#choiceNota').addClass('d-none');
                 $('.formSL').removeClass('d-none');
             }
             else if ($(this).val() == 'SB') {
@@ -379,6 +403,8 @@
                 $('#typeSL').val('').trigger('change');
                 $('.formSB').removeClass('d-none');
                 $('.detailGB').addClass('d-none');
+                $('#choiceNota').addClass('d-none');
+                $('#lblNota').addClass('d-none');
                 $('.formSL').addClass('d-none');
                 getProdCode();
             }
@@ -399,13 +425,12 @@
             },
             minLength: 1,
             select: function (event, data) {
-                console.log(data);;
                 $('#itemIdSL').val(data.item.id);
             }
         });
         // calculate total nilai return
-        $('#qtyReturnSL').on('keyup', function() {
-            let qtyReturn = $('#qtyReturnSL').val();
+    $('#qtyReturnSL').on('keyup', function() {
+      let qtyReturn = $('#qtyReturnSL').val();
 			let itemPrice = parseFloat($('#itemPriceSL').val());
 			let totalReturn = qtyReturn * itemPrice;
 			$('#returnValue').val(totalReturn);
@@ -414,12 +439,15 @@
             $('#qtyReturnSL').trigger('keyup');
         });
         $('#typeSL').on('select2:select', function() {
-            if ($(this).val() == 'GB') {
-                $('.detailGB').removeClass('d-none');
-            }
-            else {
-                $('.detailGB').addClass('d-none');
-            }
+					if ($(this).val() == 'GB') {
+						$('.detailGB').removeClass('d-none');
+						$('#choiceNota').addClass('d-none');
+						$('#lblNota').addClass('d-none');
+					}else {
+						$('#choiceNota').addClass('d-none');
+						$('#lblNota').addClass('d-none');
+						$('.detailGB').addClass('d-none');
+					}
         });
 
         // form SB
@@ -448,20 +476,27 @@
 				$('#qtyReturn').val(0);
 			}
 			// calculate total nilai return
-            qtyReturn = $('#qtyReturn').val();
+      qtyReturn = $('#qtyReturn').val();
 			let itemPrice = parseFloat($('#itemPriceSB').val());
 			let totalReturn = qtyReturn * itemPrice;
-            console.log('asd');
-            console.log(qtyReturn);
-            console.log(itemPrice);
-            console.log(totalReturn);
+
 			$('#returnValue').val(totalReturn);
 		});
-		$('#type').on('change select2:select', function() {
+		$('#type').on('select2:select', function() {
 			if ($(this).val() == 'GB') {
 				$('.detailGB').removeClass('d-none');
+				$('#choiceNota').addClass('d-none');
+				$('#lblNota').addClass('d-none');
+
+			}else if ($(this).val() == 'PT') {
+				$('#choiceNota').removeClass('d-none');
+				$('#lblNota').removeClass('d-none');
+				$('.detailGB').addClass('d-none');
+				getNota();
 			}
 			else {
+				$('#choiceNota').addClass('d-none');
+				$('#lblNota').addClass('d-none');
 				$('.detailGB').addClass('d-none');
 			}
 		});
@@ -696,7 +731,6 @@
 	}
 	// get item-unit
 	function getUnit(info) {
-        console.log(info);
 		idStock = info.stock
 		idItem = info.data.i_id;
 		namaItem = info.data.i_name;
@@ -883,7 +917,7 @@
 						supplierCode: supplierCode
 			},
 			beforeSend: function () {
-				loadingShow();
+			loadingShow();
 			},
 			success: function (response) {
 				// fill kodeproduksi option
@@ -924,10 +958,9 @@
 			},
 			type: 'get',
             beforeSend: function(){
-                loadingShow();
+            loadingShow();
             },
 			success: function(resp) {
-				// console.log(resp);
 				$('#item').val(resp.data.get_item.i_name);
 				$('#qty').val(resp.data.sd_qty);
                 $('#qtyReturn').val(0);
@@ -945,6 +978,42 @@
             }
 		});
 	}
+	// get nota
+	function getNota()
+	{
+		// let cityId = $('#city').val();
+		let prod_code = $("#kodeproduksi").val();
+		$.ajax({
+			url: "{{ route('return.getNota') }}",
+			type: "get",
+			data: {
+				prod_code : prod_code
+			},
+			beforeSend: function () {
+				loadingShow();
+			},
+			success: function (response) {
+				$('#nota').empty();
+				if (response.data.length == 0) {
+					$("#nota").append('<option value="" selected disabled>=== Pilih Nota ===</option>');
+				} else {
+					$("#nota").append('<option value="" selected disabled>=== Pilih Nota ===</option>');
+					$.each(response.data, function( key, val ) {
+						$("#nota").append('<option value="'+ val.po_nota +'">'+ val.po_nota +'</option>');
+					});
+				}
+				$('#nota').focus();
+				$('#nota').select2('open');
+			},
+            error: function (err) {
+                messageWarning('Error', 'Terjadi kesalahan saat mencari Nota, muat ulang halaman !');
+            },
+            complete: function () {
+                loadingHide();
+            }
+		});
+	}
+
 	// set confirm before send data to controller
 	function confirmStore()
 	{
@@ -999,7 +1068,6 @@
 		// 	inputs = $('.table_listcodeprod:eq(' + key + ') :input').serialize();
 		// 	data = data + '&' + inputs;
 		// });
-
 		$.ajax({
 			type: 'post',
 			data: data,

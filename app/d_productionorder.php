@@ -61,4 +61,9 @@ class d_productionorder extends Model
         return $this->hasMany('App\d_stock_mutation', 'sm_nota', 'po_nota');
     }
 
+    public function getProductionOrderCode()
+    {
+        return $this->hasMany('App\d_productionordercode', 'poc_productionorder', 'po_id');
+    }
+
 }

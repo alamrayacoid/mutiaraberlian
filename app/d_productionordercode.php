@@ -53,4 +53,6 @@ class d_productionordercode extends Model
         return $this->belongsTo('App\d_productionorder', 'poc_productionorder', 'po_id');
     }
 
+
+
 }

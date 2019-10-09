@@ -1091,6 +1091,28 @@ class ProduksiController extends Controller
             'data' => $data
         ]);
     }
+    // get list Nota
+    public function getNota(Request $request)
+    {
+        $prodCode=$request->prod_code;
+        $nota = ProductionOrder::select('po_id','po_nota','po_date','po_supplier','po_totalnet')
+                ->orderBy('po_update', 'asc')
+                ->where('po_status','BELUM')
+                ->whereHas('getProductionOrderCode',function($p) use($prodCode){
+                  $p->where('poc_productioncode','=',$prodCode);
+                })
+                ->get();
+        // $nota = d_productionordercode::
+        //         where('poc_productioncode',$prodCode)
+        //         ->whereHas('getProductionOrder',function($p){
+        //           $p->where('po_status','=','belum');
+        //         })->get();
+        // dd($nota);
+        return response()->json(array(
+            'success' => true,
+            'data' => $nota
+        ));
+    }
     // store data to Database
     public function store(Request $request)
     {
@@ -1100,7 +1122,7 @@ class ProduksiController extends Controller
             (is_null($request->returnDate)) ? $returnDate = Carbon::now() : $returnDate = Carbon::createFromFormat('d-m-Y', $request->returnDate);
 
             if ($request->returnType == 'SB') {
-                $notaPenjualan = $request->nota;
+                $notaPenjualan = null;
                 $itemId = $request->itemId;
                 $prodCode = $request->kodeproduksi;
                 $qtyReturn = (int)$request->qtyReturn;
@@ -1108,7 +1130,7 @@ class ProduksiController extends Controller
                 $type = $request->type;
             }
             elseif ($request->returnType == 'SL') {
-                $notaPenjualan = 'STOK LAMA';
+                $notaPenjualan = null;
                 $itemId = $request->itemIdSL;
                 $prodCode = $request->prodCodeSL;
                 $qtyReturn = (int)$request->qtyReturnSL;
@@ -1151,10 +1173,10 @@ class ProduksiController extends Controller
             if ($type == 'GB') {
                 $mutcat = 16;
             }
-            elseif ($type == 'GU') {
+            elseif ($type == 'PN') {
                 $mutcat = 15;
             }
-            else {
+            elseif($type == 'PT') {
                 $mutcat = 17;
             }
 
@@ -1304,62 +1326,126 @@ class ProduksiController extends Controller
                 $supplier = m_supplier::where('s_id', $supplierId)->first();
                 $supplier->s_deposit += ((int)$itemPrice * (int)$qtyReturn);
                 $supplier->save();
-
                 // tambahan dirga
-                    $acc_persediaan = DB::table('dk_pembukuan_detail')
-                                            ->where('pd_pembukuan', function($query){
-                                                $query->select('pe_id')->from('dk_pembukuan')
-                                                            ->where('pe_nama', 'Return Pembelian Potong Nota')
-                                                            ->where('pe_comp', Auth::user()->u_company)->first();
-                                            })->where('pd_nama', 'COA Persediaan Item')
-                                            ->first();
 
-                    $acc_hutang = DB::table('dk_pembukuan_detail')
-                                            ->where('pd_pembukuan', function($query){
-                                                $query->select('pe_id')->from('dk_pembukuan')
-                                                            ->where('pe_nama', 'Return Pembelian Potong Nota')
-                                                            ->where('pe_comp', Auth::user()->u_company)->first();
-                                            })->where('pd_nama', 'COA Hutang')
-                                            ->first();
+            }
+            elseif ($type == 'PT')
+            {
+              $termin = array(1);
+              $poid = '';
+              $bayar = (int)$request->returnValue;
+              $updated = false;
 
-                    $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Return Pembelian Potong Nota')
-                                    ->where('pe_comp', Auth::user()->u_company)->first();
-                    $details = [];
+              $prodPayment = ProductionOrder::where('po_nota',$request->nota)
+              ->where('pop_status','N')
+              ->join('d_productionorderpayment','po_id','pop_productionorder')->get();
 
-                    // return json_encode($parrent);
+              foreach ($prodPayment as $key => $value) {
+                $poid = $value->po_id;
+                $pop_value = (int)$value->pop_value;
+                $pop_status = $value->pop_status;
 
-                    if(!$parrent || !$acc_persediaan || !$acc_hutang){
-                        return response()->json([
-                            'status' => 'Failed',
-                            'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
-                        ]);
-                    }
+                if ($value->pop_pay + $bayar <= $pop_value) {
+                  $pop_pay = $bayar + (int)$value->pop_pay;
+                  ($pop_pay == $pop_value ) ? $pop_status = 'Y' : $pop_status = 'N';
+                  // Updated Status Production Order Payment
+                    $updatedPayment = DB::table('d_productionorderpayment')
+                          ->where('pop_productionorder', '=', $poid)
+                          ->where('pop_termin', '=', $value->pop_termin)
+                          ->update([
+                              'pop_pay' => $pop_pay,
+                              'pop_status' => $pop_status,
+                              'pop_date' => Carbon::now("Asia/Jakarta")->format("Y-m-d")
+                          ]);
+                          $updated = true;
+                          break;
+                }
+              }
+              if ($updated == false) {
+                return response()->json([
+                    'status' => 'Failed',
+                    'message' => 'Jumlah Tagiahan Kurang dari pembayaran'
+                ]);
+              }
+              // Updated status Production Order
+              $check = DB::table('d_productionorderpayment')
+                  ->where('pop_productionorder', '=', $poid)
+                  ->where('pop_status', '=', 'N')
+                  ->get();
 
-                    array_push($details, [
-                        "jrdt_nomor"        => 1,
-                        "jrdt_akun"         => $acc_hutang->pd_acc,
-                        "jrdt_value"        => $qtyReturn * $request->itemPriceSB,
-                        "jrdt_dk"           => "D",
-                        "jrdt_keterangan"   => $acc_hutang->pd_keterangan,
-                        "jrdt_cashflow"     => $acc_hutang->pd_cashflow
-                    ]);
+              if (count($check) == 0) {
+                  DB::table('d_productionorder')
+                      ->where('po_id', '=', $poid)
+                      ->update([
+                          'po_status' => "LUNAS"
+                      ]);
+              }
+              // Pembukuan
+              $data_po = DB::table('d_productionorder')
+                  ->join('d_productionorderpayment', function ($x) use ($termin) {
+                      $x->on('d_productionorder.po_id', '=', 'd_productionorderpayment.pop_productionorder');
+                      $x->where('d_productionorderpayment.pop_termin', '=', $termin);
+                  })
+                  ->join('m_supplier', function ($y) use ($termin) {
+                      $y->on('d_productionorder.po_supplier', '=', 'm_supplier.s_id');
+                  })
+                  ->where('d_productionorder.po_id', '=', $poid)
+                  ->select('d_productionorderpayment.pop_value as value', 'd_productionorderpayment.pop_pay as pay')
+                  ->first();
+              $acc_persediaan = DB::table('dk_pembukuan_detail')
+                                ->where('pd_pembukuan', function($query){
+                                  $query->select('pe_id')->from('dk_pembukuan')
+                                        ->where('pe_nama', 'Return Pembelian Potong Nota')
+                                        ->where('pe_comp', Auth::user()->u_company)->first();
+                                      })
+                                ->where('pd_nama', 'COA Persediaan Item')
+                                ->first();
 
-                    array_push($details, [
-                        "jrdt_nomor"        => 2,
-                        "jrdt_akun"         => $acc_persediaan->pd_acc,
-                        "jrdt_value"        => $qtyReturn * $request->itemPriceSB,
-                        "jrdt_dk"           => "K",
-                        "jrdt_keterangan"   => $acc_persediaan->pd_keterangan,
-                        "jrdt_cashflow"     => $acc_persediaan->pd_cashflow
-                    ]);
+                  $acc_hutang = DB::table('dk_pembukuan_detail')
+                                          ->where('pd_pembukuan', function($query){
+                                              $query->select('pe_id')->from('dk_pembukuan')
+                                                          ->where('pe_nama', 'Return Pembelian Potong Nota')
+                                                          ->where('pe_comp', Auth::user()->u_company)->first();
+                                          })->where('pd_nama', 'COA Hutang')
+                                          ->first();
 
-                    // return json_encode($details);
+                  $parrent = DB::table('dk_pembukuan')->where('pe_nama', 'Return Pembelian Potong Nota')
+                                  ->where('pe_comp', Auth::user()->u_company)->first();
+                  $details = [];
 
-                    $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $nota, $parrent->pe_nama, 'TM', Auth::user()->u_company);
+                  // return json_encode($parrent);
 
-                    if($jurnal['status'] == 'error'){
-                        return json_encode($jurnal);
-                    }
+                  if(!$parrent || !$acc_persediaan || !$acc_hutang){
+                      return response()->json([
+                          'status' => 'Failed',
+                          'message' => 'beberapa COA yang digunakan untuk transaksi ini belum ditentukan.'
+                      ]);
+                  }
+
+                  array_push($details, [
+                      "jrdt_nomor"        => 1,
+                      "jrdt_akun"         => $acc_hutang->pd_acc,
+                      "jrdt_value"        => $qtyReturn * $request->itemPriceSB,
+                      "jrdt_dk"           => "D",
+                      "jrdt_keterangan"   => $acc_hutang->pd_keterangan,
+                      "jrdt_cashflow"     => $acc_hutang->pd_cashflow
+                  ]);
+
+                  array_push($details, [
+                      "jrdt_nomor"        => 2,
+                      "jrdt_akun"         => $acc_persediaan->pd_acc,
+                      "jrdt_value"        => $qtyReturn * $request->itemPriceSB,
+                      "jrdt_dk"           => "K",
+                      "jrdt_keterangan"   => $acc_persediaan->pd_keterangan,
+                      "jrdt_cashflow"     => $acc_persediaan->pd_cashflow
+                  ]);
+
+                  // return json_encode($details);
+                  $jurnal = jurnal::jurnalTransaksi($details, date('Y-m-d'), $nota, $parrent->pe_nama, 'TM', Auth::user()->u_company);
+
+                  if($jurnal['status'] == 'error'){
+                      return json_encode($jurnal);
+                  }
             }
 
             pushNotif::notifikasiup('Notifikasi Pembuatan Return Produksi');
