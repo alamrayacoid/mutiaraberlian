@@ -502,6 +502,26 @@
 
     function distribusiPenjualan(id) {
         loadingShow();
+
+        let qty = document.getElementById("inputqtyproduksi");
+        qty.value = qty.defaultValue;
+        qty.setAttribute("readonly", "");
+
+        let code = document.getElementById("inputkodeproduksi");
+        code.value = qty.defaultValue;
+        code.setAttribute("readonly", "");
+
+        let nota = $('#notaModalSend').val('');
+        let nama = $('#nama_kurir').val('');
+        let tlp = $('#tlp_kurir').val('');
+        let resi = $('#resi_kurir').val('');
+        let harga = $('#biaya_kurir').val('');
+        let paymentType = $('#paymentType').val('');
+        let paymentMethod = $('#paymentMethod').val('');
+        let payCash = ($('#paymentType').val() == 'C') ? 0 : $('#payCash').val('');
+        let dateTop = ($('#paymentType').val() == 'C') ? null : $('#dateTop').val('');
+        let dateSend = $('#dateSend').val('');
+        
         $.ajax({
             type: 'get',
             data: {id},
@@ -559,7 +579,7 @@
                     $("#ekspedisi").append('<option value="' + val.e_id + '">' + val.e_name + '</option>');
                 });
                 $('#ekspedisi').focus();
-                $('#ekspedisi').select2('open');
+                // $('#ekspedisi').select2('open');
             },
             error: function(xhr, status, error) {
                 loadingHide();
@@ -728,7 +748,8 @@
             loadingHide();
             if (response.data.status == 'success'){
                 messageSuccess("Berhasil", "Data berhasil disimpan");
-                $('#modal_distribusi').modal('hide');
+                $('#nama_kurir').val('')
+                // $('#modal_distribusi').modal('hide');
                 table_distribusi.ajax.reload();
             } else if (response.data.status == 'gagal'){
                 messageFailed("Gagal", response.data.message);
