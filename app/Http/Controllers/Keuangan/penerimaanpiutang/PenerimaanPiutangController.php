@@ -233,7 +233,7 @@ class PenerimaanPiutangController extends Controller
                 'member.c_name',
                 DB::raw('date_format(scc.sc_datetop, "%d-%m-%Y") as sc_datetop'),
                 DB::raw('floor(scc.sc_total) as sc_total'),
-                'sc_nota as nota',)
+                'sc_nota as nota')
             ->where('sc_paidoff', '=', 'N')
             ->groupBy('sc_id')
             ->where('sc_comp', '=', $user->u_company);
