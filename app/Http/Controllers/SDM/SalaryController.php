@@ -92,7 +92,6 @@ class SalaryController extends Controller
         $e_id = $request->e_id;
         $gaji = $request->gaji;
         $makan = $request->meal;
-        dd($request->all());
         DB::beginTransaction();
         try {
 
