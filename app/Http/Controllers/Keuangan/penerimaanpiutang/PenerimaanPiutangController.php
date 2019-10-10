@@ -502,7 +502,7 @@ class PenerimaanPiutangController extends Controller
                 DB::raw('floor(scc.sc_total) as piutang'),
                 'sc_nota as nota',
                 'cabang.c_name as cabang',
-                DB::raw('"salescomp" AS asalPiutang'),
+                DB::raw('"salescomp" AS asalPiutang')
                 )
             ->where('sc_paidoff', '=', 'Y')
             ->where('sc_paidoffbranch', '=', 'N')
