@@ -542,7 +542,7 @@ class PenerimaanPiutangController extends Controller
                 DB::raw('floor(s_total) as piutang'),
                 's_nota as nota',
                 'c_name as cabang',
-                DB::raw('"sales" AS asalPiutang'),
+                DB::raw('"sales" AS asalPiutang')
                 )
             ->where('s_paidoffbranch', '=', 'N')
             ->groupBy('s_id')
