@@ -736,11 +736,12 @@
             }
             table_salary.clear().draw();
             $.each(data, function(idx, val){
-                let total = parseInt(val.tunjangan) + parseInt(val.reward) + parseInt(val.e_salary) - parseInt(val.punishment);
+                let total = parseInt(val.tunjangan) + parseInt(val.reward)+ parseInt(val.e_meal) + parseInt(val.e_salary) - parseInt(val.punishment);
                 table_salary.row.add([
                     val.e_nip+'<input type="hidden" class="e_id" name="e_id[]" value="'+val.e_id+'">',
                     val.e_name,
                     '<span class="pull-right">'+convertToRupiah(val.e_salary)+'</span>',
+                    '<span class="pull-right">'+convertToRupiah(val.e_meal)+'</span>',
                     '<span class="pull-right">'+convertToRupiah(val.reward)+'</span>',
                     '<span class="pull-right">'+convertToRupiah(val.punishment)+'</span>',
                     '<span class="pull-right">'+convertToRupiah(val.tunjangan)+'</span>',

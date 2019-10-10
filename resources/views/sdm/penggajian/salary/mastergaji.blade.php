@@ -39,8 +39,9 @@
                                         <thead class="bg-primary">
                                             <tr>
                                                 <th width="25%">NIP</th>
-                                                <th width="40%">Nama</th>
-                                                <th width="35%">Gaji Pokok</th>
+                                                <th width="35%">Nama</th>
+                                                <th width="19%">Gaji Pokok</th>
+                                                <th width="20%">Uang Makan</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -49,6 +50,7 @@
                                                     <td>{{ $item->e_nip }}<input type="hidden" class="e_id" id="{{ $item->e_id }}" name="e_id[]" value="{{ $item->e_id }}"></td>
                                                     <td>{{ $item->e_name }}</td>
                                                     <td><input type="text" class="form-control form-control-sm gaji rupiah" id="gaji{{ $item->e_id }}" name="gaji[]" value="{{ $item->e_salary }}"></td>
+                                                    <td><input type="text" class="form-control form-control-sm meal rupiah" id="meal{{ $item->e_id }}" name="meal[]" value="{{ $item->e_meal }}"></td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -82,15 +84,20 @@
         loadingShow();
         let e_id = [];
         let value = [];
+        let meal = [];
 
         $('.gaji').each(function(idx){
             value[idx] = $(this).val();
+        })
+        $('.meal').each(function(idx){
+            meal[idx] = $(this).val();
         })
         $('.e_id').each(function(idx){
             e_id[idx] = $(this).val();
         })
         axios.post('{{ route("salary.saveGajiPokok") }}', {
             "gaji": value,
+            "meal": meal,
             "e_id": e_id,
             "_token": "{{ csrf_token() }}"
         }).then(function(response){
@@ -120,6 +127,7 @@
                     val.e_nip + '<input type="hidden" class="e_id" id="'+val.e_id+'" name="e_id[]" value="'+val.e_id+'">',
                     val.e_name,
                     '<input type="text" class="form-control form-control-sm gaji rupiah" id="gaji'+val.e_id+'" name="gaji[]" value="'+val.e_salary+'">',
+                    '<input type="text" class="form-control form-control-sm meal rupiah" id="meal'+val.e_id+'" name="meal[]" value="'+val.e_meal+'">',
                 ]).draw(false);
             });
 
@@ -134,6 +142,18 @@
                 nullable: false,
                 // unmaskAsNumber: true,
             });
+            $('.meal').inputmask("currency", {
+                radixPoint: ",",
+                groupSeparator: ".",
+                digits: 0,
+                autoGroup: true,
+                prefix: ' Rp ', //Space after $, this will not truncate the first character.
+                rightAlign: true,
+                autoUnmask: true,
+                nullable: false,
+                // unmaskAsNumber: true,
+            });
+
 
             table_mastergaji.columns.adjust();
         }).catch(function(error){

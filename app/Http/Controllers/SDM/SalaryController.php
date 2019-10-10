@@ -40,7 +40,7 @@ class SalaryController extends Controller
                 $q->whereYear('eb_date', '=', $periode->format('Y'));
             })
             ->leftJoin('d_employeebenefitsdt', 'ebd_employeebenefits', '=', 'eb_id')
-            ->select('e_name', 'e_nip', 'e_id', DB::raw('round(e_salary) as e_salary'),
+            ->select('e_name', 'e_nip', 'e_id', DB::raw('round(e_salary) as e_salary'), DB::raw('round(e_meal) as e_meal'),
             DB::raw('coalesce(es_issubmitted, "N") as es_issubmitted'), 'es_id', 'esd_employeesalary',
                 DB::raw('
                         coalesce(round((select sum(ebd_value) from d_employeebenefitsdt emprew
@@ -73,7 +73,7 @@ class SalaryController extends Controller
             ->first();
 
         $data = DB::table('m_employee')
-            ->select('e_nip', 'e_name', 'e_id', DB::raw('round(e_salary) as e_salary'))
+            ->select('e_nip', 'e_name', 'e_id', DB::raw('round(e_salary) as e_salary'),DB::raw('round(e_meal) as e_meal'))
             ->where('e_company', '=', $pusat->c_id)
             ->where('e_isactive', '=', 'Y')
             ->get();
@@ -91,7 +91,8 @@ class SalaryController extends Controller
 
         $e_id = $request->e_id;
         $gaji = $request->gaji;
-
+        $makan = $request->meal;
+        dd($request->all());
         DB::beginTransaction();
         try {
 
@@ -99,7 +100,8 @@ class SalaryController extends Controller
                 DB::table('m_employee')
                     ->where('e_id', '=', $e_id[$i])
                     ->update([
-                        'e_salary' => $gaji[$i]
+                        'e_salary' => $gaji[$i],
+                        'e_meal' => $makan[$i]
                     ]);
             }
 
@@ -120,13 +122,11 @@ class SalaryController extends Controller
         $pusat = DB::table('m_company')
             ->where('c_type', '=', 'PUSAT')
             ->first();
-
         $data = DB::table('m_employee')
-            ->select('e_nip', 'e_name', 'e_id', DB::raw('round(e_salary) as e_salary'))
+            ->select('e_nip', 'e_name', 'e_id', DB::raw('round(e_salary) as e_salary'),DB::raw('round(e_meal) as e_meal'))
             ->where('e_company', '=', $pusat->c_id)
             ->where('e_isactive', '=', 'Y')
             ->get();
-
         return response()->json($data);
     }
 

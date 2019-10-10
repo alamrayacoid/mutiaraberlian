@@ -36,6 +36,7 @@
                                 <th>NIP</th>
                                 <th>Nama Pegawai</th>
                                 <th>Gaji Pokok</th>
+                                <th>Uang Makan</th>
                                 <th>Reward</th>
                                 <th>Punishment</th>
                                 <th>Tunjangan</th>
