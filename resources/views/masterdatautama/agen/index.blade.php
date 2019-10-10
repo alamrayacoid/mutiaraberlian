@@ -37,7 +37,7 @@
                     </div>
                     <div class="card-block">
                         <section>
-                            <div class="row mb-5">
+                            <div class="row mb-4">
                                 <div class="col-md-3 col-sm-6 col-xs-12">
                                     <label>Status Agen</label>
                                 </div>
@@ -48,7 +48,57 @@
                                         <option value="N">Non Aktif</option>
                                     </select>
                                 </div>
+
                             </div>
+                            {{-- Find Agen --}}
+                            @if (Auth::user()->getCompany->c_type == "PUSAT")
+                            <form id="filterData"  method="post">
+                              <div class="row mb-2">
+                                  <div class="col-md-3 col-sm-6 col-xs-12">
+                                      <label>Cabang</label>
+                                  </div>
+                                  <div class="col-md-4 col-sm-6 col-xs-12">
+                                      <select name="branch" id="branch" class="form-control form-control-sm select2">
+                                        <option selected value="null">Semua</option>
+                                        @foreach ($branch as $key => $data)
+                                        <option value="{{$data->c_id}}">{{$data->c_name .' - '. $data->c_address}}</option>
+                                      @endforeach
+                                      </select>
+                                  </div>
+
+                              </div>
+                              <div class="row mb-2">
+                                  <div class="col-md-3 col-sm-6 col-xs-12">
+                                      <label>Agen</label>
+                                  </div>
+                                  <div class="col-md-4 col-sm-6 col-xs-12">
+                                      <select name="agent" id="agent" class="form-control form-control-sm select2">
+                                        <option selected value="null">Semua</option>
+                                        @foreach ($agent as $key => $data)
+                                        <option value="{{$data->a_code}}">{{$data->a_name}}</option>
+                                      @endforeach
+                                      </select>
+                                  </div>
+
+                              </div>
+                              <div class="row mb-2">
+                                  <div class="col-md-3 col-sm-6 col-xs-12">
+                                      <label>Type</label>
+                                  </div>
+                                  <div class="col-md-4 col-sm-6 col-xs-12">
+                                      <select name="types" id="types" class="form-control form-control-sm select2">
+                                        <option selected value="null">Semua</option>
+                                        <option value="AGEN">AGEN</option>
+                                        <option value="SUB AGEN" >SUB AGEN</option>
+                                        <option value="MMA">MMA</option>
+                                        <option value="APOTEK/RADIO">APOTEK/RADIO</option>
+                                      </select>
+                                  </div>
+
+                              </div>
+
+                            </form>
+                          @endif
 
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover display w-100" cellspacing="0" id="table_agen">
@@ -84,20 +134,36 @@
 @endsection
 @section('extra_script')
 <script type="text/javascript">
+var chnageFilter = 0;
     $(document).ready(function() {
         setTimeout(function () {
             TableAgen();
 
             $('#status').on('select2:select', function() {
-                TableAgen();
+                TableAgen(0);
+
             });
 
+            $('#branch').on('select2:select', function() {
+                TableAgen(1);
+
+            });
+
+            $('#agent').on('select2:select', function() {
+                TableAgen(1);
+
+            });
+
+            $('#types').on('select2:select', function() {
+                TableAgen(1);
+
+            });
         }, 100);
     });
 
     var tb_agen;
     // function to retrieve DataTable server side
-    function TableAgen() {
+    function TableAgen(changeFilter) {
         $('#table_agen').dataTable().fnDestroy();
         tb_agen = $('#table_agen').DataTable({
             responsive: true,
@@ -108,6 +174,10 @@
                 url: "{{ route('agen.list') }}",
                 type: "post",
                 data: {
+                    changeFilter : changeFilter,
+                    branch: $("#branch").val(),
+                    agent: $("#agent").val(),
+                    types: $("#types").val(),
                     status: $('#status').val(),
                     "_token": "{{ csrf_token() }}"
                 }

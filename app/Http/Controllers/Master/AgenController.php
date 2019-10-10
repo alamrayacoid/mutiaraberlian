@@ -224,6 +224,25 @@ class AgenController extends Controller
      */
     public function getList(Request $request)
     {
+
+      if ($request->changeFilter == 1) {
+        $datas = DB::table('m_agen')
+        ->join('m_wil_kota', 'a_area', 'wc_id')
+        ->orderBy('a_isactive', 'asc')
+        ->orderBy('a_code', 'asc')
+        ->get();
+
+          if ($request->branch != 'null') {
+          $datas = $datas->where('a_mma',$request->branch);
+          }
+          if ($request->agent != 'null') {
+          $datas = $datas->where('a_parent',$request->agent);
+          }
+          if ($request->types != 'null') {
+            $datas = $datas->where('a_type',$request->types);
+          }
+
+      }else{
         $user = Auth::user();
         $comp = $user->u_company;
         $info = DB::table('m_company')
@@ -237,9 +256,12 @@ class AgenController extends Controller
             $datas = $datas->where('a_isactive', $status)
                 ->where('a_type', '!=', 'MMA');
         }
+
         $datas = $datas->join('m_wil_kota', 'a_area', 'wc_id')
             ->orderBy('a_isactive', 'asc')
             ->orderBy('a_code', 'asc');
+
+
 
         if ($info->c_type == 'PUSAT'){
             $datas = $datas->get();
@@ -256,6 +278,7 @@ class AgenController extends Controller
             return false;
         }
 
+      }
         return Datatables::of($datas)
             ->addIndexColumn()
             ->addColumn('area', function ($datas) {
@@ -284,7 +307,9 @@ class AgenController extends Controller
      */
     public function index()
     {
-        return view('masterdatautama.agen.index');
+        $branch = DB::table('m_company')->select('c_id','c_name','c_address')->where('c_type','CABANG')->get();
+        $agent = DB::table('m_agen')->select('a_code','a_parent','a_name')->where('a_type','AGEN')->get();
+        return view('masterdatautama.agen.index',compact('branch','agent'));
     }
 
     /**
@@ -559,25 +584,36 @@ class AgenController extends Controller
         $data['agen'] = DB::table('m_agen')
             ->where('a_id', $id)
             ->first();
+            // dd($data);
         //
         // if ($data['agen']->a_type == "APOTEK/RADIO"){
         //     $data['agen']->a_type = "APOTEK";
         // }
+        // dd($data['agen']->a_parent = 0);
 
         if ($data['agen']->a_type == "APOTEK/RADIO" || $data['agen']->a_type == "SUB AGEN"){
+          if ($data['agen']->a_parent == !null) {
+
             $data['infoparent'] = DB::table('m_agen')
                 ->where('a_code', '=', $data['agen']->a_parent)
                 ->first();
 
             $data['parentProv'] = $this->getProvinceByCity($data['infoparent']->a_area);
             $data['parentCity'] = $this->getCities($data['parentProv']);
+
+          }else {
             $data['parentAgen'] = DB::table('m_company')
                 ->join('m_agen', 'c_user', 'a_code')
                 ->where('a_code', '!=', $data['agen']->a_code)
-                ->where('a_area', '=', $data['infoparent']->a_area)
                 ->where('c_type', '!=', 'APOTEK/RADIO')
                 ->where('c_isactive', 'Y')
                 ->get();
+                if ($data['agen']->a_parent == !null) {
+                  $data = $data->where('a_area', '=', $data['infoparent']->a_area);
+                }
+
+              }
+
         }
 
         $data['mma'] = [];
