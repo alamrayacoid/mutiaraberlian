@@ -233,7 +233,7 @@ class PenerimaanPiutangController extends Controller
                 'member.c_name',
                 DB::raw('date_format(scc.sc_datetop, "%d-%m-%Y") as sc_datetop'),
                 DB::raw('floor(scc.sc_total) as sc_total'),
-                'sc_nota as nota',)
+                'sc_nota as nota')
             ->where('sc_paidoff', '=', 'N')
             ->groupBy('sc_id')
             ->where('sc_comp', '=', $user->u_company);
@@ -502,7 +502,7 @@ class PenerimaanPiutangController extends Controller
                 DB::raw('floor(scc.sc_total) as piutang'),
                 'sc_nota as nota',
                 'cabang.c_name as cabang',
-                DB::raw('"salescomp" AS asalPiutang'),
+                DB::raw('"salescomp" AS asalPiutang')
                 )
             ->where('sc_paidoff', '=', 'Y')
             ->where('sc_paidoffbranch', '=', 'N')
@@ -542,7 +542,7 @@ class PenerimaanPiutangController extends Controller
                 DB::raw('floor(s_total) as piutang'),
                 's_nota as nota',
                 'c_name as cabang',
-                DB::raw('"sales" AS asalPiutang'),
+                DB::raw('"sales" AS asalPiutang')
                 )
             ->where('s_paidoffbranch', '=', 'N')
             ->groupBy('s_id')
@@ -668,7 +668,7 @@ class PenerimaanPiutangController extends Controller
                 'member.c_name',
                 DB::raw('date_format(scc.sc_datetop, "%d-%m-%Y") as sc_datetop'),
                 DB::raw('floor(scc.sc_total) as piutang'),
-                'sc_nota as nota',)
+                'sc_nota as nota')
             ->where('sc_paidoff', 'Y')
             ->groupBy('sc_id')
             ->where('sc_comp', '=', $user->u_company);

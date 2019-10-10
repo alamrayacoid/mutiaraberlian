@@ -49,6 +49,7 @@ class BudgetingController extends Controller
                         ->with([
                             'akun' => function($query) use ($month) {
                                 $query->leftJoin('dk_akun_saldo', 'dk_akun_saldo.as_akun', 'dk_akun.ak_id')
+                                ->where('as_periode', $month)
                                 ->leftJoin('d_budgeting', function ($join) use ($month){
                                     $join->on('d_budgeting.b_akun', 'dk_akun.ak_nomor')
                                     ->where('d_budgeting.b_date', $month);
