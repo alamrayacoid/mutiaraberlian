@@ -584,25 +584,36 @@ class AgenController extends Controller
         $data['agen'] = DB::table('m_agen')
             ->where('a_id', $id)
             ->first();
+            // dd($data);
         //
         // if ($data['agen']->a_type == "APOTEK/RADIO"){
         //     $data['agen']->a_type = "APOTEK";
         // }
+        // dd($data['agen']->a_parent = 0);
 
         if ($data['agen']->a_type == "APOTEK/RADIO" || $data['agen']->a_type == "SUB AGEN"){
+          if ($data['agen']->a_parent == !null) {
+
             $data['infoparent'] = DB::table('m_agen')
                 ->where('a_code', '=', $data['agen']->a_parent)
                 ->first();
 
             $data['parentProv'] = $this->getProvinceByCity($data['infoparent']->a_area);
             $data['parentCity'] = $this->getCities($data['parentProv']);
+
+          }else {
             $data['parentAgen'] = DB::table('m_company')
                 ->join('m_agen', 'c_user', 'a_code')
                 ->where('a_code', '!=', $data['agen']->a_code)
-                ->where('a_area', '=', $data['infoparent']->a_area)
                 ->where('c_type', '!=', 'APOTEK/RADIO')
                 ->where('c_isactive', 'Y')
                 ->get();
+                if ($data['agen']->a_parent == !null) {
+                  $data = $data->where('a_area', '=', $data['infoparent']->a_area);
+                }
+
+              }
+
         }
 
         $data['mma'] = [];
