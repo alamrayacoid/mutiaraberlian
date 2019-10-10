@@ -96,12 +96,7 @@
                                   </div>
 
                               </div>
-                              {{-- <div class="row mb-2">
-                                  <div class="col-md-7 col-sm-12 col-xs-12">
-                                    <button style="float:right" type="button" onclick="filterData()" class="btn btn-success" name="button"> <i class="fa fa-search"></i> </button>
-                                  </div>
 
-                              </div> --}}
                             </form>
                           @endif
 
@@ -167,11 +162,6 @@ var chnageFilter = 0;
     });
 
     var tb_agen;
-    // function to filter data agen
-    function filterData()
-    {
-      TableAgen(1);
-    }
     // function to retrieve DataTable server side
     function TableAgen(changeFilter) {
         $('#table_agen').dataTable().fnDestroy();
