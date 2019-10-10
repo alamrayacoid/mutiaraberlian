@@ -729,6 +729,7 @@
 
                     this.tr_akun_detail[0].dt_akun_nama = conteks.text;
                     this.tr_akun_detail[0].dt_akun = conteks.id;
+
                 },
 
                 nominalChange: function(e){
@@ -834,7 +835,7 @@
 
                         setTimeout(function(){
                             that.tr_akun_detail = feeder;
-                            $('#dt_akun_1').val(conteks.detail[1].trdt_akun).trigger('change.select2');
+                            $('#tr_akun_kas').val(conteks.detail[0].trdt_akun).trigger('change.select2');
                             that.calculatedTotal();
                         }, 0);
                     }
@@ -955,11 +956,11 @@
 
                     if(that.tr_akun_kas.length){
                         that.coaChange(that.tr_akun_kas[0].id);
-                        $('#dt_akun_1').val(this.tr_akun_kas[0].id).trigger('change.select2');
+                        $('#tr_akun_kas').val(this.tr_akun_kas[0].id).trigger('change.select2');
                     }
 
                     this.jenisChange(this.tr_jenis[0].id);
-
+                    
                     $('#tr_jenis').val('D').trigger('change.select2');
                     $('#tr_nominal').val(0);
                 }

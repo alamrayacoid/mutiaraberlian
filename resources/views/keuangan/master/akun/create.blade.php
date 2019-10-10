@@ -269,7 +269,7 @@
                                             <div class="col-md-6" style="border: 0px solid #eee; margin-top: -10px">
                                                 <div class="row" style="padding-right: 10px;">
 
-                                                    <div class="col-md-12" style="padding: 0px; height: 272px; background: #eee;">
+                                                    <div class="col-md-12" style="padding: 0px; height: 300px; background: #eee; overflow-x: scroll;">
                                                         <table width="100%" class="keuangan table-mini">
                                                             <thead>
                                                                 <tr>
@@ -438,6 +438,7 @@
 
             mounted: function(){
                 console.log('vue mounted');
+
                 axios.get("{{ Route('keuangan.akun.resource') }}")
                         .then((response) => {
                             this.downloadingResource = false;
@@ -461,6 +462,10 @@
                             this.resourceError = true;
                             console.log('System Bermasalah '+e);
                         })
+
+                setInterval(function(){
+                        $('#ak_posisi').val('D').trigger('change.select2');
+                }, 0)
             },
 
             methods: {
