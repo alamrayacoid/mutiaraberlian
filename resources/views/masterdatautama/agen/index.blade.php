@@ -164,6 +164,7 @@ var chnageFilter = 0;
     var tb_agen;
     // function to retrieve DataTable server side
     function TableAgen(changeFilter) {
+      loadingShow();
         $('#table_agen').dataTable().fnDestroy();
         tb_agen = $('#table_agen').DataTable({
             responsive: true,
@@ -182,6 +183,7 @@ var chnageFilter = 0;
                     "_token": "{{ csrf_token() }}"
                 }
             },
+
             columns: [{
                     data: 'DT_RowIndex'
                 },
@@ -217,6 +219,7 @@ var chnageFilter = 0;
                 [10, 20, 50, 'All']
             ]
         });
+        loadingHide()
     }
     // function to redirect page to edit page
     function EditAgen(idx) {
