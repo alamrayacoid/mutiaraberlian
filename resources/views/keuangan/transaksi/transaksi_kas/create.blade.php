@@ -897,7 +897,7 @@
                         setTimeout(function(){
                             that.tr_akun_detail = feeder;
                             $('#tr_ac_cashflow').val(cashflow[0].trdt_cashflow).trigger('change.select2');
-                            $('#dt_akun_1').val(conteks.detail[1].trdt_akun).trigger('change.select2');
+                            $('#tr_akun_kas').val(conteks.detail[0].trdt_akun).trigger('change.select2');
                             that.calculatedTotal();
                         }, 0);
                     }
@@ -1018,6 +1018,7 @@
 
                     if(that.tr_akun_kas.length){
                         that.coaChange(that.tr_akun_kas[0].id);
+                        $('#tr_akun_kas').val(this.tr_akun_kas[0].id).trigger('change.select2');
                     }
 
                     if(that.tr_akun_lawan.length){

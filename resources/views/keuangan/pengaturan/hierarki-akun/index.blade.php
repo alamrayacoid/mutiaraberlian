@@ -150,6 +150,7 @@
                                                             <div class="col-md-12 text-right">
                                                                 <template v-if="stateForm == 'insert'">
                                                                     <button class="btn btn-primary btn-sm" :disabled="disabledButton" @click="save">Simpan Data</button>
+                                                                    <button class="btn btn-primary btn-sm" :disabled="disabledButton" @click="next">Selanjutnya</button>
                                                                 </template>
                                                             </div>
                                                         </div>
@@ -172,7 +173,7 @@
                                                         <div class="row" style="margin-top: 15px;">
                                                             <div class="col-md-4 label text-center">Pilih hierarki level 1</div>
                                                             <div class="col-md-8">
-                                                                <vue-select :name="'level_1'" :id="'level_1'" :options="level_1" :search="false" @option-change="level_1_change"></vue-select>
+                                                                <vue-select :name="'level_1'" :options="level_1" :id="'klop2'" :search="false" @option-change="level_1_change"></vue-select>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -221,12 +222,14 @@
 
                                                     <div class="col-md-12 button-wrapper">
                                                         <div class="row">
-                                                            <div class="col-md-6">
+                                                            <div class="col-md-4">
                                                                 <button class="btn btn-primary btn-sm" :disabled="disabledButton" @click="addAddition">Tambah Hierarki</button>
                                                             </div>
-                                                            <div class="col-md-6 text-right">
+                                                            <div class="col-md-7 text-right">
                                                                 <template v-if="stateForm == 'insert'">
                                                                     <button class="btn btn-primary btn-sm" :disabled="disabledButton" @click="save">Simpan Data</button>
+                                                                    <button class="btn btn-primary btn-sm" :disabled="disabledButton" @click="prev">Sebelumnya</button>
+                                                                    <button class="btn btn-primary btn-sm" :disabled="disabledButton" @click="next">Selanjutnya</button>
                                                                 </template>
                                                             </div>
                                                         </div>
@@ -249,7 +252,7 @@
                                                         <div class="row" style="margin-top: 15px;">
                                                             <div class="col-md-4 label text-center">Pilih hierarki level 1</div>
                                                             <div class="col-md-7">
-                                                                <vue-select :name="'level_1'" :id="'level_1'" :options="level_1" :search="false" @option-change="level_1_change"></vue-select>
+                                                                <vue-select :name="'level_1'" :id="'klop'" :options="level_1" :search="false" @option-change="level_1_change"></vue-select>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -334,6 +337,7 @@
                                                                 <template v-if="stateForm == 'insert'">
                                                                     <button class="btn btn-primary btn-sm" :disabled="disabledButton" @click="save">Simpan Data</button>
                                                                 </template>
+                                                                <button class="btn btn-primary btn-sm" :disabled="disabledButton" @click="prev">Sebelumnya</button>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -383,7 +387,7 @@
                 disabledButton: false,
 
                 // addition
-                state: 'level_2',
+                state: 'level_1',
                 level_1: [],
                 level_subclass: [],
                 level_2: [],
@@ -510,9 +514,47 @@
                             })
                 },
 
+                next: function (e){
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    if(this.state == 'level_1'){
+                       this.state = 'subclass'
+                    }else if(this.state == 'subclass'){
+                        this.state = 'level_2'
+                    }
+
+                    this.level_1_change(this.level_1[0].id);
+                },
+
+                prev: function (e){
+                    e.preventDefault();
+                    e.stopImmediatePropagation();
+
+                    if(this.state == 'level_2'){
+                       this.state = 'subclass'
+                    }else if(this.state == 'subclass'){
+                        this.state = 'level_1'
+                    }
+
+                    this.level_1_change(this.level_1[0].id);
+                },
+
                 level_1_change: function(e){
+                    // alert(e);
                     this.single.level_1 = e;
                     this.addition = [];
+                    let that = this;
+                    
+                    setTimeout(function(){
+                        if(that.state == 'subclass'){
+                            $('#klop2').val(e).trigger('change.select2');
+                        }else if(that.state == 'level_2'){
+                            $('#klop').val(e).trigger('change.select2');
+                        }
+                        
+                    }, 0);
+
                     this.filteringData();
                 },
 
