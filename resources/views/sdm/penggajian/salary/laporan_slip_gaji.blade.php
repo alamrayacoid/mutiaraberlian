@@ -50,7 +50,7 @@ function convertToRupiah($angka){
     </style>
 </head>
 
-<body>
+<body onload="window.print()">
     <div>
         <hr size="2" color="#000000" />
         <center>

@@ -227,7 +227,7 @@ class SalaryController extends Controller
 
     public function printGajiPegawai(Request $request)
     {
-        $e_id = $request->id;
+        $e_id = base64_decode($request->id);
         $periode = Carbon::createFromFormat('d-m-Y', "01-" . $request->periode);
 
         $salary = DB::table('m_employee')
@@ -289,14 +289,21 @@ class SalaryController extends Controller
         // }
 
         // function calculate total salary receipt
-        $totalReceipts = (int)$totalTunjangan->tunjangan_value + (int)$salary->e_salary + (int)$totalReward->reward_value + (int)$salary->e_meal;
+
+        if (!isset($salary)) {
+          $e_salary = 0;
+          $e_meal = 0;
+        }else{
+          $e_salary = $salary->e_salary;
+          $e_meal = $salary->e_meal;
+        }
+
+        $totalReceipts = $e_meal + $e_salary + (int)$totalTunjangan->tunjangan_value + (int)$totalReward->reward_value ;
         // function calculate total salary
         $totalSalary = $totalReceipts - (int)$totalPunishment->punishmnet_value;
-
         return view('sdm.penggajian.salary.laporan_slip_gaji')
               ->with(compact('salary', 'reward', 'tunjangan', 'punishment','totalReceipts','totalSalary'));
     }
-
     public function detailGajiPegawai(Request $request)
     {
         $e_id = $request->id;

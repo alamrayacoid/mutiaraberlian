@@ -1391,7 +1391,6 @@
             axios.get('{{ Route("agen.laporan") }}?search='+$('#option-cabang').val())
                     .then((response) => {
                         // console.log(response.data);
-
                         $('#totPenjualan').html(humanizePrice(response.data.penjualan))
                         $('#totHutang').html(humanizePrice(response.data.sisahutang))
                         $('#saldoAgen').html(humanizePrice(response.data.saldo))
