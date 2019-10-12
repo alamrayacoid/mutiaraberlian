@@ -692,7 +692,6 @@
                 "periode": bulan
             }
         }).then(function(response){
-            console.log(response);
             loadingHide();
             let data = response.data.data;
             $('.nama_pegawai').html(data[0].e_name);
@@ -747,7 +746,7 @@
                     '<span class="pull-right">'+convertToRupiah(val.tunjangan)+'</span>',
                     '<span class="pull-right">'+convertToRupiah(total)+'</span>'+'<input type="hidden" class="total" name="total[]" value="'+total+'">',
                     '<input type="text" class="form-control form-control-sm diserahkan" name="diserahkan[]" value="'+val.esd_submittedon+'">',
-                    '<center><button type="button" class="btn btn-primary btn-sm" onclick="detailGajiPegawai(\''+val.e_id+'\')">Detail</button></center>'
+                    '<center><button type="button" class="btn btn-primary btn-sm" onclick="detailGajiPegawai(\''+val.e_id+'\')">Detail</button> <button type="button" class="btn btn-warning btn-sm" onclick="printGajiPegawai(\''+val.e_id+'\')">Cetak</button></center>'
                 ]).draw().node();
             });
             table_salary.columns.adjust();
@@ -785,6 +784,12 @@
             total[idx] = $(this).val();
         })
 
+        if (type == 'draft') {
+          getDataSalary();
+
+        }else {
+
+
         axios.post('{{ route("salary.saveGajiPegawai") }}', {
             "periode": periode,
             "e_id": e_id,
@@ -802,7 +807,15 @@
             }
         }).catch(function(error){
             loadingHide();
-        })
+        });
+      }
+
+    }
+
+    function printGajiPegawai(id)
+    {
+        let periode = $('#periode_salary').val();
+        window.open("{{ url("/sdm/penggajian/salary/print-gaji-pegawai/?") }}" + "id=" + id + "&periode=" + periode, '_blank')
     }
 
     function detailGajiPegawai(id){

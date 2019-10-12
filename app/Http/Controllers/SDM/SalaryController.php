@@ -11,8 +11,9 @@ use App\Http\Controllers\AksesUser;
 
 class SalaryController extends Controller
 {
-    public function getDataSalaryPegawai(Request $request){
-        if (!AksesUser::checkAkses(28, 'read')){
+    public function getDataSalaryPegawai(Request $request)
+    {
+        if (!AksesUser::checkAkses(28, 'read')) {
             return response()->json([
                 'status' => 'gagal',
                 'message' => 'anda tidak memiliki akses'
@@ -26,22 +27,29 @@ class SalaryController extends Controller
             ->first();
 
         $data = DB::table('m_employee')
-            ->leftJoin('d_employeesalarydt as esd', function($q) use ($periode){
+            ->leftJoin('d_employeesalarydt as esd', function ($q) use ($periode) {
                 $q->on('esd_employee', '=', 'e_id');
-                $q->join('d_employeesalary as es', function($w) use ($periode){
+                $q->join('d_employeesalary as es', function ($w) use ($periode) {
                     $w->on('es_id', '=', 'esd_employeesalary');
                     $w->whereMonth('es_date', '=', $periode->format('m'));
                     $w->whereYear('es_date', '=', $periode->format('Y'));
                 });
             })
-            ->leftJoin('d_employeebenefits as emben', function($q) use ($periode){
+            ->leftJoin('d_employeebenefits as emben', function ($q) use ($periode) {
                 $q->on('eb_employee', '=', 'esd_employee');
                 $q->whereMonth('eb_date', '=', $periode->format('m'));
                 $q->whereYear('eb_date', '=', $periode->format('Y'));
             })
             ->leftJoin('d_employeebenefitsdt', 'ebd_employeebenefits', '=', 'eb_id')
-            ->select('e_name', 'e_nip', 'e_id', DB::raw('round(e_salary) as e_salary'), DB::raw('round(e_meal) as e_meal'),
-            DB::raw('coalesce(es_issubmitted, "N") as es_issubmitted'), 'es_id', 'esd_employeesalary',
+            ->select(
+                'e_name',
+                'e_nip',
+                'e_id',
+                DB::raw('round(e_salary) as e_salary'),
+                DB::raw('round(e_meal) as e_meal'),
+                DB::raw('coalesce(es_issubmitted, "N") as es_issubmitted'),
+                'es_id',
+                'esd_employeesalary',
                 DB::raw('
                         coalesce(round((select sum(ebd_value) from d_employeebenefitsdt emprew
                         LEFT JOIN m_benefits ON b_id = ebd_benefits
@@ -57,23 +65,24 @@ class SalaryController extends Controller
                         LEFT JOIN m_benefits ON b_id = ebd_benefits
                         where emprew.ebd_employeebenefits = emben.eb_id and b_type = "P" group by b_type)), 0) as punishment
                         '),
-                DB::raw('round(esd_salary) as esd_salary'), DB::raw('coalesce(date_format(esd_submittedon, "%d-%m-%Y"), "") as esd_submittedon')
+                DB::raw('round(esd_salary) as esd_salary'),
+                DB::raw('coalesce(date_format(esd_submittedon, "%d-%m-%Y"), "") as esd_submittedon')
             )
             ->where('e_company', '=', $pusat->c_id)
             ->where('e_isactive', '=', 'Y')
             ->groupBy('e_id')
             ->get();
-
         return response()->json($data);
     }
 
-    public function masterGajiPokok(Request $request){
+    public function masterGajiPokok(Request $request)
+    {
         $pusat = DB::table('m_company')
             ->where('c_type', '=', 'PUSAT')
             ->first();
 
         $data = DB::table('m_employee')
-            ->select('e_nip', 'e_name', 'e_id', DB::raw('round(e_salary) as e_salary'),DB::raw('round(e_meal) as e_meal'))
+            ->select('e_nip', 'e_name', 'e_id', DB::raw('round(e_salary) as e_salary'), DB::raw('round(e_meal) as e_meal'))
             ->where('e_company', '=', $pusat->c_id)
             ->where('e_isactive', '=', 'Y')
             ->get();
@@ -81,8 +90,9 @@ class SalaryController extends Controller
         return view('sdm/penggajian/salary/mastergaji', compact('data'));
     }
 
-    public function saveGajiPokok(Request $request){
-        if (!AksesUser::checkAkses(28, 'update')){
+    public function saveGajiPokok(Request $request)
+    {
+        if (!AksesUser::checkAkses(28, 'update')) {
             return response()->json([
                 'status' => 'gagal',
                 'message' => 'anda tidak memiliki akses'
@@ -94,7 +104,6 @@ class SalaryController extends Controller
         $makan = $request->meal;
         DB::beginTransaction();
         try {
-
             for ($i=0; $i < count($e_id); $i++) {
                 DB::table('m_employee')
                     ->where('e_id', '=', $e_id[$i])
@@ -108,7 +117,7 @@ class SalaryController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -117,20 +126,22 @@ class SalaryController extends Controller
         }
     }
 
-    public function getMasterGajiPokok(){
+    public function getMasterGajiPokok()
+    {
         $pusat = DB::table('m_company')
             ->where('c_type', '=', 'PUSAT')
             ->first();
         $data = DB::table('m_employee')
-            ->select('e_nip', 'e_name', 'e_id', DB::raw('round(e_salary) as e_salary'),DB::raw('round(e_meal) as e_meal'))
+            ->select('e_nip', 'e_name', 'e_id', DB::raw('round(e_salary) as e_salary'), DB::raw('round(e_meal) as e_meal'))
             ->where('e_company', '=', $pusat->c_id)
             ->where('e_isactive', '=', 'Y')
             ->get();
         return response()->json($data);
     }
 
-    public function saveGajiPegawai(Request $request){
-        if (!AksesUser::checkAkses(28, 'create')){
+    public function saveGajiPegawai(Request $request)
+    {
+        if (!AksesUser::checkAkses(28, 'create')) {
             return response()->json([
                 'status' => 'gagal',
                 'message' => 'anda tidak memiliki akses'
@@ -167,7 +178,6 @@ class SalaryController extends Controller
                 DB::table('d_employeesalarydt')
                     ->where('esd_employeesalary', '=', $id)
                     ->delete();
-
             } else {
                 $id = DB::table('d_employeesalary')
                     ->max('es_id');
@@ -206,7 +216,7 @@ class SalaryController extends Controller
             return response()->json([
                 'status' => 'sukses'
             ]);
-        } catch (\Exception $e){
+        } catch (\Exception $e) {
             DB::rollback();
             return response()->json([
                 'status' => 'gagal',
@@ -215,7 +225,80 @@ class SalaryController extends Controller
         }
     }
 
-    public function detailGajiPegawai(Request $request){
+    public function printGajiPegawai(Request $request)
+    {
+        $e_id = $request->id;
+        $periode = Carbon::createFromFormat('d-m-Y', "01-" . $request->periode);
+
+        $salary = DB::table('m_employee')
+          ->where('e_id', '=', $e_id)
+          ->first();
+
+        $data = DB::table('m_employee')
+              ->select('e_nip', 'e_name', 'e_id', DB::raw('round(e_salary) as e_salary'), DB::raw('round(e_meal) as e_meal'))
+              ->where('e_id', '=', $e_id)
+              ->get();
+
+        $getPunishment = DB::table('d_employeebenefits')
+              ->join('d_employeebenefitsdt', 'eb_id', '=', 'ebd_employeebenefits')
+              ->join('m_benefits', function ($q) {
+                  $q->on('b_id', '=', 'ebd_benefits');
+                  $q->where('b_type', '=', 'P');
+              })
+              ->whereMonth('eb_date', '=', $periode->format('m'))
+              ->whereYear('eb_date', '=', $periode->format('Y'))
+              ->where('eb_employee', '=', $e_id);
+
+        $punishment = $getPunishment->select('b_name', DB::raw('round(ebd_value) as ebd_value'))->get();
+        $totalPunishment = $getPunishment->select( DB::raw('round(sum(ebd_value)) as punishmnet_value'))->first();
+
+        $getReward = DB::table('d_employeebenefits')
+                  ->join('d_employeebenefitsdt', 'eb_id', '=', 'ebd_employeebenefits')
+                  ->join('m_benefits', function ($q) {
+                      $q->on('b_id', '=', 'ebd_benefits');
+                      $q->where('b_type', '=', 'R');
+                  })
+                  ->whereMonth('eb_date', '=', $periode->format('m'))
+                  ->whereYear('eb_date', '=', $periode->format('Y'))
+                  ->where('eb_employee', '=', $e_id);
+
+        $reward = $getReward->select('b_name', DB::raw('round(ebd_value) as ebd_value'))->get();
+        $totalReward = $getReward->select(DB::raw('round(sum(ebd_value)) as reward_value'))->first();
+
+        $getTunjangan = DB::table('d_employeebenefits')
+                      ->join('d_employeebenefitsdt', 'eb_id', '=', 'ebd_employeebenefits')
+                      ->join('m_benefits', function ($q) {
+                          $q->on('b_id', '=', 'ebd_benefits');
+                          $q->where('b_type', '=', 'T');
+                      })
+                      ->whereMonth('eb_date', '=', $periode->format('m'))
+                      ->whereYear('eb_date', '=', $periode->format('Y'))
+                      ->where('eb_employee', '=', $e_id);
+
+        $tunjangan = $getTunjangan->select('b_name', DB::raw('round(ebd_value) as ebd_value'))->get();
+        $totalTunjangan = $getTunjangan->select(DB::raw('round(sum(ebd_value)) as tunjangan_value'))->first();
+        // $mergePenerimaan = $tunjangan->merge($reward);
+        // $mergeTotalSalary = $mergePenerimaan->merge($salary);
+        // $totalPenerimaan = array();
+        // foreach ($tunjangan as $key => $value) {
+        //   array_push($totalPenerimaan,$value->tunjangan_value);
+        //
+        // }
+        // foreach ($merge as $key => $value) {
+        //   // code...
+        // }
+
+        // function calculate total salary receipt
+        $totalReceipts = (int)$totalTunjangan->tunjangan_value + (int)$salary->e_salary + (int)$totalReward->reward_value + (int)$salary->e_meal;
+        // function calculate total salary
+        $totalSalary = $totalReceipts - (int)$totalPunishment->punishmnet_value;
+
+        return view('sdm.penggajian.salary.laporan_slip_gaji')
+              ->with(compact('salary', 'reward', 'tunjangan', 'punishment','totalReceipts','totalSalary'));
+    }
+
+    public function detailGajiPegawai(Request $request)
+    {
         $e_id = $request->id;
         $periode = Carbon::createFromFormat('d-m-Y', "01-" . $request->periode);
 
@@ -226,7 +309,7 @@ class SalaryController extends Controller
 
         $punishment = DB::table('d_employeebenefits')
             ->join('d_employeebenefitsdt', 'eb_id', '=', 'ebd_employeebenefits')
-            ->join('m_benefits', function($q){
+            ->join('m_benefits', function ($q) {
                 $q->on('b_id', '=', 'ebd_benefits');
                 $q->where('b_type', '=', 'P');
             })
@@ -238,7 +321,7 @@ class SalaryController extends Controller
 
         $reward = DB::table('d_employeebenefits')
             ->join('d_employeebenefitsdt', 'eb_id', '=', 'ebd_employeebenefits')
-            ->join('m_benefits', function($q){
+            ->join('m_benefits', function ($q) {
                 $q->on('b_id', '=', 'ebd_benefits');
                 $q->where('b_type', '=', 'R');
             })
@@ -250,7 +333,7 @@ class SalaryController extends Controller
 
         $tunjangan = DB::table('d_employeebenefits')
             ->join('d_employeebenefitsdt', 'eb_id', '=', 'ebd_employeebenefits')
-            ->join('m_benefits', function($q){
+            ->join('m_benefits', function ($q) {
                 $q->on('b_id', '=', 'ebd_benefits');
                 $q->where('b_type', '=', 'T');
             })
